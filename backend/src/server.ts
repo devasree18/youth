@@ -29,7 +29,7 @@ app.get('/api/health', (req, res) => {
 
 // Database and Server Start
 if (process.env.NODE_ENV !== 'test') {
-  const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/youth_app';
+  const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/youth_app';
   mongoose.connect(MONGO_URI)
     .then(() => {
       console.log('Connected to MongoDB');

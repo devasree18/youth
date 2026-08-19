@@ -1,6 +1,14 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from 'firebase/auth';
 import type { User } from 'firebase/auth';
 
 // TODO: Replace with your actual Firebase config
@@ -22,6 +30,8 @@ interface AuthContextType {
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
+  signupWithEmail: (e: string, p: string) => Promise<void>;
+  loginWithEmail: (e: string, p: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -45,6 +55,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error signing in", error);
     }
   };
+  
+  const signupWithEmail = async (email: string, pass: string) => {
+    await createUserWithEmailAndPassword(auth, email, pass);
+  };
+  
+  const loginWithEmail = async (email: string, pass: string) => {
+    await signInWithEmailAndPassword(auth, email, pass);
+  };
 
   const logout = async () => {
     try {
@@ -55,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout, signupWithEmail, loginWithEmail }}>
       {!loading && children}
     </AuthContext.Provider>
   );

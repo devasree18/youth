@@ -1,11 +1,15 @@
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Guest';
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-6xl mx-auto">
         <header className="mb-10">
-          <h1 className="text-3xl font-bold text-gray-900">Good morning, Alex 👋</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Good morning, {displayName}</h1>
           <p className="text-gray-600 mt-2">Let's take one small step today.</p>
         </header>
 

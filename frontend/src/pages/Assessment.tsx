@@ -5,16 +5,36 @@ import { useNavigate } from 'react-router-dom';
 const Assessment = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [answer, setAnswer] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState('');
 
-  const handleNext = () => {
-    if (step < 3) setStep(step + 1);
-    else navigate('/dashboard');
+  const handleNext = async (ans?: string) => {
+    if (step < 3) {
+      setStep(step + 1);
+    } else {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/assessment/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers: ans || answer })
+        });
+        const data = await res.json();
+        setResult(data.result);
+        setStep(4);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-white rounded-3xl shadow-soft p-10 border border-gray-100">
-        <div className="text-sm font-semibold text-primary-600 mb-8 uppercase tracking-wider">Step {step} of 3</div>
+        {step < 4 && <div className="text-sm font-semibold text-primary-600 mb-8 uppercase tracking-wider">Step {step} of 3</div>}
         
         <motion.div
           key={step}
@@ -27,7 +47,7 @@ const Assessment = () => {
               <h2 className="text-3xl font-bold text-gray-900 mb-6">How clear do you feel about your career direction?</h2>
               <div className="space-y-4">
                 {['Very clear', 'Somewhat clear', 'Uncertain', 'Very confused'].map((option, i) => (
-                  <button key={i} onClick={handleNext} className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors font-medium text-gray-700">
+                  <button key={i} onClick={() => handleNext()} className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-primary-500 hover:bg-primary-50 transition-colors font-medium text-gray-700">
                     {option}
                   </button>
                 ))}
@@ -39,7 +59,7 @@ const Assessment = () => {
               <h2 className="text-3xl font-bold text-gray-900 mb-6">How often do you compare yourself to others?</h2>
               <div className="space-y-4">
                 {['Rarely', 'Sometimes', 'Often', 'Almost constantly'].map((option, i) => (
-                  <button key={i} onClick={handleNext} className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-secondary-500 hover:bg-secondary-50 transition-colors font-medium text-gray-700">
+                  <button key={i} onClick={() => handleNext()} className="w-full text-left p-4 rounded-xl border border-gray-200 hover:border-secondary-500 hover:bg-secondary-50 transition-colors font-medium text-gray-700">
                     {option}
                   </button>
                 ))}
@@ -50,10 +70,25 @@ const Assessment = () => {
             <>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">What is your primary goal right now?</h2>
               <textarea 
+                value={answer}
+                onChange={e => setAnswer(e.target.value)}
                 className="w-full p-4 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring focus:ring-primary-200 focus:outline-none mb-6 h-32 resize-none"
                 placeholder="I want to feel more confident in..."
               ></textarea>
-              <button onClick={handleNext} className="btn-primary w-full py-4 text-lg">Analyze My Responses</button>
+              <button disabled={loading} onClick={() => handleNext()} className="btn-primary w-full py-4 text-lg">
+                {loading ? 'Generating Insight...' : 'Analyze My Responses'}
+              </button>
+            </>
+          )}
+          {step === 4 && (
+            <>
+              <h2 className="text-3xl font-bold text-gray-900 mb-6">Your Personalized Insight</h2>
+              <div className="bg-primary-50 p-6 rounded-2xl mb-6 text-gray-800 leading-relaxed border border-primary-100">
+                {result}
+              </div>
+              <button onClick={() => navigate('/dashboard')} className="btn-primary w-full py-4 text-lg">
+                Go to Dashboard
+              </button>
             </>
           )}
         </motion.div>

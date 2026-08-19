@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Compass, Shield, Users } from 'lucide-react';
+import { ArrowRight, Compass } from 'lucide-react';
 
 import { Link } from 'react-router-dom';
 

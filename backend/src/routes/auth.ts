@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
     const newUser = new User({
       name,
       email,
-      password: hashedPassword
+      passwordHash: hashedPassword
     });
 
     await newUser.save();
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }

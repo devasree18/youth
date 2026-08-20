@@ -9,6 +9,13 @@ import assessmentRoutes from './routes/assessment';
 import communityRoutes from './routes/community';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/user';
+import moodRoutes from './routes/mood';
+import resourcesRoutes from './routes/resources';
+import counselorsRoutes from './routes/counselors';
+import aiRoutes from './routes/ai';
+import subscriptionsRoutes from './routes/subscriptions';
+import adminRoutes from './routes/admin';
+import institutionRoutes from './routes/institution';
 
 dotenv.config();
 
@@ -26,6 +33,13 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/assessment', assessmentRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/mood', moodRoutes);
+app.use('/api/resources', resourcesRoutes);
+app.use('/api/counselors', counselorsRoutes);
+app.use('/api/ai', aiRoutes);
+app.use('/api/subscriptions', subscriptionsRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/institution', institutionRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK' });

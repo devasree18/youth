@@ -1,13 +1,12 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
   name: { type: String, required: true },
-  assessments: [{
-    date: { type: Date, default: Date.now },
-    result: { type: String }
-  }]
+  email: { type: String, required: true, unique: true },
+  passwordHash: { type: String, required: true },
+  role: { type: String, enum: ['student', 'counselor', 'institution', 'admin'], default: 'student' },
+  preferences: { type: Map, of: String, default: {} },
+  supportNeeds: [{ type: String }],
 }, { timestamps: true });
 
 export const User = mongoose.model('User', userSchema);

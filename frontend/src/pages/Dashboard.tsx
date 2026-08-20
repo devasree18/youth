@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
@@ -9,7 +9,6 @@ import {
   MessageSquare, 
   BookOpen, 
   Stethoscope, 
-  Phone, 
   BarChart2,
   ChevronRight,
   ShieldAlert

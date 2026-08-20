@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card } from '../components/ui/Card';
 import { Search, Filter, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';

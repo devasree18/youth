@@ -1,12 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
-import { Card } from '../components/ui/Card';
 import { Link } from 'react-router-dom';
 import { 
   MessageSquare, 
   BookOpen, 
-  Stethoscope, 
   ChevronRight,
   ShieldAlert,
   LogOut,

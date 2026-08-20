@@ -51,7 +51,8 @@ const Dashboard = () => {
   const displayName = profile?.name || user?.name || user?.email?.split('@')[0] || 'Guest';
 
   // Dynamic score generation based on assessment text length for mockup realism
-  const generateScore = (base: number, resultText: string) => {
+  const generateScore = (base: number, resultText?: string) => {
+    if (!resultText) return base;
     const variance = (resultText.length % 20) - 10; 
     return Math.min(100, Math.max(0, base + variance));
   };
@@ -98,10 +99,10 @@ const Dashboard = () => {
           <>
             {/* Score Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-              <ScoreCard title="Clarity Score" score={generateScore(70, latestAssessment!.result)} color="primary" />
-              <ScoreCard title="Confidence Score" score={generateScore(65, latestAssessment!.result)} color="secondary" />
-              <ScoreCard title="Wellness Score" score={generateScore(80, latestAssessment!.result)} color="success" />
-              <ScoreCard title="Growth Score" score={generateScore(60, latestAssessment!.result)} color="primary" />
+              <ScoreCard title="Clarity Score" score={generateScore(70, latestAssessment?.result)} color="primary" />
+              <ScoreCard title="Confidence Score" score={generateScore(65, latestAssessment?.result)} color="secondary" />
+              <ScoreCard title="Wellness Score" score={generateScore(80, latestAssessment?.result)} color="success" />
+              <ScoreCard title="Growth Score" score={generateScore(60, latestAssessment?.result)} color="primary" />
             </div>
 
             {/* Main Content Area */}
@@ -113,7 +114,7 @@ const Dashboard = () => {
                   <p className="text-gray-800 font-medium text-lg mb-4">Review your latest assessment insights.</p>
                   <div className="bg-gray-50 p-4 rounded-lg mb-4">
                     <span className="font-semibold text-gray-700 block mb-1">Latest AI Feedback:</span>
-                    <span className="text-gray-600 text-sm line-clamp-3">"{latestAssessment!.result}"</span>
+                    <span className="text-gray-600 text-sm line-clamp-3">"{latestAssessment?.result || 'No specific feedback recorded.'}"</span>
                   </div>
                   <button onClick={() => navigate('/assessment')} className="btn-primary w-full md:w-auto">Take Another Assessment</button>
                 </motion.div>
@@ -141,11 +142,11 @@ const Dashboard = () => {
                   <ul className="space-y-4">
                     <li className="flex justify-between items-center text-sm">
                       <span className="text-gray-700">Career Clarity</span>
-                      <span className="font-semibold text-gray-900">{generateScore(60, latestAssessment!.result)}%</span>
+                      <span className="font-semibold text-gray-900">{generateScore(60, latestAssessment?.result)}%</span>
                     </li>
                     <li className="flex justify-between items-center text-sm">
                       <span className="text-gray-700">Exploration Focus</span>
-                      <span className="font-semibold text-gray-900">{generateScore(80, latestAssessment!.result)}%</span>
+                      <span className="font-semibold text-gray-900">{generateScore(80, latestAssessment?.result)}%</span>
                     </li>
                   </ul>
                   <button className="btn-secondary w-full mt-6 text-sm">View Full Analysis</button>

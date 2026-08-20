@@ -19,8 +19,12 @@
       "destination": "/backend/src/server.ts"
     },
     {
+      "source": "/(.*\\.[a-zA-Z0-9]+)",
+      "destination": "/frontend/$1"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/frontend/dist/index.html"
+      "destination": "/frontend/index.html"
     }
   ]
 }

@@ -3,7 +3,6 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
-import morgan from 'morgan';
 
 import assessmentRoutes from './routes/assessment';
 import communityRoutes from './routes/community';
@@ -22,13 +21,33 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// ── Middleware ──────────────────────────────────────────────────────────────
+app.use(cors({ origin: '*' }));
 app.use(helmet());
-app.use(morgan('dev'));
 app.use(express.json());
 
-// Routes
+// ── Serverless-safe DB connection middleware ───────────────────────────────
+// On Vercel each request may hit a cold-start. We connect once and reuse.
+let isConnected = false;
+
+app.use(async (_req, _res, next) => {
+  if (isConnected) return next();
+  const MONGO_URI = process.env.MONGODB_URI;
+  if (!MONGO_URI) {
+    console.error('MONGODB_URI is not set in environment variables!');
+    return next(); // let the route handler fail with a proper JSON 500
+  }
+  try {
+    await mongoose.connect(MONGO_URI);
+    isConnected = true;
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+  }
+  next();
+});
+
+// ── Routes ─────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/assessment', assessmentRoutes);
@@ -41,34 +60,19 @@ app.use('/api/subscriptions', subscriptionsRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/institution', institutionRoutes);
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK' });
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'OK', db: mongoose.connection.readyState });
 });
 
-// Database connection function for serverless
-const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) {
-    return;
-  }
-  const MONGO_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/youth_app';
-  try {
-    await mongoose.connect(MONGO_URI);
-    console.log('Connected to MongoDB');
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-  }
-};
+// ── Global JSON error handler (ensures Vercel never returns plain-text) ────
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+});
 
-// Connect immediately (works for both local and serverless)
-if (process.env.NODE_ENV !== 'test') {
-  connectDB();
-}
-
-// Only start the Express server if NOT running on Vercel
-if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+// ── Start server locally (skipped on Vercel serverless) ───────────────────
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 
 export default app;

@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import assessmentRoutes from './routes/assessment';
 import communityRoutes from './routes/community';
 import authRoutes from './routes/auth';
+import userRoutes from './routes/user';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/assessment', assessmentRoutes);
 app.use('/api/community', communityRoutes);
 

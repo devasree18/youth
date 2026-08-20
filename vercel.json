@@ -19,6 +19,22 @@
       "dest": "/backend/src/server.ts"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/frontend/assets/$1"
+    },
+    {
+      "src": "/favicon\\.ico",
+      "dest": "/frontend/favicon.ico"
+    },
+    {
+      "src": "/favicon\\.svg",
+      "dest": "/frontend/favicon.svg"
+    },
+    {
+      "src": "/hero\\.jpg",
+      "dest": "/frontend/hero.jpg"
+    },
+    {
       "handle": "filesystem"
     },
     {

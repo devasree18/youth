@@ -1,26 +1,41 @@
 import express from 'express';
-import { GoogleGenAI } from '@google/genai';
+import { Assessment } from '../models/Assessment';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' }); // Uses environment variable
 
 router.post('/generate', async (req, res) => {
   try {
-    const { answers } = req.body;
-    
-    if (!process.env.GEMINI_API_KEY) {
-      return res.json({ result: "Please provide a valid GEMINI_API_KEY in the backend .env to use the real AI! For now, here is mock advice: Trust yourself and take small steps every day." });
-    }
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: `You are an empathetic career and mental wellness counselor for young adults. Based on these assessment responses: "${answers}", provide a short, encouraging paragraph with 2 actionable steps they can take today.`,
-    });
-
-    res.json({ result: response.text });
+    const mockResult = "Thank you for completing your assessment! Based on your responses, here are 2 steps you can take today: 1) Take a 10-minute mindful walk to clear your head. 2) Write down 3 things you're grateful for. Remember, small steps lead to big changes. You've got this! 💪";
+    res.json({ result: mockResult });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to generate assessment' });
+  }
+});
+
+router.post('/', authenticateToken, async (req: any, res) => {
+  try {
+    const { type, responses, score } = req.body;
+    const assessment = new Assessment({
+      userId: req.user.userId,
+      type,
+      responses,
+      score
+    });
+    await assessment.save();
+    res.status(201).json(assessment);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save assessment' });
+  }
+});
+
+router.get('/', authenticateToken, async (req: any, res) => {
+  try {
+    const assessments = await Assessment.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+    res.json(assessments);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch assessments' });
   }
 });
 

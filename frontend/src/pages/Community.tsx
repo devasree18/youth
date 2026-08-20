@@ -35,7 +35,7 @@ const Community = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          author: user?.displayName || user?.email?.split('@')[0] || 'Anonymous', 
+          author: user?.name || user?.email?.split('@')[0] || 'Anonymous', 
           content: newPost 
         })
       });

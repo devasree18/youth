@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const displayName = user?.displayName || user?.email?.split('@')[0] || 'Guest';
+  const displayName = user?.name || user?.email?.split('@')[0] || 'Guest';
 
   return (
     <div className="min-h-screen bg-background p-8">

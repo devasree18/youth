@@ -40,12 +40,12 @@ const seedDatabase = async () => {
     // Seed Posts
     const posts = await Post.insertMany([
       {
-        author: users[0].name,
+        author: users[0]?.name || 'Alice Johnson',
         content: 'Just finished my first assessment! Excited to see what career paths fit me best.',
         likes: 12
       },
       {
-        author: users[1].name,
+        author: users[1]?.name || 'Bob Smith',
         content: 'Looking for advice on transitioning from marketing to software engineering. Any tips?',
         likes: 5
       },

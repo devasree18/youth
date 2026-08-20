@@ -2,246 +2,155 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { Link } from 'react-router-dom';
 import { 
-  HeartPulse, 
   MessageSquare, 
   BookOpen, 
   Stethoscope, 
-  BarChart2,
   ChevronRight,
-  ShieldAlert
+  ShieldAlert,
+  LogOut,
+  Activity
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
   const moodOptions = [
-    { label: 'Very Low', emoji: '😢', value: 'very_low', color: 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' },
-    { label: 'Low', emoji: '😕', value: 'low', color: 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100' },
-    { label: 'Okay', emoji: '😐', value: 'okay', color: 'bg-yellow-50 text-yellow-600 border-yellow-200 hover:bg-yellow-100' },
-    { label: 'Good', emoji: '🙂', value: 'good', color: 'bg-primary-50 text-primary-600 border-primary-200 hover:bg-primary-100' },
-    { label: 'Great', emoji: '😄', value: 'great', color: 'bg-success-50 text-success-600 border-success-200 hover:bg-success-100' },
+    { label: 'Very Low', emoji: '😢', value: 'very_low', color: 'bg-red-50 text-red-600 border-red-200' },
+    { label: 'Low', emoji: '😕', value: 'low', color: 'bg-orange-50 text-orange-600 border-orange-200' },
+    { label: 'Okay', emoji: '😐', value: 'okay', color: 'bg-yellow-50 text-yellow-600 border-yellow-200' },
+    { label: 'Good', emoji: '🙂', value: 'good', color: 'bg-blue-50 text-blue-600 border-blue-200' },
+    { label: 'Great', emoji: '😄', value: 'great', color: 'bg-green-50 text-green-600 border-green-200' },
   ];
 
-  const handleMoodSelect = (value: string) => {
-    setSelectedMood(value);
-    // In a real app, call API to save mood here
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      {/* Top Navbar */}
-      <nav className="bg-white border-b border-slate-100 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-xl font-bold text-primary-900">
-            <HeartPulse className="w-6 h-6 text-accent-500" />
-            <span>Student Dashboard</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link to="/crisis" className="flex items-center text-sm font-medium text-red-600 bg-red-50 px-3 py-1.5 rounded-full hover:bg-red-100 transition-colors">
-              <ShieldAlert className="w-4 h-4 mr-1.5" />
-              Need urgent help?
-            </Link>
-            <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-bold">
-              {user?.name?.[0] || 'S'}
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-[#FDFDFD] font-sans relative overflow-hidden pb-32">
+      {/* Subtle Dotted Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(#e5e7eb 1.5px, transparent 1.5px)',
+        backgroundSize: '24px 24px'
+      }}></div>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">Good morning 👋</h1>
-          <p className="text-slate-600 mt-1">Welcome back, {user?.name || 'Student'}. Here is your daily overview.</p>
+      {/* Top Floating Nav */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-6 flex justify-between items-center">
+        <div className="bg-white rounded-full px-5 py-2.5 shadow-sm border border-slate-100 flex items-center space-x-3 text-sm font-bold text-slate-800">
+          <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs">
+            {user?.name?.[0] || 'U'}
+          </div>
+          <span>{user?.name || 'Student'}</span>
+        </div>
+        <div className="flex space-x-3">
+          <Link to="/crisis" className="bg-red-50 text-red-600 rounded-full px-5 py-2.5 shadow-sm border border-red-100 flex items-center space-x-2 text-sm font-bold hover:bg-red-100 transition-colors">
+            <ShieldAlert className="w-4 h-4" />
+            <span className="hidden sm:inline">Urgent Help</span>
+          </Link>
+          <button onClick={logout} className="bg-white rounded-full p-2.5 shadow-sm border border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-colors">
+            <LogOut className="w-4 h-4 text-slate-600" />
+          </button>
+        </div>
+      </div>
+
+      <main className="relative z-10 max-w-5xl mx-auto px-4 pt-16">
+        <div className="text-center mb-16">
+          <h2 className="text-sm font-bold tracking-[0.2em] text-slate-500 mb-6 uppercase">Dashboard Overview</h2>
+          <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9]">
+            HELLO, <br />
+            {user?.name?.split(' ')[0] || 'STUDENT'}
+          </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Column */}
-          <div className="lg:col-span-2 space-y-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Main Content (Left) */}
+          <div className="lg:col-span-7 space-y-8">
             
-            {/* Mood Check-in */}
-            <Card className="p-6">
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">How are you feeling today?</h2>
-              <div className="flex flex-wrap gap-3">
+            {/* Mood Check-in Card */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-10">
+                <Activity className="w-32 h-32 text-slate-900" />
+              </div>
+              <h2 className="text-xl font-black text-slate-900 mb-6 uppercase tracking-tight relative z-10">Daily Check-in</h2>
+              <div className="flex flex-wrap gap-3 relative z-10">
                 {moodOptions.map((mood) => (
                   <button
                     key={mood.value}
-                    onClick={() => handleMoodSelect(mood.value)}
-                    className={`flex items-center px-4 py-3 rounded-xl border transition-all ${mood.color} ${selectedMood === mood.value ? 'ring-2 ring-offset-1 ring-current scale-105' : 'opacity-80'}`}
+                    onClick={() => setSelectedMood(mood.value)}
+                    className={`flex items-center px-4 py-3 rounded-full border transition-all hover:scale-105 active:scale-95 ${mood.color} ${selectedMood === mood.value ? 'ring-2 ring-offset-2 ring-current font-bold shadow-md' : 'opacity-80 bg-white'}`}
                   >
-                    <span className="text-2xl mr-2">{mood.emoji}</span>
-                    <span className="font-medium">{mood.label}</span>
+                    <span className="text-xl mr-2">{mood.emoji}</span>
+                    <span className="text-sm">{mood.label}</span>
                   </button>
                 ))}
               </div>
-              {selectedMood && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-4 pt-4 border-t border-slate-100">
-                  <p className="text-sm text-slate-600 mb-2">Want to add a note? (Optional)</p>
-                  <textarea className="w-full bg-slate-50 border border-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="I'm feeling this way because..." rows={2}></textarea>
-                  <div className="mt-3 flex justify-end">
-                    <Button size="sm">Save Check-in</Button>
+            </motion.div>
+
+            {/* Quick Links */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Link to="/ai-assistant">
+                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
+                  <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <MessageSquare className="w-5 h-5 text-white" />
                   </div>
+                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">AI Assistant</h3>
+                  <p className="text-xs text-slate-500 mt-2 font-medium">Non-judgmental chat support available 24/7.</p>
                 </motion.div>
-              )}
-            </Card>
-
-            {/* Quick Actions */}
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900 mb-4">Quick Actions</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Link to="/assessment" className="group">
-                  <Card hoverable className="p-5 flex items-center justify-between h-full bg-primary-50/50 border-primary-100">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                        <HeartPulse className="w-5 h-5 text-primary-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-slate-900">Take Assessment</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Check your well-being score</p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-primary-600 transition-colors" />
-                  </Card>
-                </Link>
-                
-                <Link to="/ai-assistant" className="group">
-                  <Card hoverable className="p-5 flex items-center justify-between h-full bg-accent-50/50 border-accent-100">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-accent-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                        <MessageSquare className="w-5 h-5 text-accent-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-slate-900">Talk to AI Assistant</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Get immediate guidance</p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-accent-600 transition-colors" />
-                  </Card>
-                </Link>
-
-                <Link to="/resources" className="group">
-                  <Card hoverable className="p-5 flex items-center justify-between h-full">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-secondary-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                        <BookOpen className="w-5 h-5 text-secondary-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-slate-900">Browse Resources</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Self-help & articles</p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-secondary-600 transition-colors" />
-                  </Card>
-                </Link>
-
-                <Link to="/counselors" className="group">
-                  <Card hoverable className="p-5 flex items-center justify-between h-full">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                        <Stethoscope className="w-5 h-5 text-slate-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-slate-900">Find a Counselor</h3>
-                        <p className="text-xs text-slate-500 mt-0.5">Professional support</p>
-                      </div>
-                    </div>
-                    <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
-                  </Card>
-                </Link>
-              </div>
-            </div>
-
-            {/* Recommended For You */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-slate-900">Recommended For You</h2>
-                <Link to="/resources" className="text-sm font-medium text-primary-600 hover:text-primary-700">View all</Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Card hoverable className="p-5">
-                  <div className="text-xs font-semibold text-accent-600 mb-2 uppercase tracking-wider">Anxiety & Stress</div>
-                  <h3 className="font-medium text-slate-900 mb-2 line-clamp-2">5 Grounding Techniques for When You Feel Overwhelmed</h3>
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="text-xs text-slate-500">4 min read</span>
-                    <button className="text-primary-600 text-sm font-medium hover:underline">Read Now</button>
+              </Link>
+              
+              <Link to="/resources">
+                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200 group-hover:scale-110 transition-transform">
+                    <BookOpen className="w-5 h-5 text-slate-900" />
                   </div>
-                </Card>
-                <Card hoverable className="p-5">
-                  <div className="text-xs font-semibold text-secondary-600 mb-2 uppercase tracking-wider">Sleep</div>
-                  <h3 className="font-medium text-slate-900 mb-2 line-clamp-2">How to Build a Better Sleep Routine in College</h3>
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="text-xs text-slate-500">6 min read</span>
-                    <button className="text-primary-600 text-sm font-medium hover:underline">Read Now</button>
-                  </div>
-                </Card>
-              </div>
+                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Resource Hub</h3>
+                  <p className="text-xs text-slate-500 mt-2 font-medium">Explore articles tailored for college stress.</p>
+                </motion.div>
+              </Link>
             </div>
-
           </div>
 
-          {/* Sidebar Column */}
-          <div className="space-y-8">
+          {/* Sidebar (Right) */}
+          <div className="lg:col-span-5 space-y-8">
             {/* Well-being Score */}
-            <Card className="p-6 text-center">
-              <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-6">Current Well-being Score</h2>
-              <div className="relative inline-flex items-center justify-center mb-4">
-                <svg className="w-32 h-32 transform -rotate-90">
-                  <circle cx="64" cy="64" r="56" fill="transparent" stroke="#f1f5f9" strokeWidth="12" />
-                  <circle cx="64" cy="64" r="56" fill="transparent" stroke="#3b82f6" strokeWidth="12" strokeDasharray="351.8" strokeDashoffset={351.8 - (351.8 * 72) / 100} className="transition-all duration-1000 ease-out" />
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-slate-900 text-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[300px]"
+            >
+              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
+              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 relative z-10">Well-being Score</h2>
+              
+              <div className="relative inline-flex items-center justify-center mb-6 z-10">
+                <svg className="w-40 h-40 transform -rotate-90">
+                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
+                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="#ffffff" strokeWidth="12" strokeDasharray="439.8" strokeDashoffset={439.8 - (439.8 * 72) / 100} className="transition-all duration-1000 ease-out drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-3xl font-bold text-slate-900">72</span>
-                  <span className="text-xs text-slate-500">/ 100</span>
+                  <span className="text-5xl font-black">72</span>
                 </div>
               </div>
-              <p className="text-sm text-slate-600 mb-4">Your score is <span className="font-medium text-primary-600">Moderate</span>. You've been doing well, but might benefit from some relaxation techniques.</p>
-              <div className="bg-blue-50 text-blue-700 text-xs px-3 py-2 rounded-lg text-left">
-                <strong>Disclaimer:</strong> This score is for self-reflection and is not a medical diagnosis.
-              </div>
-            </Card>
-
-            {/* Progress Summary */}
-            <Card className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-base font-semibold text-slate-900">Recent Activity</h2>
-                <Link to="/progress" className="text-primary-600 p-1 hover:bg-primary-50 rounded"><BarChart2 className="w-4 h-4" /></Link>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 mt-0.5 mr-3 flex-shrink-0">
-                    <span className="text-sm">🙂</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">Checked in: Good</p>
-                    <p className="text-xs text-slate-500">Yesterday, 9:41 AM</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 mt-0.5 mr-3 flex-shrink-0">
-                    <HeartPulse className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">Completed Assessment</p>
-                    <p className="text-xs text-slate-500">Oct 12, 2:30 PM</p>
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-8 h-8 rounded-full bg-accent-100 flex items-center justify-center text-accent-600 mt-0.5 mr-3 flex-shrink-0">
-                    <MessageSquare className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900">Chatted with AI Support</p>
-                    <p className="text-xs text-slate-500">Oct 10, 8:15 PM</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
+              <p className="text-center text-sm text-slate-300 font-medium relative z-10 px-4">Your score is <span className="text-white font-bold">Moderate</span>. You've been doing well recently.</p>
+            </motion.div>
           </div>
+
         </div>
       </main>
+
+      {/* Bottom Floating Action */}
+      <div className="fixed bottom-8 inset-x-0 z-50 pointer-events-none px-6 flex justify-center">
+        <Link to="/assessment" className="pointer-events-auto bg-slate-900 text-white rounded-full pl-4 pr-6 py-3 shadow-2xl border border-slate-700 flex items-center space-x-3 hover:bg-slate-800 transition-transform hover:scale-105 active:scale-95">
+          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+            <Activity className="w-4 h-4 text-white" />
+          </div>
+          <span className="text-sm font-bold uppercase tracking-wider">Start Deep Check-in</span>
+          <ChevronRight className="w-4 h-4 opacity-70" />
+        </Link>
+      </div>
     </div>
   );
 };

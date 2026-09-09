@@ -3,16 +3,17 @@ import request from 'supertest';
 import app from '../src/server';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { getJwtSecret } from '../src/middleware/auth';
 
 describe('Phase 8 System Administration & Audit Logging Tests', () => {
   let studentToken: string;
   let adminToken: string;
 
   beforeAll(() => {
-    process.env.JWT_SECRET = 'test_jwt_secret_key_minimum_32_characters_long_for_security';
+    const secret = getJwtSecret();
     studentToken = jwt.sign(
       { userId: new mongoose.Types.ObjectId().toString(), role: 'STUDENT', permissions: ['resources.read'] },
-      process.env.JWT_SECRET
+      secret
     );
     adminToken = jwt.sign(
       { 
@@ -20,7 +21,7 @@ describe('Phase 8 System Administration & Audit Logging Tests', () => {
         role: 'ADMIN', 
         permissions: ['system.manage', 'users.read'] 
       },
-      process.env.JWT_SECRET
+      secret
     );
   });
 

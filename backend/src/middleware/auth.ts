@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { sendError } from '../utils/response';
+import { envConfig } from '../config/env';
 
 export interface AuthenticatedUser {
   userId: string;
@@ -16,11 +17,8 @@ export interface AuthRequest extends Request {
 }
 
 export const getJwtSecret = (): string => {
-  const secret = process.env.JWT_SECRET;
+  const secret = envConfig.JWT_SECRET;
   if (!secret) {
-    if (process.env.NODE_ENV === 'test') {
-      return 'test_jwt_secret_key_minimum_32_characters_long_for_security';
-    }
     throw new Error('FATAL SECURITY ERROR: JWT_SECRET environment variable is missing!');
   }
   return secret;

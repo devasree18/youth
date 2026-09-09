@@ -3,6 +3,7 @@ import request from 'supertest';
 import app from '../src/server';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { getJwtSecret } from '../src/middleware/auth';
 
 describe('Phase 6 Institution SaaS & Multi-Tenancy Scoping Tests', () => {
   let studentToken: string;
@@ -10,10 +11,10 @@ describe('Phase 6 Institution SaaS & Multi-Tenancy Scoping Tests', () => {
   const dummyInstId = new mongoose.Types.ObjectId().toString();
 
   beforeAll(() => {
-    process.env.JWT_SECRET = 'test_jwt_secret_key_minimum_32_characters_long_for_security';
+    const secret = getJwtSecret();
     studentToken = jwt.sign(
       { userId: new mongoose.Types.ObjectId().toString(), role: 'STUDENT', permissions: ['resources.read'] },
-      process.env.JWT_SECRET
+      secret
     );
     instAdminToken = jwt.sign(
       { 
@@ -22,7 +23,7 @@ describe('Phase 6 Institution SaaS & Multi-Tenancy Scoping Tests', () => {
         institutionId: dummyInstId,
         permissions: ['institution.analytics.read', 'institution.manage'] 
       },
-      process.env.JWT_SECRET
+      secret
     );
   });
 

@@ -3,16 +3,17 @@ import request from 'supertest';
 import app from '../src/server';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { getJwtSecret } from '../src/middleware/auth';
 
 describe('Phase 7 Monetization, Billing & Entitlements Tests', () => {
   let userToken: string;
   const dummyUserId = new mongoose.Types.ObjectId().toString();
 
   beforeAll(() => {
-    process.env.JWT_SECRET = 'test_jwt_secret_key_minimum_32_characters_long_for_security';
+    const secret = getJwtSecret();
     userToken = jwt.sign(
       { userId: dummyUserId, role: 'STUDENT', permissions: ['resources.read'] },
-      process.env.JWT_SECRET
+      secret
     );
   });
 

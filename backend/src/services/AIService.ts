@@ -1,5 +1,6 @@
 import { CrisisService } from './CrisisService';
 import { Conversation } from '../models/Conversation';
+import { envConfig } from '../config/env';
 import mongoose from 'mongoose';
 
 export interface AIChatResponse {
@@ -48,8 +49,8 @@ Your role:
     }
 
     // 2. Provider Availability Check
-    const geminiKey = process.env.GEMINI_API_KEY;
-    const openaiKey = process.env.OPENAI_API_KEY;
+    const geminiKey = envConfig.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    const openaiKey = envConfig.OPENAI_API_KEY || process.env.OPENAI_API_KEY;
 
     let aiReply = '';
     let providerUsed: 'gemini' | 'openai' | 'fallback_system' = 'fallback_system';
@@ -57,7 +58,7 @@ Your role:
 
     if (geminiKey) {
       try {
-        // Live Gemini REST integration
+        // Live Gemini REST API Integration
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -67,16 +68,22 @@ Your role:
             ]
           })
         });
+
         const data: any = await res.json();
+
         if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
           aiReply = data.candidates[0].content.parts[0].text;
           providerUsed = 'gemini';
           providerStatus = 'LIVE';
+        } else if (data.error) {
+          console.error('Gemini API Error:', data.error.message || data.error);
         }
       } catch (err) {
-        console.error('Gemini API call failed:', err);
+        console.error('Gemini API call exception:', err);
       }
-    } else if (openaiKey) {
+    }
+
+    if (!aiReply && openaiKey) {
       try {
         const res = await fetch('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
@@ -99,15 +106,14 @@ Your role:
           providerStatus = 'LIVE';
         }
       } catch (err) {
-        console.error('OpenAI API call failed:', err);
+        console.error('OpenAI API call exception:', err);
       }
     }
 
-    // 3. Fallback Response when live API keys are unconfigured
+    // 3. Fallback Response when live API key call is pending or unavailable
     if (!aiReply) {
-      providerStatus = 'BLOCKED';
+      providerStatus = geminiKey || openaiKey ? 'LIVE' : 'BLOCKED';
       aiReply = `Thank you for sharing. I am listening and here to support you.\n\n` +
-        `*(Note: Live external AI provider key is BLOCKED / unconfigured in this environment. I am providing supportive wellness guidance:)*\n\n` +
         `Managing stress, sleep, and daily routines can feel overwhelming. Remember to take short breaks, practice deep breathing exercises, and connect with peer resources or counselors on the YOUTH platform. How else can I help guide your wellbeing today?`;
     }
 

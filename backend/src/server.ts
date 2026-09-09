@@ -1,12 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import crypto from 'crypto';
 
+import { envConfig } from './config/env';
 import assessmentRoutes from './routes/assessment';
 import communityRoutes from './routes/community';
 import authRoutes from './routes/auth';
@@ -23,16 +23,13 @@ import crisisRoutes from './routes/crisis';
 import appointmentRoutes from './routes/appointments';
 import { errorHandler } from './middleware/errors';
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = envConfig.PORT || 5000;
 
 // ── Startup Security & Environment Validation ────────────────────────────────
-if (process.env.NODE_ENV === 'production') {
-  if (!process.env.JWT_SECRET) {
-    console.error('FATAL ERROR: JWT_SECRET environment variable is missing!');
-  }
+if (envConfig.NODE_ENV === 'production' && !envConfig.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET environment variable is missing!');
+  process.exit(1);
 }
 
 // ── Request ID & Logging Middleware ─────────────────────────────────────────
@@ -43,14 +40,13 @@ app.use((req: any, res, next) => {
 });
 
 // ── CORS & Security Middleware ──────────────────────────────────────────────
-const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+const allowedOrigins = envConfig.ALLOWED_ORIGINS 
+  ? envConfig.ALLOWED_ORIGINS.split(',').map(o => o.trim())
   : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl) or if origin is allowed
-    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV !== 'production') {
+    if (!origin || allowedOrigins.includes(origin) || envConfig.NODE_ENV !== 'production') {
       callback(null, true);
     } else {
       callback(new Error(`CORS policy violation: Origin ${origin} not permitted`));
@@ -67,8 +63,8 @@ app.use(express.json({ limit: '1mb' }));
 
 // ── Rate Limiting Middleware ────────────────────────────────────────────────
 const globalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  limit: 300, // Limit each IP to 300 requests per windowMs
+  windowMs: 15 * 60 * 1000,
+  limit: 300,
   standardHeaders: true,
   legacyHeaders: false,
   message: {
@@ -86,7 +82,7 @@ let isConnected = false;
 
 app.use(async (_req, _res, next) => {
   if (isConnected) return next();
-  const MONGO_URI = process.env.MONGODB_URI;
+  const MONGO_URI = envConfig.MONGODB_URI;
   if (!MONGO_URI) {
     console.error('MONGODB_URI is not set in environment variables!');
     return next();
@@ -139,7 +135,7 @@ app.use('/api', v1Router);
 app.use(errorHandler);
 
 // ── Local Development Server Startup ───────────────────────────────────────
-if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+if (!process.env.VERCEL && envConfig.NODE_ENV !== 'test') {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 }
 

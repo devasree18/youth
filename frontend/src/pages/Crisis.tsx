@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, PhoneCall, ShieldAlert, HeartHandshake, Clock, Globe } from 'lucide-react';
+import { PhoneCall, HeartHandshake, Clock, Globe } from 'lucide-react';
 import { apiClient } from '../api/apiClient';
+import { Navbar } from '../components/layout/Navbar';
 
 interface EmergencyResource {
   name: string;
@@ -68,25 +68,11 @@ const Crisis = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      {/* Top Header */}
-      <header className="bg-red-600 text-white px-6 py-4 sticky top-0 z-20 shadow-md">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Link to="/dashboard" className="p-2 hover:bg-red-700 rounded-full transition-colors">
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </Link>
-            <div className="flex items-center space-x-2">
-              <ShieldAlert className="w-6 h-6 text-white" />
-              <h1 className="text-xl font-black uppercase tracking-wide">Crisis & Emergency Support</h1>
-            </div>
-          </div>
-          <span className="text-xs bg-red-700 px-3 py-1 rounded-full font-bold uppercase tracking-wider">Confidential & 24/7</span>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#FDFDFD] flex flex-col font-sans">
+      <Navbar />
 
       {/* Main Content */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-6 space-y-8">
+      <main className="flex-1 max-w-4xl w-full mx-auto p-6 space-y-8 py-10">
         
         {/* Urgent Banner */}
         <div className="bg-red-50 border-2 border-red-200 rounded-3xl p-6 shadow-sm flex items-start space-x-4">

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Star, Calendar, ShieldCheck, CheckCircle2, Video } from 'lucide-react';
+import { Star, Calendar, ShieldCheck, CheckCircle2, Video } from 'lucide-react';
 import { counselorService, type Counselor, type AvailabilitySlot } from '../services/counselorService';
 import { appointmentService } from '../services/appointmentService';
+import { Navbar } from '../components/layout/Navbar';
 
 const CounselorMarketplace = () => {
   const [counselors, setCounselors] = useState<Counselor[]>([]);
@@ -61,24 +61,21 @@ const CounselorMarketplace = () => {
   const getDayName = (dayNum: number) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayNum] || 'Day';
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 font-sans">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
+      <Navbar />
+
+      <main className="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Link to="/dashboard" className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Verified Counselor Marketplace</h1>
-              <p className="text-xs text-slate-500 font-medium">Connect with licensed student mental health specialists</p>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 mb-4">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Verified Counselor Marketplace</h1>
+            <p className="text-xs text-slate-500 font-medium mt-1">Connect with licensed student mental health specialists for online sessions</p>
           </div>
 
-          <div className="flex items-center space-x-1.5 text-xs text-indigo-700 bg-indigo-50 px-3.5 py-1.5 rounded-full border border-indigo-200">
+          <div className="flex items-center space-x-1.5 text-xs text-indigo-700 bg-indigo-50 px-3.5 py-1.5 rounded-full border border-indigo-200 self-start sm:self-auto">
             <ShieldCheck className="w-4 h-4 text-indigo-600" />
-            <span className="font-bold">100% Confidential & Institution-Backed</span>
+            <span className="font-bold">100% Confidential & Campus-Backed</span>
           </div>
         </div>
 
@@ -186,8 +183,7 @@ const CounselorMarketplace = () => {
             </div>
           </div>
         )}
-
-      </div>
+      </main>
     </div>
   );
 };

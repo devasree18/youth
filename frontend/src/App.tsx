@@ -30,6 +30,7 @@ function App() {
           <Route path="/assessment" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
           <Route path="/resources" element={<ProtectedRoute><ResourceHub /></ProtectedRoute>} />
           <Route path="/ai-assistant" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
+          <Route path="/ai" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
           <Route path="/crisis" element={<ProtectedRoute><Crisis /></ProtectedRoute>} />
           <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
           <Route path="/solutions" element={<ProtectedRoute><SolutionHub /></ProtectedRoute>} />

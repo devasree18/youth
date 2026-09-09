@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Send, Bot, User, ArrowLeft, ShieldAlert } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Send, Bot, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { aiService, type ChatMessage as ServiceChatMessage } from '../services/aiService';
+import { Navbar } from '../components/layout/Navbar';
 
 const SUGGESTED_PROMPTS = [
   "I'm feeling stressed about college exams.",
@@ -97,30 +97,10 @@ const AiAssistant = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-      <nav className="bg-white border-b border-slate-200 px-4 py-3 sticky top-0 z-10 shadow-sm">
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <Link to="/dashboard" className="p-2 hover:bg-slate-100 rounded-full mr-2 transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-            </Link>
-            <div>
-              <h1 className="text-lg font-bold text-slate-900 flex items-center">
-                <Bot className="w-5 h-5 text-indigo-600 mr-2" />
-                AI Support Assistant
-              </h1>
-              <p className="text-xs text-slate-500">24/7 Wellness Companion & Guide</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#FDFDFD] flex flex-col font-sans">
+      <Navbar />
 
-          <Link to="/crisis" className="flex items-center text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-full border border-red-200 transition-colors">
-            <ShieldAlert className="w-4 h-4 mr-1" />
-            Crisis Help
-          </Link>
-        </div>
-      </nav>
-
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col">
+      <main className="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col pt-6">
         <Card className="flex-1 flex flex-col overflow-hidden bg-white shadow-sm border-slate-200 h-[calc(100vh-140px)] rounded-3xl">
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6">
             

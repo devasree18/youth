@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
-import { Search, Filter, BookOpen, Loader2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Search, Filter, Loader2 } from 'lucide-react';
 import { resourceService, type ResourceItem } from '../services/resourceService';
+import { Navbar } from '../components/layout/Navbar';
 
 const FALLBACK_RESOURCES: ResourceItem[] = [
   { _id: '1', title: 'Understanding Academic Pressure', category: 'Academic Pressure', readTimeMinutes: 5, description: 'Learn how to manage the intense demands of college coursework without burning out.', content: '', author: 'YOUTH Clinical Team' },
@@ -49,16 +49,8 @@ const ResourceHub = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="bg-white border-b border-slate-100 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2 text-xl font-bold text-primary-900">
-            <BookOpen className="w-6 h-6 text-secondary-500" />
-            <span>Resource Hub</span>
-          </div>
-          <Link to="/dashboard" className="text-sm font-medium text-slate-600 hover:text-primary-600">Back to Dashboard</Link>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
+      <Navbar />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8 max-w-2xl">

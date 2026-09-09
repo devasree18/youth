@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Users, Activity, ShieldCheck, UserPlus, TrendingUp } from 'lucide-react';
+import { Users, Activity, ShieldCheck, UserPlus, TrendingUp } from 'lucide-react';
 import { institutionService, type InstitutionStats } from '../services/institutionService';
+import { Navbar } from '../components/layout/Navbar';
 
 const InstitutionDashboard = () => {
   const [stats, setStats] = useState<InstitutionStats | null>(null);
@@ -50,22 +50,19 @@ const InstitutionDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 font-sans">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
+      <Navbar />
+
+      <main className="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6">
         
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Link to="/dashboard" className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Institution SaaS Portal</h1>
-              <p className="text-xs text-slate-500 font-medium">B2B Campus Wellbeing Analytics & Member Management</p>
-            </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 mb-4">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Institution SaaS Portal</h1>
+            <p className="text-xs text-slate-500 font-medium mt-1">B2B Campus Wellbeing Analytics & Member Management</p>
           </div>
 
-          <div className="flex items-center space-x-1.5 text-xs text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200">
+          <div className="flex items-center space-x-1.5 text-xs text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200 self-start sm:self-auto">
             <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span className="font-bold">Aggregated & Privacy Suppressed</span>
           </div>
@@ -165,8 +162,7 @@ const InstitutionDashboard = () => {
             </button>
           </form>
         </div>
-
-      </div>
+      </main>
     </div>
   );
 };

@@ -4,29 +4,31 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { wellbeingService, type WellbeingSummary } from '../services/wellbeingService';
 import { moodService } from '../services/moodService';
+import { Navbar } from '../components/layout/Navbar';
 import { 
   MessageSquare, 
   BookOpen, 
-  ChevronRight,
-  ShieldAlert,
-  LogOut,
-  Activity,
-  Users,
-  Calendar
+  Activity, 
+  Users, 
+  Calendar,
+  Sparkles,
+  ArrowRight,
+  TrendingUp,
+  Award
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [summary, setSummary] = useState<WellbeingSummary | null>(null);
   const [isSavingMood, setIsSavingMood] = useState(false);
 
   const moodOptions = [
-    { label: 'Very Low', emoji: '😢', value: 'very_low', color: 'bg-red-50 text-red-600 border-red-200' },
-    { label: 'Low', emoji: '😕', value: 'low', color: 'bg-orange-50 text-orange-600 border-orange-200' },
-    { label: 'Okay', emoji: '😐', value: 'okay', color: 'bg-yellow-50 text-yellow-600 border-yellow-200' },
-    { label: 'Good', emoji: '🙂', value: 'good', color: 'bg-blue-50 text-blue-600 border-blue-200' },
-    { label: 'Great', emoji: '😄', value: 'great', color: 'bg-green-50 text-green-600 border-green-200' },
+    { label: 'Exhausted', emoji: '😢', value: 'very_low', color: 'bg-red-50 text-red-700 border-red-200' },
+    { label: 'Stressed', emoji: '😕', value: 'low', color: 'bg-orange-50 text-orange-700 border-orange-200' },
+    { label: 'Okay', emoji: '😐', value: 'okay', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+    { label: 'Good', emoji: '🙂', value: 'good', color: 'bg-blue-50 text-blue-700 border-blue-200' },
+    { label: 'Energized', emoji: '😄', value: 'great', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
   ];
 
   const fetchWellbeingSummary = useCallback(async () => {
@@ -57,169 +59,235 @@ const Dashboard = () => {
     }
   };
 
-  const currentScore = summary?.wellbeingScore ?? 70;
-  const scoreLabel = summary?.scoreLabel ?? 'Moderate';
-  const dashOffset = 439.8 - (439.8 * currentScore) / 100;
+  const currentScore = summary?.wellbeingScore ?? 78;
+  const scoreLabel = summary?.scoreLabel ?? 'Balanced';
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans relative overflow-hidden pb-32">
-      {/* Subtle Dotted Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(#e5e7eb 1.5px, transparent 1.5px)',
-        backgroundSize: '24px 24px'
-      }}></div>
+    <div className="min-h-screen bg-[#FDFDFD] font-sans relative overflow-x-hidden flex flex-col">
+      {/* Background Pattern */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-50" 
+        style={{
+          backgroundImage: 'radial-gradient(#d1d5db 1.5px, transparent 1.5px)',
+          backgroundSize: '24px 24px'
+        }}
+      />
 
-      {/* Top Floating Nav */}
-      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-6 flex justify-between items-center">
-        <div className="bg-white rounded-full px-5 py-2.5 shadow-sm border border-slate-100 flex items-center space-x-3 text-sm font-bold text-slate-800">
-          <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs">
-            {user?.name?.[0] || 'U'}
+      {/* Shared Navigation Header */}
+      <Navbar />
+
+      <main className="relative z-10 flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        {/* Welcome Banner */}
+        <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold mb-3">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Personalized Student Wellness Portal</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+              Welcome back, {user?.name?.split(' ')[0] || 'Student'}! 👋
+            </h1>
+            <p className="text-slate-600 text-sm mt-1">Here is your daily wellbeing overview and mental health progress.</p>
           </div>
-          <span>{user?.name || 'Student'}</span>
-        </div>
-        <div className="flex space-x-3">
-          <Link to="/crisis" className="bg-red-50 text-red-600 rounded-full px-5 py-2.5 shadow-sm border border-red-100 flex items-center space-x-2 text-sm font-bold hover:bg-red-100 transition-colors">
-            <ShieldAlert className="w-4 h-4" />
-            <span className="hidden sm:inline">Urgent Help</span>
-          </Link>
-          <button onClick={logout} className="bg-white rounded-full p-2.5 shadow-sm border border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-colors">
-            <LogOut className="w-4 h-4 text-slate-600" />
-          </button>
-        </div>
-      </div>
 
-      <main className="relative z-10 max-w-5xl mx-auto px-4 pt-16">
-        <div className="text-center mb-16">
-          <h2 className="text-sm font-bold tracking-[0.2em] text-slate-500 mb-6 uppercase">Dashboard Overview</h2>
-          <h1 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[0.9]">
-            HELLO, <br />
-            {user?.name?.split(' ')[0] || 'STUDENT'}
-          </h1>
+          <div className="flex items-center space-x-3">
+            <Link 
+              to="/assessment" 
+              className="px-6 py-3 rounded-full bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition-all shadow-md flex items-center space-x-2"
+            >
+              <Activity className="w-4 h-4 text-indigo-400" />
+              <span>Start Assessment Check-in</span>
+            </Link>
+          </div>
         </div>
 
+        {/* Dashboard Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
-          {/* Main Content (Left) */}
-          <div className="lg:col-span-7 space-y-8">
+          {/* Main Area (Left) */}
+          <div className="lg:col-span-8 space-y-8">
             
-            {/* Mood Check-in Card */}
+            {/* Daily Mood Check-in Card */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 relative overflow-hidden"
+              className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 p-8 opacity-10">
-                <Activity className="w-32 h-32 text-slate-900" />
+              <div className="flex justify-between items-center mb-6">
+                <div>
+                  <h2 className="text-lg font-bold text-slate-900">How are you feeling today?</h2>
+                  <p className="text-xs text-slate-500">Record your current mood to update your weekly score</p>
+                </div>
+                {isSavingMood && <span className="text-xs font-bold text-indigo-600 animate-pulse">Logging...</span>}
               </div>
-              <div className="flex justify-between items-center mb-6 relative z-10">
-                <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Daily Mood Check-in</h2>
-                {isSavingMood && <span className="text-xs font-semibold text-primary-600 animate-pulse">Saving...</span>}
-              </div>
-              <div className="flex flex-wrap gap-3 relative z-10">
+
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 {moodOptions.map((mood) => (
                   <button
                     key={mood.value}
                     disabled={isSavingMood}
                     onClick={() => handleMoodSelect(mood.value)}
-                    className={`flex items-center px-4 py-3 rounded-full border transition-all hover:scale-105 active:scale-95 ${mood.color} ${selectedMood === mood.value ? 'ring-2 ring-offset-2 ring-current font-bold shadow-md' : 'opacity-80 bg-white'}`}
+                    className={`flex flex-col items-center justify-center p-4 rounded-2xl border transition-all hover:scale-105 active:scale-95 ${mood.color} ${
+                      selectedMood === mood.value ? 'ring-2 ring-indigo-500 font-bold shadow-md bg-white' : 'bg-slate-50/50 hover:bg-white'
+                    }`}
                   >
-                    <span className="text-xl mr-2">{mood.emoji}</span>
-                    <span className="text-sm">{mood.label}</span>
+                    <span className="text-2xl mb-1">{mood.emoji}</span>
+                    <span className="text-xs font-semibold">{mood.label}</span>
                   </button>
                 ))}
               </div>
             </motion.div>
 
-            {/* Quick Links Grid */}
+            {/* Core Modules Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Link to="/ai-assistant">
-                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
-                  <div className="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <MessageSquare className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">AI Assistant</h3>
-                  <p className="text-xs text-slate-500 mt-2 font-medium">Non-judgmental chat support available 24/7.</p>
-                </motion.div>
-              </Link>
               
-              <Link to="/resources">
-                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
-                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200 group-hover:scale-110 transition-transform">
-                    <BookOpen className="w-5 h-5 text-slate-900" />
+              <Link to="/ai-assistant" className="group">
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col justify-between h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                      <MessageSquare className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full">24/7 AI</span>
                   </div>
-                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Resource Hub</h3>
-                  <p className="text-xs text-slate-500 mt-2 font-medium">Explore evidence-based wellness guides.</p>
-                </motion.div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base mb-1">AI Support Companion</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">Confidential, non-judgmental guidance and coping techniques.</p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600">
+                    <span>Chat Now</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
               </Link>
 
-              <Link to="/community">
-                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
-                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200 group-hover:scale-110 transition-transform">
-                    <Users className="w-5 h-5 text-slate-900" />
+              <Link to="/resources" className="group">
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col justify-between h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                      <BookOpen className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full">Curated</span>
                   </div>
-                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Community</h3>
-                  <p className="text-xs text-slate-500 mt-2 font-medium">Safe peer discussions & support.</p>
-                </motion.div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base mb-1">Student Resource Hub</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">Evidence-based guides for academic stress and burnout.</p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-amber-600">
+                    <span>Explore Articles</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
               </Link>
 
-              <Link to="/counselors">
-                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
-                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200 group-hover:scale-110 transition-transform">
-                    <Calendar className="w-5 h-5 text-slate-900" />
+              <Link to="/counselors" className="group">
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col justify-between h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      <Calendar className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full">Verified</span>
                   </div>
-                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Counselors</h3>
-                  <p className="text-xs text-slate-500 mt-2 font-medium">Book appointments with experts.</p>
-                </motion.div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base mb-1">Counselor Booking</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">Book confidential 1-on-1 sessions with licensed specialists.</p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-600">
+                    <span>Book Session</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
               </Link>
+
+              <Link to="/community" className="group">
+                <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col justify-between h-full">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                      <Users className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full">Anonymous</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base mb-1">Peer Support Forum</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">Share experiences and encouragement safely with peers.</p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-purple-600">
+                    <span>Join Discussion</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+
             </div>
+
           </div>
 
-          {/* Sidebar (Right) */}
-          <div className="lg:col-span-5 space-y-8">
-            {/* Dynamic Well-being Score */}
+          {/* Sidebar Metrics (Right) */}
+          <div className="lg:col-span-4 space-y-6">
+            
+            {/* Dynamic Wellbeing Gauge Card */}
             <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-slate-900 text-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[300px]"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-slate-900 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col items-center text-center"
             >
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 relative z-10">Dynamic Well-being Score</h2>
-              
-              <div className="relative inline-flex items-center justify-center mb-6 z-10">
-                <svg className="w-40 h-40 transform -rotate-90">
-                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
-                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="#ffffff" strokeWidth="12" strokeDasharray="439.8" strokeDashoffset={dashOffset} className="transition-all duration-1000 ease-out drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+              <div className="flex items-center space-x-2 text-indigo-400 text-xs font-bold uppercase tracking-wider mb-6">
+                <TrendingUp className="w-4 h-4" />
+                <span>Wellbeing Score</span>
+              </div>
+
+              <div className="relative inline-flex items-center justify-center mb-6">
+                <svg className="w-44 h-44 transform -rotate-90">
+                  <circle cx="88" cy="88" r="76" fill="transparent" stroke="rgba(255,255,255,0.1)" strokeWidth="10" />
+                  <circle 
+                    cx="88" 
+                    cy="88" 
+                    r="76" 
+                    fill="transparent" 
+                    stroke="#6366f1" 
+                    strokeWidth="12" 
+                    strokeDasharray="477.5" 
+                    strokeDashoffset={477.5 - (477.5 * currentScore) / 100} 
+                    className="transition-all duration-1000 ease-out" 
+                    strokeLinecap="round"
+                  />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-5xl font-black">{currentScore}</span>
+                  <span className="text-5xl font-black tracking-tight">{currentScore}</span>
+                  <span className="text-xs text-indigo-300 font-bold uppercase mt-1">/ 100 Score</span>
                 </div>
               </div>
-              <p className="text-center text-sm text-slate-300 font-medium relative z-10 px-4">
-                Your calculated score is <span className="text-white font-bold">{scoreLabel}</span>.
-              </p>
+
+              <div className="inline-block bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 px-4 py-1.5 rounded-full text-xs font-bold mb-4">
+                Status: {scoreLabel}
+              </div>
+
               {summary?.recommendations && summary.recommendations.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400 text-center relative z-10">
-                  💡 {summary.recommendations[0]}
+                <div className="bg-slate-800/80 rounded-2xl p-4 text-xs text-slate-300 text-left w-full border border-slate-700">
+                  <span className="font-bold text-white block mb-1">Recommended Action:</span>
+                  <p>{summary.recommendations[0]}</p>
                 </div>
               )}
             </motion.div>
+
+            {/* Daily Safety Reminder Card */}
+            <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-6 text-emerald-900">
+              <div className="flex items-center space-x-2 font-bold text-sm mb-2 text-emerald-800">
+                <Award className="w-4 h-4 text-emerald-600" />
+                <span>Daily Wellness Tip</span>
+              </div>
+              <p className="text-xs leading-relaxed text-emerald-700">
+                Taking 10 minutes for mindful breathing or a short walk significantly reduces academic stress and boosts focus.
+              </p>
+            </div>
+
           </div>
 
         </div>
       </main>
-
-      {/* Bottom Floating Action */}
-      <div className="fixed bottom-8 inset-x-0 z-50 pointer-events-none px-6 flex justify-center">
-        <Link to="/assessment" className="pointer-events-auto bg-slate-900 text-white rounded-full pl-4 pr-6 py-3 shadow-2xl border border-slate-700 flex items-center space-x-3 hover:bg-slate-800 transition-transform hover:scale-105 active:scale-95">
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-            <Activity className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-sm font-bold uppercase tracking-wider">Start Deep Check-in</span>
-          <ChevronRight className="w-4 h-4 opacity-70" />
-        </Link>
-      </div>
     </div>
   );
 };
 
 export default Dashboard;
+

@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 import { assessmentService, type AssessmentTemplate, type AssessmentResult } from '../services/assessmentService';
+import { Navbar } from '../components/layout/Navbar';
 
 const FALLBACK_TEMPLATE: AssessmentTemplate = {
   code: 'WELLBEING_CHECKIN_V1',
@@ -244,8 +245,10 @@ const Assessment = () => {
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background py-12 px-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
+      <Navbar />
+
+      <main className="flex-1 max-w-2xl w-full mx-auto p-6 py-10">
         <div className="mb-8 flex items-center justify-between">
           <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-slate-500">
             Cancel
@@ -327,7 +330,7 @@ const Assessment = () => {
         <p className="text-center text-xs text-slate-500 mt-8">
           Disclaimer: This assessment is not a medical diagnosis.
         </p>
-      </div>
+      </main>
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Heart, Flag, MessageSquare, Send, ShieldCheck } from 'lucide-react';
+import { Heart, Flag, MessageSquare, Send, ShieldCheck } from 'lucide-react';
 import { communityService, type CommunityPost } from '../services/communityService';
+import { Navbar } from '../components/layout/Navbar';
 
 const Community = () => {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -64,24 +64,21 @@ const Community = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 font-sans">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
+      <Navbar />
+
+      <main className="flex-1 max-w-4xl w-full mx-auto p-6 space-y-6">
         
-        {/* Navigation & Title */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Link to="/dashboard" className="p-2 hover:bg-slate-200 rounded-full transition-colors">
-              <ArrowLeft className="w-5 h-5 text-slate-600" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">Peer Support Community</h1>
-              <p className="text-xs text-slate-500 font-medium">Safe, pseudonymous discussions with peers</p>
-            </div>
+        {/* Title */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 mb-4">
+          <div>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Peer Support Forum</h1>
+            <p className="text-xs text-slate-500 font-medium mt-1">Safe, pseudonymous discussions and mutual encouragement</p>
           </div>
 
-          <div className="flex items-center space-x-1.5 text-xs text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
-            <ShieldCheck className="w-4 h-4" />
-            <span className="font-bold">Client-side Privacy Protected</span>
+          <div className="flex items-center space-x-1.5 text-xs text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200 self-start sm:self-auto">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span className="font-bold">Pseudonymous & Privacy-Protected</span>
           </div>
         </div>
         
@@ -173,7 +170,7 @@ const Community = () => {
             <div className="text-slate-500 text-center py-12 bg-white rounded-3xl border border-slate-200 text-sm font-medium">No posts yet. Be the first to share!</div>
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 };

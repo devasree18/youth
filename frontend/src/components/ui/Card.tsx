@@ -12,9 +12,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'bg-white rounded-2xl shadow-soft border border-slate-100 overflow-hidden',
+          'bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden transition-all duration-200',
           {
-            'transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg': hoverable,
+            'hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300': hoverable,
           },
           className
         )}
@@ -24,3 +24,4 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   }
 );
 Card.displayName = 'Card';
+

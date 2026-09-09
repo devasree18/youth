@@ -5,7 +5,7 @@ import { Button } from '../components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
 import { assessmentService, type AssessmentTemplate, type AssessmentResult } from '../services/assessmentService';
-import { Navbar } from '../components/layout/Navbar';
+import { AppShell } from '../components/layout/AppShell';
 
 const FALLBACK_TEMPLATE: AssessmentTemplate = {
   code: 'WELLBEING_CHECKIN_V1',
@@ -118,7 +118,6 @@ const Assessment = () => {
       if (res.success && res.data) {
         setResult(res.data);
       } else {
-        // Fallback calculation for offline / unauthenticated preview
         const totalScore = formattedAnswers.reduce((sum, a) => sum + a.selectedValue, 0);
         const maxScore = formattedAnswers.length * 5;
         const norm = Math.round((totalScore / maxScore) * 100);
@@ -172,12 +171,12 @@ const Assessment = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex items-center space-x-3 text-slate-600">
-          <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
-          <span>Loading Assessment...</span>
+      <AppShell title="Wellbeing Assessment">
+        <div className="flex items-center justify-center py-20 text-slate-500 space-x-3">
+          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+          <span className="text-sm font-semibold">Loading Assessment Tool...</span>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
@@ -185,35 +184,35 @@ const Assessment = () => {
     const isHighRisk = result.riskLevel === 'HIGH' || result.riskLevel === 'CRISIS';
 
     return (
-      <div className="min-h-screen bg-background py-12 px-6">
+      <AppShell title="Assessment Results" subtitle={activeTemplate.title}>
         <div className="max-w-3xl mx-auto">
           <Card className="p-8">
             <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-primary-100 text-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 shadow-sm">
                 <CheckCircle className="w-8 h-8" />
               </div>
-              <h1 className="text-3xl font-bold text-slate-900 mb-2">Your Assessment Results</h1>
-              <p className="text-slate-600">{activeTemplate.title}</p>
+              <h2 className="text-2xl font-extrabold text-slate-900 mb-1">Your Assessment Summary</h2>
+              <p className="text-xs text-slate-500">{activeTemplate.title}</p>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-8 text-center">
-              <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider mb-2">Wellbeing Score</p>
-              <div className="text-5xl font-bold text-primary-600 mb-2">
+            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-6 mb-8 text-center">
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Calculated Wellbeing Index</p>
+              <div className="text-5xl font-black text-blue-600 mb-2">
                 {result.normalizedScore}<span className="text-2xl text-slate-400 font-normal">/100</span>
               </div>
-              <p className="text-slate-700 font-medium">{result.interpretationLabel}</p>
+              <p className="text-sm font-bold text-slate-800">{result.interpretationLabel}</p>
               <p className="text-xs text-slate-500 mt-1">{result.summary}</p>
             </div>
 
             {isHighRisk && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8 flex items-start">
-                <ShieldAlert className="w-6 h-6 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
+              <div className="bg-rose-50 border border-rose-200/80 rounded-2xl p-6 mb-8 flex items-start space-x-4">
+                <ShieldAlert className="w-6 h-6 text-rose-600 shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-red-800 font-semibold mb-1">Important Safety Notice</h3>
-                  <p className="text-red-700 text-sm mb-3">Based on your responses, we strongly recommend speaking with a professional. Confidential support is available 24/7.</p>
-                  <div className="flex gap-3">
-                    <Button variant="danger" size="sm" onClick={() => navigate('/crisis')}>Emergency Hotlines</Button>
-                    <Button variant="outline" size="sm" className="border-red-200 text-red-700 hover:bg-red-100" onClick={() => navigate('/counselors')}>Find a Counselor</Button>
+                  <h4 className="text-rose-900 font-bold text-sm mb-1">Safety & Clinical Guidance</h4>
+                  <p className="text-rose-700 text-xs mb-3">Based on your responses, we strongly recommend reaching out to campus support services. Free 24/7 help is available.</p>
+                  <div className="flex gap-2">
+                    <Button variant="danger" size="sm" onClick={() => navigate('/crisis')}>24/7 Hotlines</Button>
+                    <Button variant="outline" size="sm" className="border-rose-200 text-rose-700 hover:bg-rose-100" onClick={() => navigate('/counselors')}>Book Counselor</Button>
                   </div>
                 </div>
               </div>
@@ -221,15 +220,15 @@ const Assessment = () => {
 
             {result.recommendations && result.recommendations.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Suggested Next Steps</h3>
-                <ul className="space-y-3">
+                <h4 className="text-sm font-bold text-slate-900 mb-4">Recommended Wellbeing Steps</h4>
+                <div className="space-y-3">
                   {result.recommendations.map((rec, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold mr-3 mt-0.5">{idx + 1}</div>
-                      <p className="text-slate-700 text-sm">{rec}</p>
-                    </li>
+                    <div key={idx} className="flex items-start p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 font-medium">
+                      <div className="w-5 h-5 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold mr-3 shrink-0 mt-0.5">{idx + 1}</div>
+                      <p>{rec}</p>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             )}
 
@@ -238,27 +237,20 @@ const Assessment = () => {
             </div>
           </Card>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 max-w-2xl w-full mx-auto p-6 py-10">
-        <div className="mb-8 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard')} className="text-slate-500">
-            Cancel
-          </Button>
-          <div className="text-sm font-medium text-slate-500">Question {currentStep + 1} of {questions.length}</div>
-        </div>
-
-        <div className="w-full h-2 bg-slate-200 rounded-full mb-12 overflow-hidden">
+    <AppShell title="Wellbeing Assessment" subtitle={`Question ${currentStep + 1} of ${questions.length}`}>
+      <div className="max-w-2xl mx-auto py-4">
+        
+        {/* Progress Bar */}
+        <div className="w-full h-2 bg-slate-100 rounded-full mb-8 overflow-hidden">
           <motion.div 
-            className="h-full bg-primary-500"
+            className="h-full bg-blue-600 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.3 }}
@@ -273,22 +265,22 @@ const Assessment = () => {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <Card className="p-8 md:p-10">
-              <h2 className="text-2xl font-bold text-slate-900 mb-8 leading-relaxed">
+            <Card className="p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-slate-900 mb-6 leading-relaxed">
                 {currentQ.text}
               </h2>
               
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {currentQ.options.map((option, idx) => {
                   const isSelected = answers[currentQ.id] === option.value;
                   return (
                     <button
                       key={idx}
                       onClick={() => handleSelect(currentQ.id, option.value)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+                      className={`w-full text-left p-4 rounded-2xl border transition-all text-xs font-semibold ${
                         isSelected
-                          ? 'border-primary-500 bg-primary-50 text-primary-900 font-medium'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-primary-300 hover:bg-slate-50'
+                          ? 'border-blue-600 bg-blue-50/70 text-blue-900 shadow-sm'
+                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
                       {option.label}
@@ -297,21 +289,21 @@ const Assessment = () => {
                 })}
               </div>
 
-              <div className="mt-10 flex items-center justify-between pt-6 border-t border-slate-100">
+              <div className="mt-8 flex items-center justify-between pt-6 border-t border-slate-100">
                 <Button 
                   variant="ghost" 
                   onClick={handleBack} 
                   disabled={currentStep === 0 || submitting}
-                  className="flex items-center"
+                  className="flex items-center text-xs"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Back
+                  <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
                 </Button>
                 
                 <Button 
                   variant="primary" 
                   onClick={handleNext}
                   disabled={answers[currentQ.id] === undefined || submitting}
-                  className="flex items-center"
+                  className="flex items-center text-xs"
                 >
                   {submitting ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
@@ -320,20 +312,21 @@ const Assessment = () => {
                   ) : (
                     'Next Question'
                   )}
-                  {!submitting && currentStep !== questions.length - 1 && <ArrowRight className="w-4 h-4 ml-2" />}
+                  {!submitting && currentStep !== questions.length - 1 && <ArrowRight className="w-4 h-4 ml-1.5" />}
                 </Button>
               </div>
             </Card>
           </motion.div>
         </AnimatePresence>
         
-        <p className="text-center text-xs text-slate-500 mt-8">
-          Disclaimer: This assessment is not a medical diagnosis.
+        <p className="text-center text-[11px] text-slate-400 mt-6">
+          Privacy Disclaimer: Answers are confidential and used only to calculate your personal wellbeing indicators.
         </p>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 };
 
 export default Assessment;
+
 

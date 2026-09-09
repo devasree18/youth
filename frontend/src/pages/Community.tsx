@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Flag, MessageSquare, Send, ShieldCheck } from 'lucide-react';
 import { communityService, type CommunityPost } from '../services/communityService';
-import { Navbar } from '../components/layout/Navbar';
+import { AppShell } from '../components/layout/AppShell';
 
 const Community = () => {
   const [posts, setPosts] = useState<CommunityPost[]>([]);
@@ -64,32 +64,17 @@ const Community = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 max-w-4xl w-full mx-auto p-6 space-y-6">
-        
-        {/* Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 mb-4">
-          <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Peer Support Forum</h1>
-            <p className="text-xs text-slate-500 font-medium mt-1">Safe, pseudonymous discussions and mutual encouragement</p>
-          </div>
-
-          <div className="flex items-center space-x-1.5 text-xs text-emerald-700 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200 self-start sm:self-auto">
-            <ShieldCheck className="w-4 h-4 text-emerald-600" />
-            <span className="font-bold">Pseudonymous & Privacy-Protected</span>
-          </div>
-        </div>
+    <AppShell title="Peer Community" subtitle="Safe, pseudonymous discussions & mutual encouragement">
+      <div className="max-w-4xl mx-auto space-y-6">
         
         {/* New Post Form */}
-        <form onSubmit={handleSubmit} className="mb-8 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+        <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
           <div className="flex justify-between items-center mb-3">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Share Your Mind</label>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500">Share Your Reflection</span>
             <select 
               value={category} 
               onChange={(e) => setCategory(e.target.value)}
-              className="text-xs bg-slate-100 border-none rounded-full px-3 py-1 font-bold text-slate-700 outline-none"
+              className="text-xs bg-slate-100 border border-slate-200 rounded-xl px-3 py-1 font-semibold text-slate-700 outline-none"
             >
               <option value="General">General</option>
               <option value="College Stress">College Stress</option>
@@ -101,18 +86,23 @@ const Community = () => {
           <textarea 
             value={newPost}
             onChange={(e) => setNewPost(e.target.value)}
-            placeholder="Write something supportive or share what you are going through..."
-            className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-slate-400 focus:bg-white outline-none resize-none h-28 mb-4 text-sm text-slate-800"
+            placeholder="Write something supportive or share what you are experiencing..."
+            className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white outline-none resize-none h-28 mb-3 text-xs font-semibold text-slate-800 placeholder:text-slate-400 transition-all"
           />
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-slate-400">Posts are shared under a random pseudonymous handle.</span>
+          
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2">
+            <span className="text-[11px] text-slate-400 font-semibold flex items-center">
+              <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+              Shared under a safe pseudonymous handle. No personal ID exposed.
+            </span>
+
             <button 
               type="submit" 
               disabled={isSubmitting || !newPost.trim()}
-              className="inline-flex items-center px-5 py-2.5 bg-slate-900 text-white rounded-full text-xs font-bold hover:bg-slate-800 transition-colors disabled:opacity-50"
+              className="inline-flex items-center px-5 py-2.5 bg-blue-600 text-white rounded-2xl text-xs font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 disabled:opacity-50 active:scale-[0.98]"
             >
-              <Send className="w-3.5 h-3.5 mr-2" />
-              Post Anonymously
+              <Send className="w-3.5 h-3.5 mr-1.5" />
+              <span>Post Anonymously</span>
             </button>
           </div>
         </form>
@@ -120,46 +110,46 @@ const Community = () => {
         {/* Posts Stream */}
         <div className="space-y-4">
           {loading ? (
-            <div className="text-center py-12 text-slate-500 font-medium bg-white rounded-3xl border border-slate-200">Loading discussions...</div>
+            <div className="text-center py-16 text-slate-500 font-semibold text-xs bg-white rounded-3xl border border-slate-200/80">Loading community stream...</div>
           ) : (
             posts.map(post => (
-              <motion.div key={post._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
-                <div className="flex items-center justify-between mb-4">
+              <motion.div key={post._id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center space-x-3">
-                    <div className="w-9 h-9 bg-slate-100 rounded-full flex items-center justify-center text-slate-700 font-black text-xs border border-slate-200">
+                    <div className="w-9 h-9 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center font-black text-xs border border-blue-100 shadow-sm">
                       {post.pseudonym.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <div className="font-bold text-sm text-slate-900">{post.pseudonym}</div>
-                      <div className="text-[11px] text-slate-400 font-medium">
-                        {new Date(post.createdAt).toLocaleDateString()} • <span className="text-indigo-600 font-semibold">{post.category}</span>
+                      <div className="font-bold text-xs text-slate-900">{post.pseudonym}</div>
+                      <div className="text-[10px] text-slate-400 font-semibold">
+                        {new Date(post.createdAt).toLocaleDateString()} • <span className="text-blue-6-[700] font-bold">{post.category}</span>
                       </div>
                     </div>
                   </div>
 
                   <button 
                     onClick={() => handleReport(post._id)}
-                    className="p-1.5 hover:bg-slate-100 rounded-full text-slate-400 hover:text-red-500 transition-colors"
-                    title="Report Post"
+                    className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-rose-600 transition-colors"
+                    title="Report Content"
                   >
                     <Flag className="w-4 h-4" />
                   </button>
                 </div>
 
-                <p className="text-slate-800 text-sm leading-relaxed mb-4 whitespace-pre-wrap">{post.content}</p>
+                <p className="text-slate-800 text-xs sm:text-sm leading-relaxed mb-4 whitespace-pre-wrap">{post.content}</p>
 
-                <div className="pt-4 border-t border-slate-100 flex items-center space-x-6 text-xs text-slate-500 font-medium">
+                <div className="pt-3 border-t border-slate-100 flex items-center space-x-6 text-xs text-slate-500 font-bold">
                   <button 
                     onClick={() => handleLike(post._id)}
-                    className="flex items-center space-x-1.5 hover:text-red-600 transition-colors"
+                    className="flex items-center space-x-1.5 hover:text-rose-600 transition-colors"
                   >
-                    <Heart className="w-4 h-4 text-red-500 fill-red-50" />
-                    <span>{post.likesCount} Likes</span>
+                    <Heart className="w-4 h-4 text-rose-500 fill-rose-50" />
+                    <span>{post.likesCount} Support</span>
                   </button>
 
-                  <div className="flex items-center space-x-1.5">
-                    <MessageSquare className="w-4 h-4 text-slate-400" />
-                    <span>{post.commentsCount} Comments</span>
+                  <div className="flex items-center space-x-1.5 text-slate-400">
+                    <MessageSquare className="w-4 h-4" />
+                    <span>{post.commentsCount} Replies</span>
                   </div>
                 </div>
               </motion.div>
@@ -167,12 +157,13 @@ const Community = () => {
           )}
           
           {!loading && posts.length === 0 && (
-            <div className="text-slate-500 text-center py-12 bg-white rounded-3xl border border-slate-200 text-sm font-medium">No posts yet. Be the first to share!</div>
+            <div className="text-slate-500 text-center py-16 bg-white rounded-3xl border border-slate-200/80 text-xs font-semibold">No discussions yet. Be the first to share an encouraging note!</div>
           )}
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 };
 
 export default Community;
+

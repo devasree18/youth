@@ -13,16 +13,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center rounded-full font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+          'inline-flex items-center justify-center rounded-2xl font-bold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98]',
           {
-            'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500': variant === 'primary',
-            'bg-secondary-100 text-secondary-900 hover:bg-secondary-200 focus:ring-secondary-500': variant === 'secondary',
-            'border-2 border-primary-200 bg-transparent hover:bg-primary-50 text-primary-700 focus:ring-primary-500': variant === 'outline',
-            'bg-transparent hover:bg-slate-100 text-slate-700 focus:ring-slate-500': variant === 'ghost',
-            'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500': variant === 'danger',
-            'h-9 px-4 text-sm': size === 'sm',
-            'h-11 px-6 text-base': size === 'md',
-            'h-14 px-8 text-lg': size === 'lg',
+            'bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/20 focus:ring-blue-500': variant === 'primary',
+            'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 shadow-sm focus:ring-slate-400': variant === 'secondary',
+            'border border-blue-200 bg-transparent hover:bg-blue-50 text-blue-700 focus:ring-blue-500': variant === 'outline',
+            'bg-transparent hover:bg-slate-100 text-slate-600 focus:ring-slate-400': variant === 'ghost',
+            'bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-500/20 focus:ring-red-500': variant === 'danger',
+            'h-9 px-3.5 text-xs': size === 'sm',
+            'h-11 px-5 text-sm': size === 'md',
+            'h-13 px-7 text-base': size === 'lg',
           },
           className
         )}
@@ -32,3 +32,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 Button.displayName = 'Button';
+

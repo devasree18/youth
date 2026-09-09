@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { Send, Bot, User } from 'lucide-react';
+import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { aiService, type ChatMessage as ServiceChatMessage } from '../services/aiService';
-import { Navbar } from '../components/layout/Navbar';
+import { AppShell } from '../components/layout/AppShell';
 
 const SUGGESTED_PROMPTS = [
   "I'm feeling stressed about college exams.",
@@ -97,18 +97,20 @@ const AiAssistant = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] flex flex-col font-sans">
-      <Navbar />
+    <AppShell title="Safe AI Companion" subtitle="Confidential 24/7 wellness dialogue & coping strategies">
+      <div className="max-w-4xl mx-auto h-[calc(85vh-120px)] flex flex-col">
+        <Card className="flex-1 flex flex-col overflow-hidden bg-white shadow-sm border-slate-200/80 rounded-3xl">
+          
+          {/* Safety Notice Banner */}
+          <div className="bg-amber-50/80 border-b border-amber-200/70 p-3.5 px-6 flex items-center space-x-2 text-amber-900 text-xs">
+            <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
+            <p className="leading-snug">
+              <strong>Private & Confidential:</strong> YOUTH AI Assistant provides supportive guidance & techniques. It is not emergency medical care. If you need urgent distress support, use the <strong>24/7 Crisis</strong> button.
+            </p>
+          </div>
 
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 flex flex-col pt-6">
-        <Card className="flex-1 flex flex-col overflow-hidden bg-white shadow-sm border-slate-200 h-[calc(100vh-140px)] rounded-3xl">
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-6">
-            
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start text-amber-900 text-xs leading-relaxed">
-              <div className="font-bold mr-2 flex-shrink-0">⚠️ Safety Notice:</div>
-              <p>YOUTH AI Assistant provides supportive guidance and resources. It is not a clinical therapist or emergency care. If you need immediate distress support, please use the <strong>Crisis Help</strong> button above.</p>
-            </div>
-
+          {/* Messages Scroll Area */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-5">
             <AnimatePresence>
               {messages.map((m, i) => (
                 <motion.div 
@@ -118,19 +120,19 @@ const AiAssistant = () => {
                   className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className={`flex max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      m.role === 'user' ? 'bg-indigo-100 text-indigo-700 ml-3' : 'bg-slate-900 text-white mr-3'
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                      m.role === 'user' ? 'bg-blue-600 text-white ml-3 shadow-sm' : 'bg-slate-900 text-white mr-3 shadow-sm'
                     }`}>
                       {m.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
                     </div>
-                    <div className={`p-4 rounded-2xl ${
+                    <div className={`p-4 rounded-2xl text-xs sm:text-sm ${
                       m.role === 'user' 
-                        ? 'bg-indigo-600 text-white rounded-tr-none' 
+                        ? 'bg-blue-600 text-white rounded-tr-none shadow-sm font-medium' 
                         : m.isCrisis
-                        ? 'bg-red-50 text-red-900 border-2 border-red-200 rounded-tl-none font-medium'
-                        : 'bg-slate-100 text-slate-800 rounded-tl-none'
+                        ? 'bg-rose-50 text-rose-900 border border-rose-200 rounded-tl-none font-semibold'
+                        : 'bg-slate-100/80 text-slate-800 rounded-tl-none border border-slate-200/60'
                     }`}>
-                      <p className="whitespace-pre-wrap leading-relaxed text-sm">{m.text}</p>
+                      <p className="whitespace-pre-wrap leading-relaxed">{m.text}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -138,45 +140,54 @@ const AiAssistant = () => {
               
               {isLoading && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                  <div className="flex items-center bg-slate-100 rounded-2xl rounded-tl-none p-4 space-x-2">
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="flex items-center bg-slate-100 rounded-2xl rounded-tl-none p-4 space-x-2 border border-slate-200/60">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
 
-          <div className="p-4 bg-white border-t border-slate-100">
-            <div className="flex flex-wrap gap-2 mb-4">
+          {/* Suggested Prompts & Input Controls */}
+          <div className="p-4 bg-white border-t border-slate-100 space-y-3">
+            <div className="flex flex-wrap gap-2">
               {SUGGESTED_PROMPTS.map(prompt => (
                 <button 
                   key={prompt}
                   onClick={() => handleSend(prompt)}
-                  className="text-xs bg-slate-50 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-full hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors"
+                  className="text-xs bg-slate-50 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors font-semibold"
                 >
                   {prompt}
                 </button>
               ))}
             </div>
+            
             <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex space-x-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Type your message..."
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-full px-5 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition-all placeholder:text-slate-400"
               />
-              <Button type="submit" variant="primary" disabled={isLoading || !input.trim()} className="rounded-full w-12 h-12 p-0 flex items-center justify-center flex-shrink-0 bg-slate-900 hover:bg-slate-800">
-                <Send className="w-5 h-5 ml-1" />
+              <Button 
+                type="submit" 
+                variant="primary" 
+                disabled={isLoading || !input.trim()} 
+                className="rounded-2xl px-5 flex items-center justify-center shrink-0"
+              >
+                <Send className="w-4 h-4" />
               </Button>
             </form>
           </div>
+
         </Card>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 };
 
 export default AiAssistant;
+

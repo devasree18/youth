@@ -4,19 +4,19 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { wellbeingService, type WellbeingSummary } from '../services/wellbeingService';
 import { moodService } from '../services/moodService';
-import { Navbar } from '../components/layout/Navbar';
+import { AppShell } from '../components/layout/AppShell';
 import { 
   MessageSquare, 
   BookOpen, 
   Activity, 
   Users, 
-  Calendar,
   Sparkles,
   ArrowRight,
   TrendingUp,
   CheckCircle2,
   PhoneCall,
-  ShieldCheck
+  ShieldCheck,
+  UserCheck
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -65,56 +65,59 @@ const Dashboard = () => {
   const scoreLabel = summary?.scoreLabel ?? 'Optimal Wellbeing';
 
   return (
-    <div className="min-h-screen bg-slate-50/60 font-sans text-slate-900 flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <AppShell 
+      title={`Welcome back, ${user?.name?.split(' ')[0] || 'User'}`}
+      subtitle="Here is your personal wellbeing overview and daily actions."
+    >
+      <div className="space-y-6">
         
-        {/* Welcome Header */}
-        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <div className="inline-flex items-center space-x-2 bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+        {/* Top Banner Card */}
+        <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="relative z-10 space-y-2">
+            <div className="inline-flex items-center space-x-2 bg-blue-500/20 text-blue-300 border border-blue-400/30 px-3 py-1 rounded-full text-xs font-bold">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Student Mental Health & Wellbeing Portal</span>
+              <span>Student Mental Health & Wellbeing Hub</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-              Welcome back, {user?.name?.split(' ')[0] || 'Student'}
-            </h1>
-            <p className="text-slate-500 text-sm mt-1">Here is your daily mental health status and recommended wellness actions.</p>
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+              Track, Reflect, & Empower Your Daily Mindset
+            </h2>
+            <p className="text-slate-300 text-xs sm:text-sm max-w-xl">
+              Log daily mood check-ins, connect with verified campus counselors, or chat 24/7 with your confidential AI companion.
+            </p>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="relative z-10 flex items-center space-x-3 shrink-0">
             <Link 
               to="/assessment" 
-              className="px-5 py-3 rounded-full bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition-all shadow-sm flex items-center space-x-2"
+              className="px-5 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-lg shadow-blue-500/25 transition-all flex items-center space-x-2 active:scale-[0.98]"
             >
-              <Activity className="w-4 h-4 text-indigo-400" />
-              <span>Take Check-in Assessment</span>
+              <Activity className="w-4 h-4 text-white" />
+              <span>Start Assessment</span>
             </Link>
           </div>
         </div>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Main Column (Left - 7 cols) */}
-          <div className="lg:col-span-7 space-y-8">
+          <div className="lg:col-span-7 space-y-6">
             
             {/* Mood Tracker */}
             <motion.div 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm"
+              className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm"
             >
-              <div className="flex justify-between items-center mb-5">
+              <div className="flex justify-between items-center mb-4">
                 <div>
-                  <h2 className="text-base font-bold text-slate-900">How are you feeling right now?</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Select a mood to update your live wellbeing score</p>
+                  <h3 className="text-sm font-extrabold text-slate-900">How are you feeling today?</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">Select a mood rating to calculate your real-time score</p>
                 </div>
-                {isSavingMood && <span className="text-xs font-semibold text-indigo-600 animate-pulse">Recording...</span>}
+                {isSavingMood && <span className="text-xs font-bold text-blue-600 animate-pulse">Saving...</span>}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                 {moodOptions.map((mood) => {
                   const isSelected = selectedMood === mood.value;
                   return (
@@ -122,38 +125,38 @@ const Dashboard = () => {
                       key={mood.value}
                       disabled={isSavingMood}
                       onClick={() => handleMoodSelect(mood.value)}
-                      className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border transition-all ${mood.bg} ${
+                      className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all ${mood.bg} ${
                         isSelected 
-                          ? 'border-indigo-600 bg-indigo-50/50 font-bold ring-2 ring-indigo-500/20' 
+                          ? 'border-blue-600 bg-blue-50/60 font-bold ring-2 ring-blue-500/20' 
                           : 'border-slate-200/80 bg-slate-50/50'
                       }`}
                     >
                       <span className="text-2xl mb-1">{mood.emoji}</span>
-                      <span className="text-xs font-medium">{mood.label}</span>
+                      <span className="text-xs font-semibold">{mood.label}</span>
                     </button>
                   );
                 })}
               </div>
             </motion.div>
 
-            {/* Quick Feature Grid */}
+            {/* Quick Feature Modules Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               
               <Link to="/ai-assistant" className="group">
                 <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
                       <MessageSquare className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">24/7 AI</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">24/7 AI</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">AI Support Companion</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">Confidential, non-judgmental guidance and stress techniques.</p>
+                    <h4 className="font-extrabold text-slate-900 text-sm mb-1">Safe AI Companion</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">Private, empathetic dialogue & coping strategies.</p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-indigo-600">
-                    <span>Start Chat</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-600">
+                    <span>Start conversation</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
@@ -161,18 +164,18 @@ const Dashboard = () => {
               <Link to="/resources" className="group">
                 <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                    <div className="w-10 h-10 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-colors">
                       <BookOpen className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Articles</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">Library</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">Resource Library</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">Self-help articles on academic pressure and burnout.</p>
+                    <h4 className="font-extrabold text-slate-900 text-sm mb-1">Resource Hub</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">Evidence-based guides on stress & study balance.</p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-amber-600">
-                    <span>Read Guides</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-teal-600">
+                    <span>Explore articles</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
@@ -180,18 +183,18 @@ const Dashboard = () => {
               <Link to="/counselors" className="group">
                 <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                      <Calendar className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                      <UserCheck className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Verified</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">Licensed</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">Campus Counselors</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">Book confidential 1-on-1 sessions with licensed specialists.</p>
+                    <h4 className="font-extrabold text-slate-900 text-sm mb-1">Campus Counselors</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">Book confidential 1-on-1 consultations.</p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-emerald-600">
-                    <span>Book Session</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600">
+                    <span>Book session</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
@@ -199,18 +202,18 @@ const Dashboard = () => {
               <Link to="/community" className="group">
                 <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full">
                   <div className="flex justify-between items-start mb-4">
-                    <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                    <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition-colors">
                       <Users className="w-5 h-5" />
                     </div>
-                    <span className="text-[10px] font-semibold uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">Anonymous</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700 px-2.5 py-1 rounded-full">Anonymous</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">Peer Support Forum</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">Share experiences and encouragement safely with peers.</p>
+                    <h4 className="font-extrabold text-slate-900 text-sm mb-1">Peer Community</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">Safe pseudonymous discussion channels.</p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-purple-600">
-                    <span>Join Forum</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-purple-600">
+                    <span>Join discussion</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </div>
               </Link>
@@ -222,11 +225,11 @@ const Dashboard = () => {
           {/* Sidebar Column (Right - 5 cols) */}
           <div className="lg:col-span-5 space-y-6">
             
-            {/* Wellbeing Score Card */}
+            {/* Wellbeing Score Radial Card */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm flex flex-col items-center text-center">
-              <div className="flex items-center space-x-2 text-slate-500 text-xs font-semibold uppercase tracking-wider mb-4">
-                <TrendingUp className="w-4 h-4 text-indigo-600" />
-                <span>Weekly Wellbeing Score</span>
+              <div className="flex items-center space-x-2 text-slate-500 text-xs font-bold uppercase tracking-wider mb-4">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
+                <span>Dynamic Wellbeing Index</span>
               </div>
 
               <div className="relative inline-flex items-center justify-center mb-4">
@@ -237,7 +240,7 @@ const Dashboard = () => {
                     cy="72" 
                     r="60" 
                     fill="transparent" 
-                    stroke="#4f46e5" 
+                    stroke="#2563eb" 
                     strokeWidth="10" 
                     strokeDasharray="377" 
                     strokeDashoffset={377 - (377 * currentScore) / 100} 
@@ -246,18 +249,18 @@ const Dashboard = () => {
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-4xl font-bold text-slate-900 tracking-tight">{currentScore}</span>
-                  <span className="text-[10px] text-slate-400 font-semibold uppercase">out of 100</span>
+                  <span className="text-3xl font-black text-slate-900 tracking-tight">{currentScore}</span>
+                  <span className="text-[10px] text-slate-400 font-bold uppercase">out of 100</span>
                 </div>
               </div>
 
-              <div className="inline-block bg-indigo-50 text-indigo-700 px-3.5 py-1 rounded-full text-xs font-bold mb-4">
+              <div className="inline-block bg-blue-50 text-blue-700 px-3.5 py-1 rounded-full text-xs font-bold mb-4">
                 {scoreLabel}
               </div>
 
               {summary?.recommendations && summary.recommendations.length > 0 && (
-                <div className="bg-slate-50 rounded-2xl p-4 text-xs text-slate-600 text-left w-full border border-slate-100">
-                  <span className="font-semibold text-slate-900 block mb-1">Recommended Action:</span>
+                <div className="bg-slate-50 rounded-2xl p-3.5 text-xs text-slate-600 text-left w-full border border-slate-100">
+                  <span className="font-bold text-slate-900 block mb-1">Recommended Action:</span>
                   <p className="leading-relaxed">{summary.recommendations[0]}</p>
                 </div>
               )}
@@ -265,37 +268,37 @@ const Dashboard = () => {
 
             {/* Daily Checklist */}
             <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-3">
-              <h3 className="font-bold text-slate-900 text-sm mb-2">Recommended Daily Micro-Actions</h3>
+              <h3 className="font-extrabold text-slate-900 text-sm mb-2">Daily Wellbeing Micro-Actions</h3>
               
-              <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl text-xs text-slate-700 font-semibold border border-slate-100">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Practice 5-minute Pomodoro study break</span>
               </div>
               
-              <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-indigo-600 flex-shrink-0" />
-                <span>Review article on managing exam pressure</span>
+              <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl text-xs text-slate-700 font-semibold border border-slate-100">
+                <CheckCircle2 className="w-4 h-4 text-blue-600 shrink-0" />
+                <span>Read article on managing exam anxiety</span>
               </div>
 
-              <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl text-xs text-slate-700 font-medium">
-                <CheckCircle2 className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                <span>Log evening mood entry</span>
+              <div className="flex items-center space-x-3 p-3 bg-slate-50 rounded-2xl text-xs text-slate-700 font-semibold border border-slate-100">
+                <CheckCircle2 className="w-4 h-4 text-slate-400 shrink-0" />
+                <span>Record evening reflection journal</span>
               </div>
             </div>
 
-            {/* Helpline Box */}
-            <div className="bg-rose-50 border border-rose-200/80 rounded-3xl p-5 text-rose-900 flex items-center justify-between">
+            {/* Emergency Hotline Box */}
+            <div className="bg-rose-50 border border-rose-200/80 rounded-3xl p-5 text-rose-900 flex items-center justify-between shadow-sm">
               <div>
-                <div className="flex items-center space-x-1.5 text-xs font-bold text-rose-700 mb-0.5">
+                <div className="flex items-center space-x-1.5 text-xs font-extrabold text-rose-700 mb-0.5">
                   <ShieldCheck className="w-4 h-4 text-rose-600" />
-                  <span>24/7 Tele-MANAS Hotline</span>
+                  <span>24/7 Tele-MANAS Line</span>
                 </div>
-                <p className="text-[11px] text-rose-600 font-medium">Free & confidential crisis support</p>
+                <p className="text-[11px] text-rose-600 font-semibold">Toll-free national crisis hotline</p>
               </div>
 
               <a 
                 href="tel:14416"
-                className="px-3.5 py-2 bg-rose-600 text-white rounded-full text-xs font-bold hover:bg-rose-700 transition-colors flex items-center space-x-1 shadow-sm"
+                className="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold hover:bg-rose-700 transition-colors flex items-center space-x-1 shadow-sm active:scale-[0.98]"
               >
                 <PhoneCall className="w-3.5 h-3.5" />
                 <span>14416</span>
@@ -305,10 +308,11 @@ const Dashboard = () => {
           </div>
 
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 };
 
 export default Dashboard;
+
 

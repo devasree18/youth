@@ -28,25 +28,40 @@
   --color-success-500: #22c55e;
   --color-success-600: #16a34a;
   
-  --color-background: #f8fafc;
+  --color-background: #f4f6f9;
   
   --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 0 1px rgba(15, 23, 42, 0.1);
+  --shadow-pearl: 0 25px 50px -12px rgba(0, 0, 0, 0.07);
 }
 
 @layer base {
   body {
-    @apply bg-background text-gray-900 font-sans antialiased selection:bg-primary-200 selection:text-primary-900;
+    @apply bg-[#f4f6f9] text-slate-900 font-sans antialiased selection:bg-blue-100 selection:text-blue-900;
   }
+}
+
+/* Fine Dot-Grid background texture matching reference benchmark */
+.bg-dot-pattern {
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+}
+
+/* Subtle glass surface */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 text-white font-medium py-2 px-6 rounded-full shadow-sm hover:bg-primary-700 hover:shadow transition-all duration-200;
+    @apply bg-blue-600 text-white font-semibold py-2.5 px-6 rounded-2xl shadow-md shadow-blue-500/20 hover:bg-blue-700 hover:shadow-lg transition-all duration-200 active:scale-[0.98];
   }
   .btn-secondary {
-    @apply bg-white text-primary-600 font-medium py-2 px-6 rounded-full shadow-sm border border-primary-100 hover:bg-primary-50 transition-all duration-200;
+    @apply bg-white text-slate-700 font-semibold py-2.5 px-6 rounded-2xl shadow-sm border border-slate-200 hover:bg-slate-50 transition-all duration-200 active:scale-[0.98];
   }
   .card {
-    @apply bg-white rounded-2xl shadow-soft p-6 border border-gray-100;
+    @apply bg-white rounded-2xl shadow-sm p-6 border border-slate-200/80 transition-all duration-200;
   }
 }
+

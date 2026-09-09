@@ -1,16 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Users, Activity, ShieldCheck, UserPlus, TrendingUp } from 'lucide-react';
-import { apiClient } from '../api/apiClient';
-
-interface InstitutionStats {
-  activeStudents: number;
-  checkInParticipation: number;
-  aggregatedWellbeingIndex: number | null;
-  riskLevelBreakdown?: { low: number; moderate: number; high: number };
-  anonymized: boolean;
-  privacyNotice?: string;
-}
+import { institutionService, type InstitutionStats } from '../services/institutionService';
 
 const InstitutionDashboard = () => {
   const [stats, setStats] = useState<InstitutionStats | null>(null);
@@ -24,8 +15,8 @@ const InstitutionDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await apiClient.get<InstitutionStats>('/institution/stats');
-        if (res.data) setStats(res.data);
+        const res = await institutionService.getStats();
+        if (res.success && res.data) setStats(res.data);
       } catch (err: any) {
         console.error('Failed to load institution stats:', err);
       } finally {
@@ -43,14 +34,14 @@ const InstitutionDashboard = () => {
     setInviteStatus(null);
 
     try {
-      await apiClient.post('/institution/members/invite', {
-        name: inviteName,
-        email: inviteEmail,
-        role: inviteRole
-      });
-      setInviteStatus(`Invitation sent successfully to ${inviteEmail}`);
-      setInviteName('');
-      setInviteEmail('');
+      const res = await institutionService.inviteMember(inviteName, inviteEmail, inviteRole);
+      if (res.success) {
+        setInviteStatus(`Invitation sent successfully to ${inviteEmail}`);
+        setInviteName('');
+        setInviteEmail('');
+      } else {
+        setInviteStatus(`Invitation failed: ${res.error?.message || 'Error sending invite'}`);
+      }
     } catch (err: any) {
       setInviteStatus(`Invitation failed: ${err.message || 'Error sending invite'}`);
     } finally {

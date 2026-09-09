@@ -90,6 +90,14 @@ class ApiClient {
   public delete<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, { ...options, method: 'DELETE' });
   }
+
+  public patch<T = any>(endpoint: string, body?: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined
+    });
+  }
 }
 
 export const apiClient = new ApiClient();

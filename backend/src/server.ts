@@ -81,7 +81,7 @@ app.use(globalLimiter);
 let isConnected = false;
 
 app.use(async (_req, _res, next) => {
-  if (isConnected) return next();
+  if (isConnected || envConfig.NODE_ENV === 'test' || process.env.NODE_ENV === 'test') return next();
   const MONGO_URI = envConfig.MONGODB_URI;
   if (!MONGO_URI) {
     console.error('MONGODB_URI is not set in environment variables!');

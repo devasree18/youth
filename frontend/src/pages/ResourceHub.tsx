@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '../components/ui/Card';
-import { Search, Filter, BookOpen } from 'lucide-react';
+import { Search, Filter, BookOpen, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { resourceService, type ResourceItem } from '../services/resourceService';
 
-const MOCK_RESOURCES = [
-  { id: 1, title: 'Understanding Academic Pressure', category: 'Academic Pressure', readTime: '5 min', desc: 'Learn how to manage the intense demands of college coursework without burning out.' },
-  { id: 2, title: '5 Grounding Techniques for Overwhelm', category: 'Anxiety & Stress', readTime: '4 min', desc: 'Quick physical techniques to bring yourself back to the present moment when anxiety spikes.' },
-  { id: 3, title: 'How to Build a Better Sleep Routine', category: 'Sleep', readTime: '6 min', desc: 'Actionable steps to fix your sleep schedule and get the rest your brain needs.' },
-  { id: 4, title: 'Navigating Social Anxiety in College', category: 'Relationships', readTime: '7 min', desc: 'Tips for making friends and attending events when you feel socially anxious.' },
-  { id: 5, title: 'Financial Stress: A Student Guide', category: 'Financial Stress', readTime: '8 min', desc: 'Managing money anxiety while trying to focus on your degree.' },
+const FALLBACK_RESOURCES: ResourceItem[] = [
+  { _id: '1', title: 'Understanding Academic Pressure', category: 'Academic Pressure', readTimeMinutes: 5, description: 'Learn how to manage the intense demands of college coursework without burning out.', content: '', author: 'YOUTH Clinical Team' },
+  { _id: '2', title: '5 Grounding Techniques for Overwhelm', category: 'Anxiety & Stress', readTimeMinutes: 4, description: 'Quick physical techniques to bring yourself back to the present moment when anxiety spikes.', content: '', author: 'YOUTH Wellness' },
+  { _id: '3', title: 'How to Build a Better Sleep Routine', category: 'Sleep', readTimeMinutes: 6, description: 'Actionable steps to fix your sleep schedule and get the rest your brain needs.', content: '', author: 'YOUTH Health' },
+  { _id: '4', title: 'Navigating Social Anxiety in College', category: 'Relationships', readTimeMinutes: 7, description: 'Tips for making friends and attending events when you feel socially anxious.', content: '', author: 'YOUTH Counseling' },
+  { _id: '5', title: 'Financial Stress: A Student Guide', category: 'Financial Stress', readTimeMinutes: 8, description: 'Managing money anxiety while trying to focus on your degree.', content: '', author: 'YOUTH Advisory' }
 ];
 
 const CATEGORIES = ['All', 'Anxiety & Stress', 'Academic Pressure', 'Sleep', 'Relationships', 'Financial Stress'];
@@ -16,10 +17,34 @@ const CATEGORIES = ['All', 'Anxiety & Stress', 'Academic Pressure', 'Sleep', 'Re
 const ResourceHub = () => {
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [resources, setResources] = useState<ResourceItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = MOCK_RESOURCES.filter(r => {
+  useEffect(() => {
+    async function loadResources() {
+      setLoading(true);
+      try {
+        const catQuery = activeCategory === 'All' ? undefined : activeCategory;
+        const res = await resourceService.getResources(catQuery, search || undefined);
+        if (res.success && res.data && res.data.length > 0) {
+          setResources(res.data);
+        } else {
+          setResources(FALLBACK_RESOURCES);
+        }
+      } catch {
+        setResources(FALLBACK_RESOURCES);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    const timer = setTimeout(loadResources, 300);
+    return () => clearTimeout(timer);
+  }, [activeCategory, search]);
+
+  const filtered = resources.filter(r => {
     const matchCat = activeCategory === 'All' || r.category === activeCategory;
-    const matchSearch = r.title.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search || r.title.toLowerCase().includes(search.toLowerCase()) || r.description?.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -70,29 +95,37 @@ const ResourceHub = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map(resource => (
-            <Card key={resource.id} hoverable className="flex flex-col h-full">
-              <div className="p-6 flex-1 flex flex-col">
-                <div className="text-xs font-semibold text-secondary-600 mb-3 uppercase tracking-wider">{resource.category}</div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2">{resource.title}</h3>
-                <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">{resource.desc}</p>
-                <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
-                  <span className="text-xs text-slate-500 font-medium">{resource.readTime} read</span>
-                  <button className="text-primary-600 text-sm font-medium hover:text-primary-700 hover:underline">Read Article</button>
+        {loading ? (
+          <div className="flex justify-center items-center py-20 text-slate-500">
+            <Loader2 className="w-6 h-6 animate-spin text-primary-600 mr-2" />
+            <span>Loading resources...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map(resource => (
+              <Card key={resource._id} hoverable className="flex flex-col h-full">
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="text-xs font-semibold text-secondary-600 mb-3 uppercase tracking-wider">{resource.category}</div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2">{resource.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed mb-4 flex-1 line-clamp-3">{resource.description}</p>
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
+                    <span className="text-xs text-slate-500 font-medium">{resource.readTimeMinutes || 5} min read</span>
+                    <button className="text-primary-600 text-sm font-medium hover:text-primary-700 hover:underline">Read Article</button>
+                  </div>
                 </div>
+              </Card>
+            ))}
+            {filtered.length === 0 && (
+              <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-100 border-dashed">
+                <p className="text-slate-500">No resources found matching your criteria.</p>
               </div>
-            </Card>
-          ))}
-          {filtered.length === 0 && (
-            <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-100 border-dashed">
-              <p className="text-slate-500">No resources found matching your criteria.</p>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
 };
 
 export default ResourceHub;
+

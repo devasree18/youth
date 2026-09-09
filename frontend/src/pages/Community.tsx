@@ -2,20 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Heart, Flag, MessageSquare, Send, ShieldCheck } from 'lucide-react';
-import { apiClient } from '../api/apiClient';
-
-interface Post {
-  _id: string;
-  pseudonym: string;
-  category: string;
-  content: string;
-  likesCount: number;
-  commentsCount: number;
-  createdAt: string;
-}
+import { communityService, type CommunityPost } from '../services/communityService';
 
 const Community = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [newPost, setNewPost] = useState('');
   const [category, setCategory] = useState('General');
   const [loading, setLoading] = useState(true);
@@ -23,8 +13,8 @@ const Community = () => {
 
   const fetchPosts = useCallback(async () => {
     try {
-      const res = await apiClient.get<Post[]>('/community/posts');
-      if (res.data) setPosts(res.data);
+      const res = await communityService.getPosts();
+      if (res.success && res.data) setPosts(res.data);
     } catch (e) {
       console.error('Failed to fetch posts:', e);
     } finally {
@@ -42,10 +32,7 @@ const Community = () => {
 
     setIsSubmitting(true);
     try {
-      await apiClient.post('/community/posts', { 
-        content: newPost,
-        category
-      });
+      await communityService.createPost(newPost, category);
       setNewPost('');
       await fetchPosts();
     } catch (e) {
@@ -57,8 +44,8 @@ const Community = () => {
 
   const handleLike = async (postId: string) => {
     try {
-      const res = await apiClient.post<{ likesCount: number }>(`/community/posts/${postId}/like`);
-      if (res.data) {
+      const res = await communityService.likePost(postId);
+      if (res.success && res.data) {
         setPosts(prev => prev.map(p => p._id === postId ? { ...p, likesCount: res.data!.likesCount } : p));
       }
     } catch (e) {
@@ -69,11 +56,7 @@ const Community = () => {
   const handleReport = async (postId: string) => {
     if (!confirm('Are you sure you want to report this post for moderation review?')) return;
     try {
-      await apiClient.post('/community/report', {
-        targetType: 'POST',
-        targetId: postId,
-        reason: 'INAPPROPRIATE'
-      });
+      await communityService.reportContent('POST', postId, 'INAPPROPRIATE');
       alert('Post reported for review. Thank you for keeping our community safe.');
     } catch (e) {
       console.error('Failed to report post:', e);

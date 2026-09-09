@@ -1,28 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Star, Calendar, ShieldCheck, CheckCircle2, Video } from 'lucide-react';
-import { apiClient } from '../api/apiClient';
-
-interface AvailabilitySlot {
-  dayOfWeek: number;
-  startTime: string;
-  endTime: string;
-}
-
-interface Counselor {
-  _id: string;
-  name: string;
-  specialization: string;
-  qualifications: string[];
-  languages: string[];
-  consultationType: 'online' | 'in_person' | 'both';
-  price: number;
-  currency: string;
-  rating: number;
-  reviewsCount: number;
-  description: string;
-  availabilitySlots: AvailabilitySlot[];
-}
+import { counselorService, type Counselor, type AvailabilitySlot } from '../services/counselorService';
+import { appointmentService } from '../services/appointmentService';
 
 const CounselorMarketplace = () => {
   const [counselors, setCounselors] = useState<Counselor[]>([]);
@@ -35,8 +15,8 @@ const CounselorMarketplace = () => {
   useEffect(() => {
     const fetchCounselors = async () => {
       try {
-        const res = await apiClient.get<Counselor[]>('/counselors');
-        if (res.data) setCounselors(res.data);
+        const res = await counselorService.getCounselors();
+        if (res.success && res.data) setCounselors(res.data);
       } catch (err) {
         console.error('Failed to load counselors:', err);
       } finally {
@@ -60,13 +40,17 @@ const CounselorMarketplace = () => {
     resultDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
 
     try {
-      await apiClient.post('/appointments/book', {
-        counselorId: selectedCounselor._id,
-        scheduledAt: resultDate.toISOString(),
-        consultationType: 'online'
-      });
-      setBookingStatus('Appointment successfully booked! Confirmation details sent to your account.');
-      setSelectedSlot(null);
+      const res = await appointmentService.bookAppointment(
+        selectedCounselor._id,
+        resultDate.toISOString(),
+        'online'
+      );
+      if (res.success) {
+        setBookingStatus('Appointment successfully booked! Confirmation details sent to your account.');
+        setSelectedSlot(null);
+      } else {
+        setBookingStatus(`Booking failed: ${res.error?.message || 'Slot unavailable'}`);
+      }
     } catch (err: any) {
       setBookingStatus(`Booking failed: ${err.message || 'Slot unavailable'}`);
     } finally {

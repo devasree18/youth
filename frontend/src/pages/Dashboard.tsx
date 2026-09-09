@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { apiClient } from '../api/apiClient';
+import { wellbeingService, type WellbeingSummary } from '../services/wellbeingService';
+import { moodService } from '../services/moodService';
 import { 
   MessageSquare, 
   BookOpen, 
@@ -13,14 +14,6 @@ import {
   Users,
   Calendar
 } from 'lucide-react';
-
-interface WellbeingSummary {
-  wellbeingScore: number;
-  scoreLabel: string;
-  trend: string;
-  recentMoodCount: number;
-  recommendations: string[];
-}
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -38,7 +31,7 @@ const Dashboard = () => {
 
   const fetchWellbeingSummary = useCallback(async () => {
     try {
-      const res = await apiClient.get<WellbeingSummary>('/wellbeing/summary');
+      const res = await wellbeingService.getSummary();
       if (res.data) {
         setSummary(res.data);
       }
@@ -55,7 +48,7 @@ const Dashboard = () => {
     setSelectedMood(moodValue);
     setIsSavingMood(true);
     try {
-      await apiClient.post('/mood', { mood: moodValue });
+      await moodService.recordMood(moodValue);
       await fetchWellbeingSummary();
     } catch (err) {
       console.error('Failed to record mood:', err);

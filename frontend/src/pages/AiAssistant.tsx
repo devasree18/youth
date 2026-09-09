@@ -4,7 +4,7 @@ import { Button } from '../components/ui/Button';
 import { Send, Bot, User, ArrowLeft, ShieldAlert } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiClient } from '../api/apiClient';
+import { aiService, type ChatMessage as ServiceChatMessage } from '../services/aiService';
 
 const SUGGESTED_PROMPTS = [
   "I'm feeling stressed about college exams.",
@@ -17,12 +17,6 @@ interface ChatMessage {
   role: 'user' | 'ai';
   text: string;
   isCrisis?: boolean;
-}
-
-interface AIChatApiResponse {
-  reply: string;
-  isCrisisIntercepted: boolean;
-  providerStatus: 'LIVE' | 'BLOCKED';
 }
 
 const AiAssistant = () => {
@@ -45,9 +39,9 @@ const AiAssistant = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await apiClient.get<any[]>('/ai/history');
-        if (res.data && res.data.length > 0) {
-          const formatted = res.data.map(m => ({
+        const res = await aiService.getHistory();
+        if (res.success && res.data && res.data.length > 0) {
+          const formatted = res.data.map((m: ServiceChatMessage) => ({
             role: (m.role === 'assistant' || m.role === 'ai' ? 'ai' : 'user') as 'ai' | 'user',
             text: m.content,
             isCrisis: m.isCrisisIntercepted
@@ -70,8 +64,8 @@ const AiAssistant = () => {
     setIsLoading(true);
 
     try {
-      const res = await apiClient.post<AIChatApiResponse>('/ai/chat', { message: userText });
-      if (res.data) {
+      const res = await aiService.sendMessage(userText);
+      if (res.success && res.data) {
         setMessages(prev => [
           ...prev, 
           { 
@@ -80,13 +74,21 @@ const AiAssistant = () => {
             isCrisis: res.data!.isCrisisIntercepted 
           }
         ]);
+      } else {
+        setMessages(prev => [
+          ...prev, 
+          { 
+            role: 'ai', 
+            text: "I'm available to help support your wellbeing goals. How else can I assist you?" 
+          }
+        ]);
       }
     } catch {
       setMessages(prev => [
         ...prev, 
         { 
           role: 'ai', 
-          text: "Sorry, I'm having trouble connecting to the server. Please try again later." 
+          text: "I am having trouble connecting right now. If you are experiencing a crisis, please reach out to our Tele-MANAS hotline at 14416." 
         }
       ]);
     } finally {

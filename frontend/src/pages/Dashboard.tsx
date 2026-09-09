@@ -1,19 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
+import { apiClient } from '../api/apiClient';
 import { 
   MessageSquare, 
   BookOpen, 
   ChevronRight,
   ShieldAlert,
   LogOut,
-  Activity
+  Activity,
+  Users,
+  Calendar
 } from 'lucide-react';
+
+interface WellbeingSummary {
+  wellbeingScore: number;
+  scoreLabel: string;
+  trend: string;
+  recentMoodCount: number;
+  recommendations: string[];
+}
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const [summary, setSummary] = useState<WellbeingSummary | null>(null);
+  const [isSavingMood, setIsSavingMood] = useState(false);
 
   const moodOptions = [
     { label: 'Very Low', emoji: '😢', value: 'very_low', color: 'bg-red-50 text-red-600 border-red-200' },
@@ -22,6 +35,38 @@ const Dashboard = () => {
     { label: 'Good', emoji: '🙂', value: 'good', color: 'bg-blue-50 text-blue-600 border-blue-200' },
     { label: 'Great', emoji: '😄', value: 'great', color: 'bg-green-50 text-green-600 border-green-200' },
   ];
+
+  const fetchWellbeingSummary = useCallback(async () => {
+    try {
+      const res = await apiClient.get<WellbeingSummary>('/wellbeing/summary');
+      if (res.data) {
+        setSummary(res.data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch wellbeing summary:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchWellbeingSummary();
+  }, [fetchWellbeingSummary]);
+
+  const handleMoodSelect = async (moodValue: string) => {
+    setSelectedMood(moodValue);
+    setIsSavingMood(true);
+    try {
+      await apiClient.post('/mood', { mood: moodValue });
+      await fetchWellbeingSummary();
+    } catch (err) {
+      console.error('Failed to record mood:', err);
+    } finally {
+      setIsSavingMood(false);
+    }
+  };
+
+  const currentScore = summary?.wellbeingScore ?? 70;
+  const scoreLabel = summary?.scoreLabel ?? 'Moderate';
+  const dashOffset = 439.8 - (439.8 * currentScore) / 100;
 
   return (
     <div className="min-h-screen bg-[#FDFDFD] font-sans relative overflow-hidden pb-32">
@@ -73,12 +118,16 @@ const Dashboard = () => {
               <div className="absolute top-0 right-0 p-8 opacity-10">
                 <Activity className="w-32 h-32 text-slate-900" />
               </div>
-              <h2 className="text-xl font-black text-slate-900 mb-6 uppercase tracking-tight relative z-10">Daily Check-in</h2>
+              <div className="flex justify-between items-center mb-6 relative z-10">
+                <h2 className="text-xl font-black text-slate-900 uppercase tracking-tight">Daily Mood Check-in</h2>
+                {isSavingMood && <span className="text-xs font-semibold text-primary-600 animate-pulse">Saving...</span>}
+              </div>
               <div className="flex flex-wrap gap-3 relative z-10">
                 {moodOptions.map((mood) => (
                   <button
                     key={mood.value}
-                    onClick={() => setSelectedMood(mood.value)}
+                    disabled={isSavingMood}
+                    onClick={() => handleMoodSelect(mood.value)}
                     className={`flex items-center px-4 py-3 rounded-full border transition-all hover:scale-105 active:scale-95 ${mood.color} ${selectedMood === mood.value ? 'ring-2 ring-offset-2 ring-current font-bold shadow-md' : 'opacity-80 bg-white'}`}
                   >
                     <span className="text-xl mr-2">{mood.emoji}</span>
@@ -88,7 +137,7 @@ const Dashboard = () => {
               </div>
             </motion.div>
 
-            {/* Quick Links */}
+            {/* Quick Links Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link to="/ai-assistant">
                 <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
@@ -106,7 +155,27 @@ const Dashboard = () => {
                     <BookOpen className="w-5 h-5 text-slate-900" />
                   </div>
                   <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Resource Hub</h3>
-                  <p className="text-xs text-slate-500 mt-2 font-medium">Explore articles tailored for college stress.</p>
+                  <p className="text-xs text-slate-500 mt-2 font-medium">Explore evidence-based wellness guides.</p>
+                </motion.div>
+              </Link>
+
+              <Link to="/community">
+                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200 group-hover:scale-110 transition-transform">
+                    <Users className="w-5 h-5 text-slate-900" />
+                  </div>
+                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Community</h3>
+                  <p className="text-xs text-slate-500 mt-2 font-medium">Safe peer discussions & support.</p>
+                </motion.div>
+              </Link>
+
+              <Link to="/counselors">
+                <motion.div whileHover={{ y: -4 }} className="bg-white rounded-3xl p-6 shadow-lg border border-slate-100 flex flex-col h-full group">
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-4 border border-slate-200 group-hover:scale-110 transition-transform">
+                    <Calendar className="w-5 h-5 text-slate-900" />
+                  </div>
+                  <h3 className="font-black text-lg text-slate-900 uppercase tracking-tight">Counselors</h3>
+                  <p className="text-xs text-slate-500 mt-2 font-medium">Book appointments with experts.</p>
                 </motion.div>
               </Link>
             </div>
@@ -114,25 +183,32 @@ const Dashboard = () => {
 
           {/* Sidebar (Right) */}
           <div className="lg:col-span-5 space-y-8">
-            {/* Well-being Score */}
+            {/* Dynamic Well-being Score */}
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               className="bg-slate-900 text-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden flex flex-col items-center justify-center min-h-[300px]"
             >
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '16px 16px' }}></div>
-              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 relative z-10">Well-being Score</h2>
+              <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 relative z-10">Dynamic Well-being Score</h2>
               
               <div className="relative inline-flex items-center justify-center mb-6 z-10">
                 <svg className="w-40 h-40 transform -rotate-90">
                   <circle cx="80" cy="80" r="70" fill="transparent" stroke="rgba(255,255,255,0.1)" strokeWidth="8" />
-                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="#ffffff" strokeWidth="12" strokeDasharray="439.8" strokeDashoffset={439.8 - (439.8 * 72) / 100} className="transition-all duration-1000 ease-out drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
+                  <circle cx="80" cy="80" r="70" fill="transparent" stroke="#ffffff" strokeWidth="12" strokeDasharray="439.8" strokeDashoffset={dashOffset} className="transition-all duration-1000 ease-out drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]" />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-5xl font-black">72</span>
+                  <span className="text-5xl font-black">{currentScore}</span>
                 </div>
               </div>
-              <p className="text-center text-sm text-slate-300 font-medium relative z-10 px-4">Your score is <span className="text-white font-bold">Moderate</span>. You've been doing well recently.</p>
+              <p className="text-center text-sm text-slate-300 font-medium relative z-10 px-4">
+                Your calculated score is <span className="text-white font-bold">{scoreLabel}</span>.
+              </p>
+              {summary?.recommendations && summary.recommendations.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-slate-800 text-xs text-slate-400 text-center relative z-10">
+                  💡 {summary.recommendations[0]}
+                </div>
+              )}
             </motion.div>
           </div>
 

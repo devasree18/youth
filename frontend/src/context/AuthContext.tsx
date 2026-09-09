@@ -1,73 +1,92 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
+import { apiClient } from '../api/apiClient';
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
+  role?: string;
+  permissions?: string[];
+  tenantId?: string;
+  institutionId?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => void;
-  signupWithEmail: (name: string, email: string, pass: string) => Promise<void>;
+  signupWithEmail: (name: string, email: string, pass: string, role?: string) => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   token: string | null;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-const API_URL = import.meta.env.VITE_API_URL || '/api';
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [user, setUser] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, [token]);
-
-  const signupWithEmail = async (name: string, email: string, pass: string) => {
-    const res = await fetch(`${API_URL}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password: pass })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to sign up');
-    
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-  };
-  
-  const loginWithEmail = async (email: string, pass: string) => {
-    const res = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password: pass })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Failed to login');
-    
-    setToken(data.token);
-    setUser(data.user);
-    localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
+    apiClient.post('/auth/logout').catch(() => {});
     setToken(null);
     setUser(null);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+  }, []);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
+        try {
+          const res = await apiClient.get<User>('/auth/me');
+          if (res.data) {
+            setUser(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+          }
+        } catch {
+          logout();
+        }
+      }
+      setLoading(false);
+    };
+
+    initAuth();
+  }, [logout]);
+
+  const signupWithEmail = async (name: string, email: string, pass: string, role?: string) => {
+    const res = await apiClient.post<{ token: string; user: User }>('/auth/register', {
+      name,
+      email,
+      password: pass,
+      role
+    });
+
+    if (res.data) {
+      setToken(res.data.token);
+      setUser(res.data.user);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+    }
+  };
+
+  const loginWithEmail = async (email: string, pass: string) => {
+    const res = await apiClient.post<{ token: string; user: User }>('/auth/login', {
+      email,
+      password: pass
+    });
+
+    if (res.data) {
+      setToken(res.data.token);
+      setUser(res.data.user);
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+    }
   };
 
   return (

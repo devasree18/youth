@@ -1,12 +1,37 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
-const conversationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  messages: [{
-    role: { type: String, enum: ['user', 'ai'], required: true },
-    content: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now }
-  }]
+export interface IMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  isCrisisIntercepted?: boolean;
+  tokensUsed?: number;
+  createdAt: Date;
+}
+
+export interface IConversation extends Document {
+  userId: mongoose.Types.ObjectId;
+  tenantId?: mongoose.Types.ObjectId;
+  title?: string;
+  messages: IMessage[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const messageSchema = new Schema<IMessage>({
+  role: { type: String, enum: ['user', 'assistant', 'system'], required: true },
+  content: { type: String, required: true },
+  isCrisisIntercepted: { type: Boolean, default: false },
+  tokensUsed: { type: Number, default: 0 },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const conversationSchema = new Schema<IConversation>({
+  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  tenantId: { type: Schema.Types.ObjectId, ref: 'Tenant', index: true },
+  title: { type: String, default: 'AI Wellness Support Session' },
+  messages: [messageSchema]
 }, { timestamps: true });
 
-export const Conversation = mongoose.model('Conversation', conversationSchema);
+conversationSchema.index({ userId: 1, updatedAt: -1 });
+
+export const Conversation = mongoose.model<IConversation>('Conversation', conversationSchema);

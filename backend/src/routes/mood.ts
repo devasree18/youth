@@ -1,30 +1,62 @@
 import express from 'express';
-import { MoodEntry } from '../models/MoodEntry';
-import { authenticateToken } from '../middleware/auth';
+import { z } from 'zod';
+import { MoodEntry, MoodValue } from '../models/MoodEntry';
+import { authenticateToken, AuthRequest } from '../middleware/auth';
+import { sendSuccess, sendError } from '../utils/response';
 
 const router = express.Router();
 
-router.post('/', authenticateToken, async (req: any, res) => {
+const moodScoreMap: Record<MoodValue, number> = {
+  very_low: 1,
+  low: 2,
+  okay: 3,
+  good: 4,
+  great: 5
+};
+
+const moodSchema = z.object({
+  mood: z.enum(['very_low', 'low', 'okay', 'good', 'great']),
+  note: z.string().max(500).optional(),
+  factors: z.array(z.string()).optional()
+});
+
+router.post('/', authenticateToken, async (req: AuthRequest, res, next) => {
   try {
-    const { mood, note } = req.body;
-    const newMood = new MoodEntry({
-      userId: req.user.userId,
+    const parseResult = moodSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return sendError(res, 400, 'VALIDATION_ERROR', 'Invalid mood parameters', parseResult.error.flatten().fieldErrors);
+    }
+
+    const { mood, note, factors } = parseResult.data;
+    const numericScore = moodScoreMap[mood];
+
+    const moodEntry = new MoodEntry({
+      userId: req.user?.userId,
+      tenantId: req.user?.tenantId,
       mood,
-      note
+      score: numericScore,
+      note,
+      factors: factors || []
     });
-    await newMood.save();
-    res.status(201).json(newMood);
+
+    await moodEntry.save();
+
+    return sendSuccess(res, moodEntry, 'Mood check-in recorded successfully', 201);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to save mood entry' });
+    next(error);
   }
 });
 
-router.get('/', authenticateToken, async (req: any, res) => {
+router.get(['/', '/history'], authenticateToken, async (req: AuthRequest, res, next) => {
   try {
-    const moods = await MoodEntry.find({ userId: req.user.userId }).sort({ createdAt: -1 });
-    res.json(moods);
+    const limit = Math.min(parseInt(req.query.limit as string || '30', 10), 100);
+    const moods = await MoodEntry.find({ userId: req.user?.userId })
+      .sort({ createdAt: -1 })
+      .limit(limit);
+
+    return sendSuccess(res, moods, 'Mood history retrieved successfully');
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch mood entries' });
+    next(error);
   }
 });
 

@@ -1,147 +1,295 @@
 import { motion } from 'framer-motion';
-import { Shield, MessageSquare, Activity, BookOpen, Bookmark, Mail, PhoneCall } from 'lucide-react';
+import { 
+  Shield, 
+  MessageSquare, 
+  Activity, 
+  BookOpen, 
+  PhoneCall, 
+  User, 
+  LogIn, 
+  Sparkles, 
+  HeartHandshake, 
+  Building2, 
+  Users, 
+  ArrowRight,
+  ShieldAlert
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+const FEATURES = [
+  {
+    icon: Activity,
+    title: 'Well-being Check',
+    desc: 'Track your mood, stress levels, and sleep quality over time with automated score calculations.',
+    link: '/assessment',
+    badge: 'Self-Guided'
+  },
+  {
+    icon: MessageSquare,
+    title: 'AI Support Assistant',
+    desc: 'Non-judgmental wellness companion available 24/7 with instant crisis interception.',
+    link: '/ai',
+    badge: '24/7 Support'
+  },
+  {
+    icon: BookOpen,
+    title: 'Resource Hub',
+    desc: 'Evidence-based articles and guides tailored specifically for student academic pressure.',
+    link: '/resources',
+    badge: 'Curated'
+  },
+  {
+    icon: Shield,
+    title: 'Verified Counselors',
+    desc: 'Connect with licensed mental health specialists for online or in-person sessions.',
+    link: '/counselors',
+    badge: 'Confidential'
+  },
+  {
+    icon: Users,
+    title: 'Peer Community',
+    desc: 'Share experiences and find encouragement safely under pseudonymous handles.',
+    link: '/community',
+    badge: 'Anonymous'
+  },
+  {
+    icon: Building2,
+    title: 'Campus SaaS Portal',
+    desc: 'Aggregate, privacy-suppressed wellbeing analytics for educational institutions.',
+    link: '/institution',
+    badge: 'Enterprise'
+  }
+];
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen bg-[#FDFDFD] font-sans relative overflow-hidden">
-      {/* Subtle Dotted Background */}
-      <div className="absolute inset-0 z-0 pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(#e5e7eb 1.5px, transparent 1.5px)',
-        backgroundSize: '24px 24px'
-      }}></div>
+    <div className="min-h-screen bg-[#FDFDFD] text-slate-900 font-sans relative overflow-x-hidden flex flex-col">
+      {/* Subtle Dotted Background Pattern */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-60" 
+        style={{
+          backgroundImage: 'radial-gradient(#d1d5db 1.5px, transparent 1.5px)',
+          backgroundSize: '24px 24px'
+        }}
+      />
 
-      {/* Top Floating Elements */}
-      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-6 flex justify-between items-center">
-        <div className="bg-white rounded-full px-5 py-2.5 shadow-sm border border-slate-100 flex items-center space-x-2 text-sm font-semibold text-slate-800">
-          <Mail className="w-4 h-4 text-slate-600" />
-          <span>support@youthmentalhealth.app</span>
-        </div>
-        <Link to="/login" className="bg-white rounded-full p-2.5 shadow-sm border border-slate-100 flex items-center justify-center hover:bg-slate-50 transition-colors">
-          <span className="font-bold text-lg px-2">*</span>
-        </Link>
-      </div>
-
-      <main className="relative z-10 max-w-5xl mx-auto px-4 pt-12 pb-32 flex flex-col items-center">
-        {/* Headline Section */}
-        <div className="text-center mb-16">
-          <h2 className="text-sm font-bold tracking-[0.2em] text-slate-500 mb-6 uppercase">Key Features Of</h2>
-          <h1 className="text-6xl md:text-[5.5rem] leading-[0.9] font-black text-slate-900 tracking-tighter uppercase mx-auto max-w-4xl">
-            Youth Mental <br /> Health Access
-          </h1>
-        </div>
-
-        {/* Central Graphic & Floating Cards Area */}
-        <div className="relative w-full max-w-3xl aspect-[4/3] mt-8">
+      {/* Navigation Header */}
+      <header className="relative z-30 bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           
-          {/* Background Shape behind Image */}
-          <div className="absolute inset-x-8 inset-y-12 bg-[#FEEBC8] rounded-[3rem] -z-10 shadow-inner opacity-70"></div>
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+              Y
+            </div>
+            <div>
+              <span className="text-xl font-black tracking-tight text-slate-900 block leading-none">YOUTH</span>
+              <span className="text-[10px] font-bold tracking-wider uppercase text-indigo-600 block mt-0.5">Wellbeing SaaS Platform</span>
+            </div>
+          </Link>
 
-          {/* Central Image */}
-          <div className="absolute inset-0 flex items-center justify-center -z-0">
-             <img src="/hero.jpg" alt="Supportive abstract figure" className="h-[110%] w-auto object-contain object-bottom drop-shadow-2xl" style={{ mixBlendMode: 'multiply' }} />
+          {/* Desktop Navigation Links */}
+          <nav className="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
+            <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
+            <Link to="/resources" className="hover:text-slate-900 transition-colors">Resources</Link>
+            <Link to="/counselors" className="hover:text-slate-900 transition-colors">Counselors</Link>
+            <Link to="/institution" className="hover:text-slate-900 transition-colors">Institution SaaS</Link>
+            <Link to="/crisis" className="text-red-600 hover:text-red-700 font-bold flex items-center">
+              <ShieldAlert className="w-4 h-4 mr-1" />
+              Crisis 24/7
+            </Link>
+          </nav>
+
+          {/* Header Action Buttons */}
+          <div className="flex items-center space-x-3">
+            <Link 
+              to="/login" 
+              className="px-5 py-2.5 rounded-full border border-slate-200 bg-white text-slate-800 text-xs sm:text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm flex items-center"
+            >
+              <LogIn className="w-4 h-4 mr-1.5 text-slate-600" />
+              Log In
+            </Link>
+            <Link 
+              to="/login" 
+              className="px-5 py-2.5 rounded-full bg-slate-900 text-white text-xs sm:text-sm font-bold hover:bg-slate-800 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 flex items-center"
+            >
+              <User className="w-4 h-4 mr-1.5" />
+              Get Started
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Container */}
+      <main className="relative z-10 flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 flex flex-col items-center">
+        
+        {/* Top Announcement Pill */}
+        <motion.div 
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center space-x-2 bg-indigo-50 border border-indigo-100 rounded-full px-4 py-1.5 mb-8 shadow-sm"
+        >
+          <Sparkles className="w-4 h-4 text-indigo-600" />
+          <span className="text-xs font-bold text-indigo-900">Student & Enterprise Mental Health Access</span>
+        </motion.div>
+
+        {/* Hero Display Header */}
+        <div className="text-center max-w-4xl mx-auto mb-12">
+          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-slate-900 tracking-tight uppercase leading-[1.05] mb-6">
+            Youth Mental <br className="hidden sm:inline" />
+            <span className="text-indigo-600">Health Access</span>
+          </h1>
+          <p className="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-normal">
+            A secure, confidential, and evidence-based SaaS platform empowering students, educational institutions, and counselors with personalized wellbeing support.
+          </p>
+        </div>
+
+        {/* Hero Call to Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 w-full max-w-md mx-auto">
+          <Link 
+            to="/assessment" 
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-slate-900 text-white font-bold text-sm hover:bg-slate-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-0.5 flex items-center justify-center"
+          >
+            <PhoneCall className="w-4 h-4 mr-2" />
+            Start Free Check-in
+          </Link>
+          <Link 
+            to="/ai" 
+            className="w-full sm:w-auto px-8 py-4 rounded-full bg-white border-2 border-slate-200 text-slate-800 font-bold text-sm hover:border-slate-400 hover:bg-slate-50 transition-all shadow-sm flex items-center justify-center"
+          >
+            <MessageSquare className="w-4 h-4 mr-2 text-indigo-600" />
+            Try AI Companion
+          </Link>
+        </div>
+
+        {/* Hero Interactive Showcase Card */}
+        <div className="w-full max-w-4xl bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-200 mb-20 relative overflow-hidden">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            
+            <div className="space-y-6">
+              <div className="inline-flex items-center space-x-2 bg-emerald-50 text-emerald-800 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">
+                <HeartHandshake className="w-4 h-4 text-emerald-600" />
+                <span>100% Student-Focused & Anonymous</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug">
+                Proactive Mental Health Support at Your Fingertips
+              </h2>
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Whether you need daily mood tracking, immediate AI assistance, structured assessment tools, or a private session with a campus counselor, YOUTH provides an integrated safe space.
+              </p>
+              
+              <div className="pt-2 flex items-center space-x-4">
+                <Link 
+                  to="/crisis" 
+                  className="inline-flex items-center text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-4 py-2.5 rounded-full transition-colors"
+                >
+                  <ShieldAlert className="w-4 h-4 mr-1.5" />
+                  Emergency Hotlines (24/7)
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative flex justify-center items-center">
+              <div className="w-full aspect-square max-w-xs bg-gradient-to-tr from-amber-100 via-orange-100 to-indigo-100 rounded-3xl p-6 flex flex-col justify-between shadow-inner border border-orange-200/50">
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-100 flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                    🙂
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-900">Dynamic Wellbeing Index</h3>
+                    <p className="text-[10px] text-slate-500 font-medium">Updated real-time from check-ins</p>
+                  </div>
+                </div>
+
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-slate-100 space-y-2">
+                  <div className="flex justify-between items-center text-xs font-bold">
+                    <span className="text-slate-600">Weekly Score</span>
+                    <span className="text-indigo-600 font-black">78 / 100</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-indigo-600 rounded-full w-[78%]" />
+                  </div>
+                </div>
+
+                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-3 shadow-sm border border-slate-100 flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span>Counselor Booking</span>
+                  <span className="text-emerald-600">Available Today</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Feature Cards Grid Section */}
+        <section id="features" className="w-full max-w-6xl mx-auto py-8">
+          <div className="text-center mb-12">
+            <h2 className="text-xs font-bold tracking-[0.2em] text-slate-500 uppercase mb-3">Core Modules</h2>
+            <h3 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight uppercase">
+              Everything You Need For Campus Wellbeing
+            </h3>
           </div>
 
-          {/* Top Center Floating Badge */}
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white rounded-full px-4 py-2 shadow-lg border border-slate-100 flex items-center space-x-3"
-          >
-            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
-              <span className="text-xl">🙂</span>
-            </div>
-            <div className="text-left">
-              <p className="text-sm font-bold text-slate-900 leading-tight">Student-Focused</p>
-              <p className="text-[10px] text-slate-500 font-medium">Safe and anonymous</p>
-            </div>
-          </motion.div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {FEATURES.map((f, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all group"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-900 group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                      <f.icon className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                      {f.badge}
+                    </span>
+                  </div>
 
-          {/* Floating Card 1: Left Top */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="absolute top-1/4 -left-12 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-56 flex items-start space-x-3"
-          >
-            <div className="p-2 bg-slate-50 rounded-lg">
-              <Activity className="w-5 h-5 text-slate-700" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Well-being Check</h3>
-              <p className="text-[10px] text-slate-500 mt-1 leading-snug">Track your mood and stress levels over time...</p>
-            </div>
-          </motion.div>
+                  <h4 className="text-lg font-bold text-slate-900 mb-2">{f.title}</h4>
+                  <p className="text-xs text-slate-600 leading-relaxed mb-6">{f.desc}</p>
+                </div>
 
-          {/* Floating Card 2: Right Top */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="absolute top-1/3 -right-8 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-56 flex items-start space-x-3"
-          >
-            <div className="p-2 bg-slate-50 rounded-lg">
-              <MessageSquare className="w-5 h-5 text-slate-700" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">AI Support Assistant</h3>
-              <p className="text-[10px] text-slate-500 mt-1 leading-snug">Non-judgmental guidance available 24/7...</p>
-            </div>
-          </motion.div>
-
-          {/* Floating Card 3: Left Bottom */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="absolute bottom-1/4 -left-8 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-56 flex items-start space-x-3"
-          >
-            <div className="p-2 bg-slate-50 rounded-lg">
-              <BookOpen className="w-5 h-5 text-slate-700" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Resource Hub</h3>
-              <p className="text-[10px] text-slate-500 mt-1 leading-snug">Articles tailored for college academic pressure...</p>
-            </div>
-          </motion.div>
-
-          {/* Floating Card 4: Right Bottom */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="absolute bottom-12 -right-4 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 w-56 flex items-start space-x-3"
-          >
-            <div className="p-2 bg-slate-50 rounded-lg">
-              <Shield className="w-5 h-5 text-slate-700" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Professional Help</h3>
-              <p className="text-[10px] text-slate-500 mt-1 leading-snug">Connect with verified counselors quickly...</p>
-            </div>
-          </motion.div>
-
-        </div>
+                <Link 
+                  to={f.link} 
+                  className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600 group-hover:text-indigo-700"
+                >
+                  <span>Explore Feature</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
       </main>
 
-      {/* Bottom Floating Elements */}
-      <div className="fixed bottom-6 inset-x-0 z-50 pointer-events-none px-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-end">
-          <Link to="/assessment" className="pointer-events-auto bg-white rounded-full pl-2 pr-5 py-2 shadow-lg border border-slate-100 flex items-center space-x-3 hover:bg-slate-50 transition-transform hover:scale-105 active:scale-95">
-            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white">
-              <PhoneCall className="w-4 h-4 text-slate-700" />
+      {/* Footer Section */}
+      <footer className="bg-white border-t border-slate-200 mt-20 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm">
+              Y
             </div>
-            <span className="text-sm font-bold text-slate-900">Start your Check-in</span>
-          </Link>
+            <span className="text-sm font-bold text-slate-800">YOUTH Mental Health SaaS Platform</span>
+          </div>
 
-          <Link to="/resources" className="pointer-events-auto bg-white rounded-full px-5 py-3 shadow-lg border border-slate-100 flex items-center space-x-2 hover:bg-slate-50 transition-transform hover:scale-105 active:scale-95">
-            <span className="text-sm font-bold text-slate-900">Explore Resources</span>
-            <Bookmark className="w-4 h-4 text-slate-900 fill-current" />
-          </Link>
+          <div className="flex flex-wrap justify-center gap-6 text-xs font-semibold text-slate-500">
+            <Link to="/crisis" className="text-red-600 hover:underline">Tele-MANAS Hotline (14416)</Link>
+            <Link to="/resources" className="hover:text-slate-800">Resources</Link>
+            <Link to="/counselors" className="hover:text-slate-800">Counselors</Link>
+            <Link to="/institution" className="hover:text-slate-800">Institution Portal</Link>
+            <Link to="/login" className="hover:text-slate-800">Account Login</Link>
+          </div>
+
+          <p className="text-xs text-slate-400 text-center">
+            © {new Date().getFullYear()} YOUTH Platform. Confidential & Secure.
+          </p>
         </div>
-      </div>
+      </footer>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { Capacitor } from '@capacitor/core';
+
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
@@ -16,20 +18,52 @@ export interface ApiResponse<T = any> {
   };
 }
 
-class ApiClient {
-  private get baseUrl(): string {
-    const rawUrl =
-      import.meta.env.VITE_API_BASE_URL ||
-      import.meta.env.VITE_API_URL ||
-      '/api/v1';
+export class ApiError extends Error {
+  public status: number;
+  public code?: string;
+  public details?: any;
+  public isNetworkError: boolean;
 
-    // Normalize path to ensure versioning
-    if (rawUrl.endsWith('/api')) return `${rawUrl}/v1`;
-    return rawUrl;
+  constructor(message: string, status = 0, code?: string, details?: any, isNetworkError = false) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+    this.details = details;
+    this.isNetworkError = isNetworkError;
+    Object.setPrototypeOf(this, ApiError.prototype);
+  }
+}
+
+// Fallback production deployment backend URL for native APK builds
+const DEFAULT_PRODUCTION_API_URL = 'https://youth-wellbeing.vercel.app/api/v1';
+
+class ApiClient {
+  public get baseUrl(): string {
+    const envUrl =
+      import.meta.env.VITE_API_BASE_URL ||
+      import.meta.env.VITE_API_URL;
+
+    if (envUrl && envUrl.trim() !== '') {
+      let trimmed = envUrl.trim();
+      // Remove trailing slash
+      if (trimmed.endsWith('/')) trimmed = trimmed.slice(0, -1);
+      // Normalize /api to /api/v1 if not already versioned
+      if (trimmed.endsWith('/api')) return `${trimmed}/v1`;
+      return trimmed;
+    }
+
+    // When running inside native Android/iOS Capacitor WebView, relative URLs resolve to https://localhost (broken)
+    if (Capacitor.isNativePlatform()) {
+      return DEFAULT_PRODUCTION_API_URL;
+    }
+
+    // On web development or Vercel static web deployment, relative path routes seamlessly
+    return '/api/v1';
   }
 
   private get defaultHeaders(): Record<string, string> {
-    const token = localStorage.getItem('token');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       Accept: 'application/json',
@@ -40,16 +74,31 @@ class ApiClient {
     return headers;
   }
 
-  private sanitizeErrorMessage(status: number, rawMsg?: string): string {
+  private sanitizeErrorMessage(endpoint: string, status: number, rawMsg?: string, errorCode?: string): string {
+    const isAuthLoginOrRegister = endpoint.includes('/auth/login') || endpoint.includes('/auth/register');
+
     if (status === 401) {
+      if (isAuthLoginOrRegister || errorCode === 'INVALID_CREDENTIALS') {
+        return rawMsg || 'Invalid email or password. Please check your credentials.';
+      }
       return 'Your session has expired. Please sign in again.';
     }
+
     if (status === 403) {
-      return 'You do not have permission to access this resource.';
+      if (errorCode === 'ACCOUNT_SUSPENDED') {
+        return rawMsg || 'Your account has been suspended. Please contact support.';
+      }
+      return rawMsg || 'You do not have permission to access this resource.';
     }
+
+    if (status === 409 && errorCode === 'EMAIL_EXISTS') {
+      return rawMsg || 'An account with this email already exists.';
+    }
+
     if (status === 404) {
-      return 'We could not find the requested page or data.';
+      return rawMsg || 'The requested resource could not be found.';
     }
+
     if (status >= 500) {
       return 'Our servers encountered a temporary issue. Please try again in a moment.';
     }
@@ -57,11 +106,14 @@ class ApiClient {
     if (!rawMsg) return 'Unable to complete request. Please try again.';
 
     // Strip raw technical stack traces or database keywords if present
+    const lower = rawMsg.toLowerCase();
     if (
-      rawMsg.toLowerCase().includes('mongo') ||
-      rawMsg.toLowerCase().includes('e11000') ||
-      rawMsg.toLowerCase().includes('syntaxerror') ||
-      rawMsg.toLowerCase().includes('casterror')
+      lower.includes('mongo') ||
+      lower.includes('e11000') ||
+      lower.includes('syntaxerror') ||
+      lower.includes('casterror') ||
+      lower.includes('jwt') ||
+      lower.includes('bearer')
     ) {
       return 'A data validation error occurred. Please verify your inputs.';
     }
@@ -103,25 +155,30 @@ class ApiClient {
 
       if (!response.ok || data.success === false) {
         const rawMsg = data.error?.message || data.message;
-        const cleanMsg = this.sanitizeErrorMessage(response.status, rawMsg);
-        throw new Error(cleanMsg);
+        const errorCode = data.error?.code;
+        const cleanMsg = this.sanitizeErrorMessage(endpoint, response.status, rawMsg, errorCode);
+        throw new ApiError(cleanMsg, response.status, errorCode, data.error?.details);
       }
 
       return data as ApiResponse<T>;
     } catch (error: any) {
       clearTimeout(timeoutId);
 
-      if (error.name === 'AbortError') {
-        throw new Error('Request timed out. Please check your mobile connection and try again.');
+      if (error instanceof ApiError) {
+        throw error;
       }
 
-      if (error instanceof TypeError && (error.message.includes('fetch') || error.message.includes('network'))) {
+      if (error.name === 'AbortError') {
+        throw new ApiError('Request timed out. Please check your mobile connection and try again.', 408, 'REQUEST_TIMEOUT', null, true);
+      }
+
+      if (error instanceof TypeError && (error.message.includes('fetch') || error.message.includes('network') || error.message.includes('Failed to fetch'))) {
         console.error(`Network Error [${options.method || 'GET'} ${url}]:`, error);
-        throw new Error('No internet connection. Please check your connection and try again.');
+        throw new ApiError('No internet connection. Please check your network and try again.', 0, 'NETWORK_ERROR', null, true);
       }
 
       console.error(`API Client Error [${options.method || 'GET'} ${url}]:`, error);
-      throw error;
+      throw new ApiError(error.message || 'An unexpected error occurred.', 0, 'UNKNOWN_ERROR');
     }
   }
 
@@ -133,7 +190,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -141,7 +198,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -153,10 +210,9 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PATCH',
-      body: body ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   }
 }
 
 export const apiClient = new ApiClient();
-

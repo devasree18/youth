@@ -17,9 +17,19 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { MobileAppProvider } from './components/mobile/MobileAppProvider';
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
-  if (!user) return <Navigate to="/login" />;
-  return children;
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4">
+        <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin mb-3"></div>
+        <p className="text-xs font-medium text-slate-500">Restoring session...</p>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
 };
 
 function App() {

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import { apiClient } from '../api/apiClient';
+import { apiClient, ApiError } from '../api/apiClient';
 
 export interface User {
   id: string;
@@ -10,14 +10,15 @@ export interface User {
   permissions?: string[];
   tenantId?: string;
   institutionId?: string;
+  accountStatus?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => void;
-  signupWithEmail: (name: string, email: string, pass: string, role?: string) => Promise<void>;
-  loginWithEmail: (email: string, pass: string) => Promise<void>;
+  signupWithEmail: (name: string, email: string, pass: string, role?: string) => Promise<User>;
+  loginWithEmail: (email: string, pass: string) => Promise<User>;
   token: string | null;
 }
 
@@ -25,8 +26,12 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      const storedUser = localStorage.getItem('user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
   });
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
@@ -49,8 +54,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(res.data);
             localStorage.setItem('user', JSON.stringify(res.data));
           }
-        } catch {
-          logout();
+        } catch (err: any) {
+          // Invalidate session ONLY if server explicitly rejected the token (401 / 403)
+          if (err instanceof ApiError && (err.status === 401 || err.status === 403 || err.code === 'TOKEN_EXPIRED')) {
+            logout();
+          } else {
+            // Keep existing cached session for offline / temporary network blips
+            console.warn('Auth session verification skipped due to network/server state:', err.message);
+          }
         }
       }
       setLoading(false);
@@ -59,39 +70,49 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     initAuth();
   }, [logout]);
 
-  const signupWithEmail = async (name: string, email: string, pass: string, role?: string) => {
+  const signupWithEmail = async (name: string, email: string, pass: string, role?: string): Promise<User> => {
     const res = await apiClient.post<{ token: string; user: User }>('/auth/register', {
-      name,
-      email,
+      name: name.trim(),
+      email: email.trim(),
       password: pass,
       role
     });
 
-    if (res.data) {
-      setToken(res.data.token);
-      setUser(res.data.user);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+    if (!res.data?.user || !res.data?.token) {
+      throw new Error('Invalid response from server during registration.');
     }
+
+    const { token: receivedToken, user: receivedUser } = res.data;
+    setToken(receivedToken);
+    setUser(receivedUser);
+    localStorage.setItem('token', receivedToken);
+    localStorage.setItem('user', JSON.stringify(receivedUser));
+
+    return receivedUser;
   };
 
-  const loginWithEmail = async (email: string, pass: string) => {
+  const loginWithEmail = async (email: string, pass: string): Promise<User> => {
     const res = await apiClient.post<{ token: string; user: User }>('/auth/login', {
-      email,
+      email: email.trim(),
       password: pass
     });
 
-    if (res.data) {
-      setToken(res.data.token);
-      setUser(res.data.user);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+    if (!res.data?.user || !res.data?.token) {
+      throw new Error('Invalid response from server during login.');
     }
+
+    const { token: receivedToken, user: receivedUser } = res.data;
+    setToken(receivedToken);
+    setUser(receivedUser);
+    localStorage.setItem('token', receivedToken);
+    localStorage.setItem('user', JSON.stringify(receivedUser));
+
+    return receivedUser;
   };
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, signupWithEmail, loginWithEmail, token }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

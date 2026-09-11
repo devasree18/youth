@@ -31,8 +31,9 @@ router.post('/register', async (req, res, next) => {
     }
 
     const { name, email, password, role } = parseResult.data;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       return sendError(res, 409, 'EMAIL_EXISTS', 'An account with this email already exists.');
     }
@@ -44,8 +45,8 @@ router.post('/register', async (req, res, next) => {
     const permissions = DEFAULT_ROLE_PERMISSIONS[userRole] || DEFAULT_ROLE_PERMISSIONS['STUDENT'];
 
     const newUser = new User({
-      name,
-      email: email.toLowerCase(),
+      name: name.trim(),
+      email: normalizedEmail,
       passwordHash: hashedPassword,
       role: userRole,
       permissions
@@ -96,9 +97,10 @@ router.post('/login', async (req, res, next) => {
     }
 
     const { email, password } = parseResult.data;
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) {
+    const user = await User.findOne({ email: normalizedEmail });
+    if (!user || !user.passwordHash) {
       return sendError(res, 401, 'INVALID_CREDENTIALS', 'Invalid email or password');
     }
 

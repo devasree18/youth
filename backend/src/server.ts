@@ -41,21 +41,42 @@ app.use((req: any, res, next) => {
 });
 
 // ── CORS & Security Middleware ──────────────────────────────────────────────
-const allowedOrigins = envConfig.ALLOWED_ORIGINS 
-  ? envConfig.ALLOWED_ORIGINS.split(',').map(o => o.trim())
-  : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+const defaultAllowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:3000',
+  'https://localhost',
+  'capacitor://localhost',
+  'http://localhost'
+];
+
+const envAllowedOrigins = envConfig.ALLOWED_ORIGINS 
+  ? envConfig.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
+  : [];
+
+const allowedOriginsSet = new Set([...defaultAllowedOrigins, ...envAllowedOrigins]);
+
+const isOriginAllowed = (origin?: string): boolean => {
+  if (!origin) return true; // Allow non-browser or same-origin requests
+  if (envConfig.NODE_ENV !== 'production') return true;
+  if (allowedOriginsSet.has(origin)) return true;
+  // Allow Vercel preview and production deployments
+  if (/^https:\/\/[a-zA-Z0-9-_.]+\.vercel\.app$/.test(origin)) return true;
+  return false;
+};
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || envConfig.NODE_ENV !== 'production') {
+    if (isOriginAllowed(origin)) {
       callback(null, true);
     } else {
-      callback(new Error(`CORS policy violation: Origin ${origin} not permitted`));
+      callback(null, false);
     }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID', 'Accept', 'Origin', 'X-Requested-With']
 }));
 
 app.use(helmet());

@@ -25,13 +25,13 @@ const seedDatabase = async () => {
       {
         name: 'Alice Johnson',
         email: 'alice@example.com',
-        password: hashedPassword,
+        passwordHash: hashedPassword,
         assessments: [{ result: 'High analytical skills' }]
       },
       {
         name: 'Bob Smith',
         email: 'bob@example.com',
-        password: hashedPassword,
+        passwordHash: hashedPassword,
         assessments: [{ result: 'Strong communication skills' }]
       }
     ]);

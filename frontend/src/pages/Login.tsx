@@ -24,15 +24,32 @@ export const Login = () => {
     e.preventDefault();
     if (isLoading) return;
     setError('');
+
+    const cleanEmail = email.trim();
+    if (!cleanEmail || !cleanEmail.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
+    if (!password) {
+      setError('Please enter your password.');
+      return;
+    }
+
     setIsLoading(true);
     try {
+      let authUser;
       if (isLogin) {
-        await loginWithEmail(email, password);
+        authUser = await loginWithEmail(cleanEmail, password);
       } else {
-        await signupWithEmail(name, email, password, role);
+        authUser = await signupWithEmail(name.trim(), cleanEmail, password, role);
       }
-      if (role === 'institution') {
+
+      const userRole = (authUser.role || '').toUpperCase();
+      if (userRole === 'INSTITUTION' || userRole === 'INSTITUTION_ADMIN' || userRole === 'INSTITUTION_STAFF' || userRole === 'ADMIN') {
         navigate('/institution');
+      } else if (userRole === 'COUNSELOR') {
+        navigate('/counselors');
       } else {
         navigate('/dashboard');
       }

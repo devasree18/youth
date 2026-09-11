@@ -97,7 +97,7 @@ export const HorizontalMoodScale: React.FC<HorizontalMoodScaleProps> = ({
       </div>
 
       {/* Horizontal Emotional Scale */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-2.5">
         {MOOD_OPTIONS.map((option) => {
           const isSelected = selected === option.value;
           return (
@@ -106,27 +106,29 @@ export const HorizontalMoodScale: React.FC<HorizontalMoodScaleProps> = ({
               type="button"
               onClick={() => handleSelect(option.value)}
               disabled={isSaving}
-              className={`group relative p-3 sm:p-3.5 rounded-2xl border text-left transition-all duration-150 cursor-pointer active:scale-[0.98] ${
+              className={`group relative p-2.5 sm:p-3.5 rounded-2xl border text-center sm:text-left transition-all duration-150 cursor-pointer active:scale-[0.98] ${
                 isSelected
                   ? `${option.activeBg} ${option.activeBorder} ${option.activeText} shadow-2xs ring-1 ring-emerald-500/20`
                   : 'bg-white border-stone-200/90 hover:border-stone-300 hover:bg-stone-50/60 text-stone-700'
               }`}
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-center sm:justify-between mb-1.5">
                 <span
                   className={`w-2.5 h-2.5 rounded-full transition-transform group-hover:scale-125 ${
                     option.toneColor
                   } ${isSelected ? 'ring-2 ring-white shadow-xs' : ''}`}
                 />
                 {isSelected && (
-                  <span className="text-[10px] font-bold text-emerald-700 bg-white/90 px-1.5 py-0.2 rounded-md shadow-2xs flex items-center gap-0.5">
+                  <span className="hidden sm:inline-flex text-[10px] font-bold text-emerald-700 bg-white/90 px-1.5 py-0.2 rounded-md shadow-2xs items-center gap-0.5">
                     <Check className="w-2.5 h-2.5" /> Logged
                   </span>
                 )}
               </div>
 
-              <p className="text-xs font-semibold leading-snug">{option.label}</p>
-              <p className="text-[10px] text-stone-400 font-normal mt-0.5 truncate">
+              <p className="text-[11px] sm:text-xs font-semibold leading-tight sm:leading-snug truncate">
+                {option.label}
+              </p>
+              <p className="hidden sm:block text-[10px] text-stone-400 font-normal mt-0.5 truncate">
                 {option.sublabel}
               </p>
             </button>

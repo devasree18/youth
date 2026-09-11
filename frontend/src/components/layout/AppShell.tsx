@@ -180,7 +180,7 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] text-[#111827] flex flex-col antialiased selection:bg-emerald-100 selection:text-emerald-900 w-full overflow-x-hidden">
-      <div className="flex-1 flex w-full max-w-[1440px] mx-auto min-h-screen">
+      <div className="flex-1 flex w-full min-h-screen">
         {/* =========================================================================
             1. AUTHENTICATED DESKTOP SIDEBAR (Slim, Minimal, Collapsible)
             ========================================================================= */}

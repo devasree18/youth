@@ -22,33 +22,33 @@ export const ToolsMixedSection: React.FC = () => {
       {/* Mixed Layout: 1 Featured Banner + 3 Compact Grid Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* Featured Card (Spans 2 cols on tablet/desktop) */}
-        <div className="md:col-span-2 p-5 rounded-3xl bg-gradient-to-br from-teal-900 via-emerald-950 to-stone-900 text-white flex flex-col justify-between shadow-2xs relative overflow-hidden">
-          <div className="relative z-10 space-y-2">
+        <div className="md:col-span-2 p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-emerald-50/80 via-teal-50/40 to-white border border-emerald-200/80 text-stone-900 flex flex-col justify-between shadow-2xs">
+          <div className="space-y-2">
             <div className="flex items-center space-x-2">
-              <span className="text-[10px] font-bold text-teal-300 uppercase tracking-widest bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
+              <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-widest bg-emerald-100/70 px-2.5 py-0.5 rounded-full border border-emerald-200">
                 Featured Practice
               </span>
-              <span className="text-[11px] text-teal-200/80 font-normal">
+              <span className="text-[11px] text-stone-500 font-normal">
                 60-Second Cadence
               </span>
             </div>
-            <h4 className="text-base sm:text-lg font-semibold text-white tracking-tight">
+            <h4 className="text-base sm:text-lg font-bold text-stone-900 tracking-tight">
               Somatic 4-7-8 Breathing Reset
             </h4>
-            <p className="text-xs text-stone-300 max-w-md font-normal leading-relaxed">
-              Inhale 4s, hold 7s, exhale 8s. A clinically validated rhythm to downregulate nervous arousal.
+            <p className="text-xs text-stone-600 max-w-md font-normal leading-relaxed">
+              Inhale 4s, hold 7s, exhale 8s. A clinically validated rhythm to settle heart rate and downregulate nervous arousal.
             </p>
           </div>
 
-          <div className="relative z-10 pt-4 flex items-center justify-between">
-            <span className="text-xs text-teal-300/80 font-medium">
-              Immediate calming
+          <div className="pt-4 flex items-center justify-between">
+            <span className="text-xs text-emerald-700 font-semibold">
+              Immediate nervous calming
             </span>
             <Link to="/games">
               <Button
                 variant="primary"
                 size="sm"
-                className="bg-teal-400 hover:bg-teal-300 text-stone-950 font-bold text-xs rounded-xl px-4"
+                className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs rounded-xl px-4 shadow-xs"
                 rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
               >
                 Begin

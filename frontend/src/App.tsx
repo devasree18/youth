@@ -11,6 +11,7 @@ import SolutionHub from './pages/SolutionHub';
 import CounselorMarketplace from './pages/CounselorMarketplace';
 import InstitutionDashboard from './pages/InstitutionDashboard';
 import Games from './pages/Games';
+import WellbeingInsights from './pages/WellbeingInsights';
 import Login from './pages/Login';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/wellbeing-insights" element={<ProtectedRoute><WellbeingInsights /></ProtectedRoute>} />
           <Route path="/assessment" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
           <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
           <Route path="/resources" element={<ProtectedRoute><ResourceHub /></ProtectedRoute>} />

@@ -136,7 +136,8 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   // Secondary pages accessible via Profile/More Menu (Section 2)
   const studentSecondaryLinks = [
-    { label: 'Mindful Resets', path: '/games', icon: Gamepad2 },
+    { label: 'Wellbeing Insights', path: '/wellbeing-insights', icon: Sparkles },
+    { label: 'Reset Games', path: '/games', icon: Gamepad2 },
     { label: 'Assessments History', path: '/assessment', icon: Sparkles },
     { label: 'Counselor Appointments', path: '/counselors', icon: UserCheck },
     { label: 'Peer Community', path: '/community', icon: Users },

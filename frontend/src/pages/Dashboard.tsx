@@ -187,7 +187,46 @@ export const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* ==================== 4. SUPPORT ACCESS SECTION ==================== */}
+        {/* ==================== 4. MY WELLBEING INSIGHTS COMPACT PREVIEW ==================== */}
+        <motion.div variants={fadeUpVariants} className="space-y-2.5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Your wellbeing patterns
+            </h2>
+            <Link
+              to="/wellbeing-insights"
+              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"
+            >
+              View full insights <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <Link to="/wellbeing-insights" className="block group">
+            <Card className="p-5 bg-gradient-to-br from-indigo-50/60 via-white to-teal-50/40 border-slate-200/90 group-hover:border-indigo-300 transition-all rounded-2xl shadow-xs">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start space-x-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-2xs">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-[#172033] group-hover:text-indigo-600 transition-colors">
+                      Your wellbeing, at a glance
+                    </h3>
+                    <p className="text-xs text-slate-500 leading-relaxed max-w-md font-normal mt-0.5">
+                      Check your focus patterns, emotional trends, and daily reset recommendations.
+                    </p>
+                  </div>
+                </div>
+                <div className="shrink-0 hidden sm:flex items-center text-xs font-semibold text-indigo-600">
+                  <span>Explore</span>
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </div>
+              </div>
+            </Card>
+          </Link>
+        </motion.div>
+
+        {/* ==================== 5. SUPPORT ACCESS SECTION ==================== */}
         <motion.div variants={fadeUpVariants} className="space-y-3 pt-2">
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Need support?
@@ -240,7 +279,7 @@ export const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* ==================== 5. RECENT ACTIVITY (ONLY WHEN REAL DATA EXISTS) ==================== */}
+        {/* ==================== 6. RECENT ACTIVITY (ONLY WHEN REAL DATA EXISTS) ==================== */}
         {summary && summary.recentMoodCount > 0 && (
           <motion.div variants={fadeUpVariants} className="pt-4 border-t border-slate-100 space-y-2">
             <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">

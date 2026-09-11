@@ -1,192 +1,83 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 import { AppShell } from '../components/layout/AppShell';
 import { moodService, type MoodEntry } from '../services/moodService';
 import { wellbeingService, type WellbeingSummary } from '../services/wellbeingService';
 import { assessmentService } from '../services/assessmentService';
-import { gameService } from '../services/gameService';
 import { fadeUpVariants, staggerContainerVariants } from '../lib/motion';
-
-import { TodayStatusStrip } from '../components/dashboard/TodayStatusStrip';
-import { TodayFocusAction } from '../components/dashboard/TodayFocusAction';
+import {
+  Wind,
+  Target,
+  BookMarked,
+  MessageSquare,
+  ArrowRight,
+  TrendingUp,
+  Flame,
+  PhoneCall,
+} from 'lucide-react';
 import { HorizontalMoodScale } from '../components/dashboard/HorizontalMoodScale';
-import { WellbeingOverviewMetrics } from '../components/dashboard/WellbeingOverviewMetrics';
-import { ActivityTimeline, type TimelineItem } from '../components/dashboard/ActivityTimeline';
-import { ToolsMixedSection } from '../components/dashboard/ToolsMixedSection';
-import { JournalReflectionCard } from '../components/dashboard/JournalReflectionCard';
-import { AiSupportPrompt } from '../components/dashboard/AiSupportPrompt';
-import { DiscreetSafetyCard } from '../components/dashboard/DiscreetSafetyCard';
+import { TodayFocusAction } from '../components/dashboard/TodayFocusAction';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
 
-  // Core Data States
   const [summary, setSummary] = useState<WellbeingSummary | null>(null);
-  const [moodHistory, setMoodHistory] = useState<MoodEntry[]>([]);
   const [todayMood, setTodayMood] = useState<MoodEntry | null>(null);
   const [isCheckedInToday, setIsCheckedInToday] = useState(false);
-  const [lastCheckInDate, setLastCheckInDate] = useState<string | undefined>(undefined);
-  const [timelineItems, setTimelineItems] = useState<TimelineItem[]>([]);
-  const [latestJournal, setLatestJournal] = useState<{
-    id: string;
-    title: string;
-    content: string;
-    date: string;
-    moodTag?: string;
-  } | null>(null);
-  const [journalCount, setJournalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
 
   const firstName = user?.name ? user.name.split(' ')[0] : 'there';
 
   const todayDateFormatted = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
   }).format(new Date());
 
-  // Load Real Data from All Services
-  const loadDashboardData = useCallback(async () => {
-    setIsLoading(true);
+  const getTimeGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const loadData = useCallback(async () => {
     try {
-      // 1. Fetch Wellbeing Summary
-      const summaryPromise = wellbeingService.getSummary().catch(() => null);
-
-      // 2. Fetch Mood History
-      const moodPromise = moodService.getHistory(30).catch(() => null);
-
-      // 3. Fetch Assessment History
-      const assessPromise = assessmentService.getHistory().catch(() => null);
-
-      // 4. Fetch Game Sessions
-      const gamePromise = gameService.getSummary().catch(() => null);
-
-      const [summaryRes, moodRes, assessRes, gameRes] = await Promise.all([
-        summaryPromise,
-        moodPromise,
-        assessPromise,
-        gamePromise,
+      const [summaryRes, moodRes, assessRes] = await Promise.all([
+        wellbeingService.getSummary().catch(() => null),
+        moodService.getHistory(7).catch(() => null),
+        assessmentService.getHistory().catch(() => null),
       ]);
 
-      if (summaryRes?.data) {
-        setSummary(summaryRes.data);
+      if (summaryRes?.data) setSummary(summaryRes.data);
+
+      const todayStr = new Date().toDateString();
+      if (moodRes?.data) {
+        const found = moodRes.data.find((m) => new Date(m.createdAt).toDateString() === todayStr);
+        if (found) setTodayMood(found);
       }
 
-      // Check today's mood
-      const todayDateString = new Date().toDateString();
-      if (moodRes?.data && moodRes.data.length > 0) {
-        setMoodHistory(moodRes.data);
-        const todayFound = moodRes.data.find(
-          (m) => new Date(m.createdAt).toDateString() === todayDateString
-        );
-        if (todayFound) {
-          setTodayMood(todayFound);
-        }
-      }
-
-      // Check today's check-in status from assessments
       if (assessRes?.data && assessRes.data.length > 0) {
-        const latestAssess = assessRes.data[0];
-        const assessDate = new Date(latestAssess.createdAt);
-        setLastCheckInDate(
-          assessDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-        );
-        if (assessDate.toDateString() === todayDateString) {
+        const latest = assessRes.data[0];
+        if (new Date(latest.createdAt).toDateString() === todayStr) {
           setIsCheckedInToday(true);
         }
       }
-
-      // Read real journal entries from storage
-      let entriesCount = 0;
-      try {
-        const savedJournals = localStorage.getItem('youth_journal_entries');
-        if (savedJournals) {
-          const parsed = JSON.parse(savedJournals);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setLatestJournal(parsed[0]);
-            entriesCount = parsed.length;
-          }
-        }
-      } catch {
-        // Storage ignore
-      }
-      setJournalCount(entriesCount);
-
-      // Assemble Chronological Activity Timeline
-      const timeline: TimelineItem[] = [];
-
-      // Add recent assessments
-      if (assessRes?.data) {
-        assessRes.data.slice(0, 2).forEach((a) => {
-          timeline.push({
-            id: `assess-${a._id}`,
-            type: 'CHECKIN',
-            title: 'Completed Wellbeing Check-in',
-            subtitle: `Score: ${a.normalizedScore}/100 • Risk: ${a.riskLevel}`,
-            timestamp: new Date(a.createdAt).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-            }),
-            route: '/wellbeing-insights',
-          });
-        });
-      }
-
-      // Add recent game sessions
-      if (gameRes?.data?.recentSessions) {
-        gameRes.data.recentSessions.slice(0, 2).forEach((s) => {
-          timeline.push({
-            id: `game-${s._id}`,
-            type: s.gameType.includes('BREATH') ? 'BREATHING' : 'FOCUS',
-            title: s.gameType === 'BREATHING_FLOW' ? 'Somatic Breathing Reset' : 'Focus Orbit Session',
-            subtitle: `${Math.round(s.durationSeconds / 60)} min practice • Completed`,
-            timestamp: new Date(s.createdAt).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-            }),
-            route: '/games',
-          });
-        });
-      }
-
-      // Add recent mood logs
-      if (moodRes?.data) {
-        moodRes.data.slice(0, 2).forEach((m) => {
-          timeline.push({
-            id: `mood-${m._id}`,
-            type: 'CHECKIN',
-            title: `Recorded Mood: ${m.mood.replace('_', ' ').toUpperCase()}`,
-            subtitle: m.note || 'Daily emotional log',
-            timestamp: new Date(m.createdAt).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric',
-            }),
-          });
-        });
-      }
-
-      // Sort timeline chronologically descending
-      setTimelineItems(timeline);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadDashboardData();
-  }, [loadDashboardData]);
+    loadData();
+  }, [loadData]);
 
-  // Handle Real Mood Recording
   const handleMoodSelect = async (moodValue: string) => {
     try {
       const res = await moodService.recordMood(moodValue);
-      if (res.data) {
-        setTodayMood(res.data);
-      }
-      await loadDashboardData();
+      if (res.data) setTodayMood(res.data);
+      await loadData();
     } catch (err) {
       console.error('Failed to record mood:', err);
     }
@@ -198,37 +89,35 @@ export const Dashboard: React.FC = () => {
         initial="initial"
         animate="animate"
         variants={staggerContainerVariants}
-        className="max-w-6xl mx-auto space-y-7 pb-12"
+        className="max-w-4xl mx-auto space-y-6"
       >
-        {/* =========================================================================
-            1. EDITORIAL WELCOME AREA (No giant neon banners)
-            ========================================================================= */}
-        <motion.div variants={fadeUpVariants} className="space-y-4 pt-1">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-stone-200/80 pb-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-stone-900">
-                Your space for today.
-              </h1>
-              <p className="text-xs sm:text-sm text-stone-500 font-normal mt-0.5">
-                Check in, reset, reflect, and keep moving at your own pace, {firstName}.
-              </p>
-            </div>
-            <span className="text-xs font-medium text-stone-400 shrink-0">
+        {/* 1. CLEAN EDITORIAL GREETING */}
+        <motion.div variants={fadeUpVariants} className="space-y-1">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
+              {getTimeGreeting()}, {firstName}.
+            </h1>
+            <span className="text-xs font-medium text-stone-400 bg-stone-100/80 px-2.5 py-1 rounded-full border border-stone-200/60">
               {todayDateFormatted}
             </span>
           </div>
+          <p className="text-xs sm:text-sm text-stone-500 font-normal">
+            Take a moment to check in and pace your day.
+          </p>
+        </motion.div>
 
-          {/* Today's Subtle Status Strip */}
-          <TodayStatusStrip
-            todayMood={todayMood}
-            summary={summary}
-            lastCheckInDate={lastCheckInDate}
+        {/* 2. 1-TAP HORIZONTAL MOOD LOG */}
+        <motion.div
+          variants={fadeUpVariants}
+          className="p-4 sm:p-5 rounded-3xl bg-white border border-stone-200/90 shadow-2xs"
+        >
+          <HorizontalMoodScale
+            currentMood={todayMood?.mood}
+            onSelectMood={handleMoodSelect}
           />
         </motion.div>
 
-        {/* =========================================================================
-            2. TODAY'S NEXT STEP (Primary Focal Action)
-            ========================================================================= */}
+        {/* 3. TODAY'S PRIMARY FOCUS ACTION */}
         <motion.div variants={fadeUpVariants}>
           <TodayFocusAction
             isCheckedInToday={isCheckedInToday}
@@ -236,62 +125,132 @@ export const Dashboard: React.FC = () => {
           />
         </motion.div>
 
-        {/* =========================================================================
-            3. MAIN ASYMMETRICAL 2-COLUMN COMPOSITION
-            ========================================================================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* ==================== LEFT COLUMN (7 COLS): DAILY FLOW ==================== */}
-          <div className="lg:col-span-7 space-y-7">
-            {/* A. Subtle Horizontal Mood Scale */}
-            <motion.div
-              variants={fadeUpVariants}
-              className="p-5 sm:p-6 rounded-3xl bg-white border border-stone-200/90 shadow-2xs"
+        {/* 4. ESSENTIAL TOOLS GRID (4 SIMPLE TILES) */}
+        <motion.div variants={fadeUpVariants} className="space-y-2.5">
+          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider">
+            Daily Wellbeing Tools
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Tool 1: Somatic Breathing */}
+            <Link
+              to="/games"
+              className="p-4 sm:p-4.5 rounded-2xl bg-white border border-stone-200/90 hover:border-emerald-300 transition-all flex items-center justify-between group shadow-2xs"
             >
-              <HorizontalMoodScale
-                currentMood={todayMood?.mood}
-                onSelectMood={handleMoodSelect}
-              />
-            </motion.div>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 border border-teal-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <Wind className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                    Somatic 4-7-8 Reset
+                  </h3>
+                  <p className="text-[11px] text-stone-500 font-normal">
+                    60-second breathing rhythm to calm tension
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+            </Link>
 
-            {/* B. Mixed-Visual Weight Tools Section */}
-            <motion.div variants={fadeUpVariants}>
-              <ToolsMixedSection />
-            </motion.div>
+            {/* Tool 2: Focus Orbit */}
+            <Link
+              to="/games"
+              className="p-4 sm:p-4.5 rounded-2xl bg-white border border-stone-200/90 hover:border-emerald-300 transition-all flex items-center justify-between group shadow-2xs"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 border border-amber-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <Target className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                    Focus Orbit Timer
+                  </h3>
+                  <p className="text-[11px] text-stone-500 font-normal">
+                    25-minute study intervals with ambient audio
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+            </Link>
 
-            {/* C. Real Chronological Activity Timeline */}
-            <motion.div variants={fadeUpVariants}>
-              <ActivityTimeline items={timelineItems} isLoading={isLoading} />
-            </motion.div>
+            {/* Tool 3: Journal & Reflection */}
+            <Link
+              to="/solutions"
+              className="p-4 sm:p-4.5 rounded-2xl bg-white border border-stone-200/90 hover:border-emerald-300 transition-all flex items-center justify-between group shadow-2xs"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <BookMarked className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                    Daily Reflection
+                  </h3>
+                  <p className="text-[11px] text-stone-500 font-normal">
+                    Private journal prompts & thought logging
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+            </Link>
+
+            {/* Tool 4: AI Support */}
+            <Link
+              to="/ai-assistant"
+              className="p-4 sm:p-4.5 rounded-2xl bg-white border border-stone-200/90 hover:border-emerald-300 transition-all flex items-center justify-between group shadow-2xs"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold text-stone-900 group-hover:text-emerald-700 transition-colors">
+                    AI Wellness Sanctuary
+                  </h3>
+                  <p className="text-[11px] text-stone-500 font-normal">
+                    24/7 confidential reflection & guidance
+                  </p>
+                </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-stone-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* 5. SLIM PULSE & SUPPORT FOOTER STRIP */}
+        <motion.div
+          variants={fadeUpVariants}
+          className="p-3.5 sm:p-4 rounded-2xl bg-stone-100/80 border border-stone-200/80 flex flex-wrap items-center justify-between gap-3 text-xs"
+        >
+          <div className="flex items-center space-x-4">
+            <span className="flex items-center font-semibold text-stone-700">
+              <TrendingUp className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+              Resilience: {summary?.wellbeingScore || 84}/100 • {summary?.scoreLabel || 'Optimal'}
+            </span>
+            <span className="hidden sm:inline-flex items-center text-amber-700 font-medium">
+              <Flame className="w-3.5 h-3.5 mr-1 fill-amber-500 text-amber-500" />
+              Active Streak
+            </span>
           </div>
 
-          {/* ==================== RIGHT COLUMN (5 COLS): PULSE & REFLECTION ==================== */}
-          <div className="lg:col-span-5 space-y-6">
-            {/* A. Weekly Overview & Resilience Metrics */}
-            <motion.div variants={fadeUpVariants}>
-              <WellbeingOverviewMetrics
-                summary={summary}
-                recentCheckInCount={moodHistory.length > 0 ? Math.min(7, moodHistory.length) : 1}
-                reflectionCount={journalCount}
-                streakDays={summary?.recentMoodCount || 3}
-              />
-            </motion.div>
-
-            {/* B. Real Journal Reflection Preview */}
-            <motion.div variants={fadeUpVariants}>
-              <JournalReflectionCard latestEntry={latestJournal} />
-            </motion.div>
-
-            {/* C. Subtle AI Support Entry */}
-            <motion.div variants={fadeUpVariants}>
-              <AiSupportPrompt />
-            </motion.div>
-
-            {/* D. Discreet Human Safety Support */}
-            <motion.div variants={fadeUpVariants}>
-              <DiscreetSafetyCard />
-            </motion.div>
+          <div className="flex items-center space-x-3">
+            <a
+              href="tel:14416"
+              className="text-stone-600 hover:text-rose-600 font-semibold flex items-center gap-1 transition-colors"
+            >
+              <PhoneCall className="w-3.5 h-3.5 text-rose-500" />
+              <span>Tele-MANAS (14416)</span>
+            </a>
+            <span>•</span>
+            <Link
+              to="/counselors"
+              className="text-emerald-700 hover:text-emerald-900 font-semibold"
+            >
+              Counselors →
+            </Link>
           </div>
-        </div>
+        </motion.div>
       </motion.div>
     </AppShell>
   );

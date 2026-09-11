@@ -4,25 +4,25 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer select-none active:scale-[0.98]',
   {
     variants: {
       variant: {
-        default: 'bg-blue-600 text-white shadow-xs hover:bg-blue-700 active:bg-blue-800',
-        primary: 'bg-blue-600 text-white shadow-xs hover:bg-blue-700 active:bg-blue-800',
-        destructive: 'bg-rose-600 text-white shadow-xs hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600',
-        danger: 'bg-rose-600 text-white shadow-xs hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600',
-        outline: 'border border-slate-200 bg-white text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-300 active:bg-slate-100',
-        secondary: 'bg-slate-100 text-slate-900 shadow-xs hover:bg-slate-200/80 active:bg-slate-200',
-        ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 active:bg-slate-200',
-        link: 'text-blue-600 underline-offset-4 hover:underline',
+        default: 'bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 active:bg-indigo-800 font-semibold',
+        primary: 'bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 active:bg-indigo-800 font-semibold',
+        destructive: 'bg-rose-600 text-white shadow-xs hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600 font-semibold',
+        danger: 'bg-rose-600 text-white shadow-xs hover:bg-rose-700 active:bg-rose-800 focus-visible:ring-rose-600 font-semibold',
+        outline: 'border border-slate-200 bg-white text-slate-700 shadow-xs hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900',
+        secondary: 'bg-slate-100 text-slate-800 shadow-xs hover:bg-slate-200/80 active:bg-slate-200 font-medium',
+        ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+        link: 'text-indigo-600 underline-offset-4 hover:underline font-medium',
       },
       size: {
-        default: 'h-10 px-4 py-2 text-sm',
-        sm: 'h-8 rounded-md px-3 text-xs gap-1.5',
-        md: 'h-10 px-4 py-2 text-sm',
-        lg: 'h-11 rounded-lg px-6 text-base gap-2.5',
-        icon: 'h-9 w-9 p-0',
+        default: 'min-h-[44px] h-11 px-4 py-2.5 text-sm',
+        sm: 'h-9 min-h-[36px] rounded-lg px-3 text-xs gap-1.5',
+        md: 'min-h-[44px] h-11 px-4 py-2.5 text-sm',
+        lg: 'min-h-[48px] h-12 rounded-xl px-6 text-base gap-2.5',
+        icon: 'min-h-[44px] h-11 w-11 p-0',
       },
     },
     defaultVariants: {

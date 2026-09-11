@@ -88,7 +88,7 @@ export const CounselorMarketplace = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[1, 2, 3, 4].map((i) => (
-              <Card key={i} className="p-6 space-y-4">
+              <Card key={i} className="p-6 space-y-4 rounded-2xl">
                 <Skeleton className="h-5 w-1/3" />
                 <Skeleton className="h-4 w-1/2" />
                 <Skeleton className="h-16 w-full" />
@@ -105,31 +105,31 @@ export const CounselorMarketplace = () => {
           >
             {counselors.map((c) => (
               <motion.div key={c._id} variants={fadeUpVariants}>
-                <Card className="p-6 flex flex-col justify-between space-y-5 h-full">
+                <Card className="p-6 sm:p-7 flex flex-col justify-between space-y-5 h-full rounded-2xl border-slate-200/90 shadow-xs hover:border-slate-300">
                   <div>
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h3 className="text-base font-bold text-slate-900">{c.name}</h3>
+                        <h3 className="text-base font-bold text-[#172033]">{c.name}</h3>
                         <div className="mt-1">
                           <Badge variant="primary" size="sm">{c.specialization}</Badge>
                         </div>
                       </div>
 
-                      <div className="flex items-center text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">
+                      <div className="flex items-center text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200/80">
                         <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 mr-1" />
                         <span>{c.rating} ({c.reviewsCount})</span>
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 leading-relaxed mt-3">{c.description}</p>
+                    <p className="text-xs text-slate-600 leading-relaxed mt-3 font-normal">{c.description}</p>
 
-                    <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-100 text-xs text-slate-600 space-y-1">
+                    <div className="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-600 space-y-1">
                       <div className="flex items-center space-x-1.5">
-                        <strong className="text-slate-700">Qualifications:</strong>
+                        <strong className="text-[#172033]">Qualifications:</strong>
                         <span>{c.qualifications?.join(', ')}</span>
                       </div>
                       <div className="flex items-center space-x-1.5">
-                        <strong className="text-slate-700">Languages:</strong>
+                        <strong className="text-[#172033]">Languages:</strong>
                         <span>{c.languages?.join(', ')}</span>
                       </div>
                     </div>
@@ -138,19 +138,19 @@ export const CounselorMarketplace = () => {
                   <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                     <div className="text-xs">
                       <span className="text-slate-400 font-medium">Session Fee: </span>
-                      <span className="font-bold text-slate-900">
+                      <span className="font-bold text-[#172033]">
                         {c.price === 0 ? 'Campus Sponsored (Free)' : `₹${c.price}`}
                       </span>
                     </div>
 
                     <Button
                       variant="primary"
-                      size="sm"
+                      size="default"
                       onClick={() => {
                         setSelectedCounselor(c);
                         setSelectedSlot(null);
                       }}
-                      leftIcon={<Calendar className="w-3.5 h-3.5" />}
+                      leftIcon={<Calendar className="w-4 h-4" />}
                     >
                       Select Slot
                     </Button>
@@ -172,14 +172,14 @@ export const CounselorMarketplace = () => {
             <>
               <Button
                 variant="secondary"
-                size="sm"
+                size="default"
                 onClick={() => setSelectedCounselor(null)}
               >
                 Cancel
               </Button>
               <Button
                 variant="primary"
-                size="sm"
+                size="default"
                 disabled={!selectedSlot}
                 isLoading={isBooking}
                 onClick={handleBookSlot}
@@ -191,8 +191,8 @@ export const CounselorMarketplace = () => {
         >
           <div className="space-y-4">
             <div>
-              <h4 className="text-xs font-semibold text-slate-700 mb-2">Available Consultation Slots</h4>
-              <div className="grid grid-cols-2 gap-2">
+              <h4 className="text-xs font-bold text-[#172033] mb-2.5">Available Consultation Slots</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {selectedCounselor?.availabilitySlots?.map((slot, idx) => {
                   const isSelected = selectedSlot === slot;
                   return (
@@ -201,15 +201,15 @@ export const CounselorMarketplace = () => {
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`p-3 rounded-lg text-left border text-xs transition-colors cursor-pointer ${
+                      className={`p-3.5 rounded-xl text-left border text-xs transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-blue-50 border-blue-600 text-blue-900 font-semibold'
+                          ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-semibold shadow-xs ring-2 ring-indigo-500/20'
                           : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      <div className="font-semibold text-slate-900">{getDayName(slot.dayOfWeek)}</div>
-                      <div className="text-[11px] text-slate-500 flex items-center mt-1">
-                        <Clock className="w-3 h-3 mr-1 text-slate-400" />
+                      <div className="font-bold text-[#172033]">{getDayName(slot.dayOfWeek)}</div>
+                      <div className="text-[11px] text-slate-500 flex items-center mt-1 font-medium">
+                        <Clock className="w-3.5 h-3.5 mr-1 text-slate-400" />
                         {slot.startTime} – {slot.endTime}
                       </div>
                     </motion.button>
@@ -218,12 +218,12 @@ export const CounselorMarketplace = () => {
               </div>
             </div>
 
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-500 space-y-1">
-              <div className="flex items-center space-x-1">
-                <Video className="w-3.5 h-3.5 text-blue-600" />
-                <span className="font-medium text-slate-700">Private End-to-End Encrypted Telehealth</span>
+            <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-500 space-y-1">
+              <div className="flex items-center space-x-1.5">
+                <Video className="w-4 h-4 text-indigo-600" />
+                <span className="font-bold text-[#172033]">Private End-to-End Encrypted Telehealth</span>
               </div>
-              <p>Appointments are conducted securely. A meeting link will be sent prior to the session.</p>
+              <p className="leading-relaxed">Appointments are conducted securely. A confidential video link will be sent prior to the session.</p>
             </div>
           </div>
         </Modal>

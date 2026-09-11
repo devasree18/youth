@@ -88,7 +88,7 @@ export const Community = () => {
     >
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Create post box */}
-        <Card className="p-5 sm:p-6 space-y-4">
+        <Card className="p-5 sm:p-6 space-y-4 rounded-2xl border-slate-200/90 shadow-xs">
           <div className="flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
               Create New Reflection
@@ -96,7 +96,7 @@ export const Community = () => {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1 font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-600"
+              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-semibold text-[#172033] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 cursor-pointer"
             >
               {CATEGORIES.filter((c) => c !== 'All').map((c) => (
                 <option key={c} value={c}>
@@ -111,23 +111,23 @@ export const Community = () => {
             onChange={(e) => setNewPost(e.target.value)}
             placeholder="Share a thoughtful reflection, study routine, or message of encouragement..."
             rows={3}
-            className="w-full p-3 rounded-lg bg-slate-50 border border-slate-200 focus:border-blue-600 focus:bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 resize-none transition-colors outline-none"
+            className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white text-xs sm:text-sm text-[#172033] placeholder:text-slate-400 resize-none transition-all outline-none"
           />
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1 border-t border-slate-100">
-            <div className="flex items-center space-x-1.5 text-[11px] text-slate-500">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Posts are published under an anonymous handle.</span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
+            <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 font-medium">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              <span>Posts are published safely under an anonymous handle.</span>
             </div>
 
             <Button
               type="button"
               variant="primary"
-              size="sm"
+              size="default"
               onClick={handleSubmit}
               disabled={!newPost.trim() || isSubmitting}
               isLoading={isSubmitting}
-              rightIcon={<Send className="w-3.5 h-3.5" />}
+              rightIcon={<Send className="w-4 h-4" />}
             >
               Publish Post
             </Button>
@@ -135,16 +135,16 @@ export const Community = () => {
         </Card>
 
         {/* Category Filter Tabs */}
-        <div className="flex items-center space-x-1.5 overflow-x-auto pb-1">
+        <div className="flex items-center space-x-2 overflow-x-auto pb-1">
           {CATEGORIES.map((cat) => (
             <motion.button
               key={cat}
               whileTap={{ scale: 0.97 }}
               onClick={() => setSelectedFilter(cat)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium shrink-0 transition-colors cursor-pointer ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer active:scale-[0.98] ${
                 selectedFilter === cat
-                  ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
               {cat}
@@ -157,9 +157,9 @@ export const Community = () => {
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <Card key={i} className="p-6 space-y-3">
+                <Card key={i} className="p-6 space-y-3 rounded-2xl">
                   <div className="flex items-center space-x-3">
-                    <Skeleton className="w-8 h-8 rounded-md" />
+                    <Skeleton className="w-8 h-8 rounded-xl" />
                     <Skeleton className="h-4 w-32" />
                   </div>
                   <Skeleton className="h-16 w-full" />
@@ -181,14 +181,14 @@ export const Community = () => {
             >
               {filteredPosts.map((post) => (
                 <motion.div key={post._id} variants={fadeUpVariants}>
-                  <Card className="p-5 sm:p-6 space-y-3">
+                  <Card className="p-5 sm:p-6 space-y-3 rounded-2xl border-slate-200/90 shadow-xs hover:border-slate-300">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-center space-x-2.5">
-                        <div className="w-7 h-7 bg-blue-50 text-blue-700 rounded-md flex items-center justify-center font-bold text-xs border border-blue-100">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-indigo-50 text-indigo-700 rounded-xl flex items-center justify-center font-bold text-xs border border-indigo-100">
                           {post.pseudonym.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <span className="text-xs font-semibold text-slate-900 block leading-tight">
+                          <span className="text-xs font-bold text-[#172033] block leading-tight">
                             {post.pseudonym}
                           </span>
                           <span className="text-[10px] text-slate-400">
@@ -211,7 +211,7 @@ export const Community = () => {
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                    <p className="text-xs sm:text-sm text-[#172033] leading-relaxed whitespace-pre-wrap font-normal">
                       {post.content}
                     </p>
 
@@ -219,14 +219,14 @@ export const Community = () => {
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         onClick={() => handleLike(post._id)}
-                        className="flex items-center space-x-1.5 text-slate-600 hover:text-rose-600 transition-colors cursor-pointer"
+                        className="flex items-center space-x-1.5 text-slate-600 hover:text-rose-600 transition-colors cursor-pointer font-medium"
                       >
-                        <Heart className="w-3.5 h-3.5 text-rose-500" />
+                        <Heart className="w-4 h-4 text-rose-500" />
                         <span>{post.likesCount} Support</span>
                       </motion.button>
 
-                      <div className="flex items-center space-x-1.5 text-slate-400">
-                        <MessageSquare className="w-3.5 h-3.5" />
+                      <div className="flex items-center space-x-1.5 text-slate-400 font-medium">
+                        <MessageSquare className="w-4 h-4" />
                         <span>{post.commentsCount || 0} Replies</span>
                       </div>
                     </div>

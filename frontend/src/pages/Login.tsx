@@ -42,18 +42,18 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-between antialiased">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between antialiased">
       {/* Top minimal header */}
-      <header className="h-16 px-4 sm:px-8 border-b border-slate-200 bg-white flex items-center justify-between">
+      <header className="h-16 px-4 sm:px-8 border-b border-slate-200/80 bg-white flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2.5">
-          <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">
+          <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
             Y
           </div>
-          <span className="text-base font-bold tracking-tight text-slate-900">YOUTH</span>
+          <span className="text-base font-bold tracking-tight text-[#172033]">YOUTH</span>
         </Link>
         <Link
           to="/"
-          className="text-xs font-semibold text-slate-600 hover:text-slate-900 transition-colors"
+          className="text-xs font-semibold text-slate-600 hover:text-[#172033] transition-colors"
         >
           Back to homepage
         </Link>
@@ -65,28 +65,28 @@ export const Login = () => {
           variants={fadeUpVariants}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-md bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-xs"
+          className="w-full max-w-md bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs"
         >
           <div className="text-center mb-6">
-            <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-xl font-bold text-[#172033] tracking-tight">
               {isLogin ? 'Sign in to YOUTH' : 'Create your YOUTH account'}
             </h1>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 mt-1 font-normal">
               {isLogin
                 ? 'Enter your credentials to access your wellbeing workspace'
                 : 'Join your campus mental health ecosystem'}
             </p>
 
             {/* Auth tab toggle */}
-            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-lg mt-5 text-xs font-medium">
+            <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-xl mt-5 text-xs font-semibold">
               <button
                 type="button"
                 onClick={() => {
                   setIsLogin(true);
                   setError('');
                 }}
-                className={`py-1.5 rounded-md transition-all cursor-pointer ${
-                  isLogin ? 'bg-white text-slate-900 font-semibold shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                className={`py-2 rounded-lg transition-all cursor-pointer ${
+                  isLogin ? 'bg-white text-[#172033] font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Sign In
@@ -97,8 +97,8 @@ export const Login = () => {
                   setIsLogin(false);
                   setError('');
                 }}
-                className={`py-1.5 rounded-md transition-all cursor-pointer ${
-                  !isLogin ? 'bg-white text-slate-900 font-semibold shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                className={`py-2 rounded-lg transition-all cursor-pointer ${
+                  !isLogin ? 'bg-white text-[#172033] font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Create Account
@@ -134,7 +134,7 @@ export const Login = () => {
                   />
 
                   <div className="space-y-1.5 text-left">
-                    <label className="block text-xs font-semibold text-slate-700 tracking-tight">
+                    <label className="block text-xs font-bold text-slate-700 tracking-tight">
                       Account Role
                     </label>
                     <div className="grid grid-cols-3 gap-2">
@@ -150,13 +150,13 @@ export const Login = () => {
                             key={item.id}
                             type="button"
                             onClick={() => setRole(item.id as any)}
-                            className={`flex flex-col items-center justify-center p-2.5 rounded-lg border text-xs transition-colors cursor-pointer ${
+                            className={`flex flex-col items-center justify-center p-3 rounded-xl border text-xs transition-all cursor-pointer active:scale-[0.98] ${
                               isSelected
-                                ? 'bg-blue-50 border-blue-600 text-blue-900 font-semibold'
-                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-bold shadow-xs ring-2 ring-indigo-500/20'
+                                : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                             }`}
                           >
-                            <Icon className="w-4 h-4 mb-1 text-slate-500" />
+                            <Icon className={`w-4 h-4 mb-1 ${isSelected ? 'text-indigo-600' : 'text-slate-400'}`} />
                             <span>{item.label}</span>
                           </button>
                         );
@@ -191,7 +191,7 @@ export const Login = () => {
               <Button
                 type="submit"
                 variant="primary"
-                size="md"
+                size="default"
                 className="w-full"
                 isLoading={isLoading}
                 rightIcon={<ArrowRight className="w-4 h-4" />}
@@ -201,7 +201,7 @@ export const Login = () => {
             </div>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center space-x-2 text-slate-400 text-[11px]">
+          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-center space-x-2 text-slate-400 text-[11px] font-medium">
             <Shield className="w-3.5 h-3.5 text-slate-400" />
             <span>Encrypted & Privacy Guarded</span>
           </div>
@@ -209,8 +209,8 @@ export const Login = () => {
       </main>
 
       {/* Minimal Footer */}
-      <footer className="py-4 text-center text-xs text-slate-400 border-t border-slate-200/60 bg-white">
-        © {new Date().getFullYear()} YOUTH Technologies Inc. All rights reserved.
+      <footer className="py-4 text-center text-xs text-slate-400 border-t border-slate-200/80 bg-white">
+        © {new Date().getFullYear()} YOUTH Student Wellbeing. All rights reserved.
       </footer>
     </div>
   );

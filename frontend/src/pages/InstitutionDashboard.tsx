@@ -77,61 +77,63 @@ export const InstitutionDashboard = () => {
 
         {/* Analytics Widgets Grid */}
         <motion.div variants={fadeUpVariants} className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <Card className="p-5 flex items-center justify-between">
+          <Card className="p-6 flex items-center justify-between rounded-2xl border-slate-200/90 shadow-xs">
             <div>
-              <span className="text-xs font-semibold text-slate-500">Enrolled Students</span>
-              <div className="text-2xl font-bold text-slate-900 mt-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Enrolled Students</span>
+              <div className="text-3xl font-extrabold text-[#172033] mt-1.5 font-mono">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats?.activeStudents ?? 0}
               </div>
-              <span className="text-[11px] text-emerald-600 font-medium mt-1 inline-block">
+              <span className="text-[11px] text-emerald-600 font-semibold mt-1 inline-block">
                 Active campus accounts
               </span>
             </div>
-            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-              <Users className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+              <Users className="w-6 h-6" />
             </div>
           </Card>
 
-          <Card className="p-5 flex items-center justify-between">
+          <Card className="p-6 flex items-center justify-between rounded-2xl border-slate-200/90 shadow-xs">
             <div>
-              <span className="text-xs font-semibold text-slate-500">Check-in Participation</span>
-              <div className="text-2xl font-bold text-slate-900 mt-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Check-in Participation</span>
+              <div className="text-3xl font-extrabold text-[#172033] mt-1.5 font-mono">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats?.checkInParticipation ?? 0}
               </div>
-              <span className="text-[11px] text-blue-600 font-medium mt-1 inline-block">
+              <span className="text-[11px] text-indigo-600 font-semibold mt-1 inline-block">
                 Assessments logged
               </span>
             </div>
-            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <Activity className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+              <Activity className="w-6 h-6" />
             </div>
           </Card>
 
-          <Card className="p-5 flex items-center justify-between">
+          <Card className="p-6 flex items-center justify-between rounded-2xl border-slate-200/90 shadow-xs">
             <div>
-              <span className="text-xs font-semibold text-slate-500">Campus Wellbeing Index</span>
-              <div className="text-2xl font-bold text-slate-900 mt-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Campus Wellbeing Index</span>
+              <div className="text-3xl font-extrabold text-[#172033] mt-1.5 font-mono">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats?.aggregatedWellbeingIndex ?? 'N/A'}
               </div>
               <span className="text-[11px] text-slate-500 font-medium mt-1 inline-block">
                 Cohort aggregate score
               </span>
             </div>
-            <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+              <TrendingUp className="w-6 h-6" />
             </div>
           </Card>
         </motion.div>
 
         {/* Member Invitation Card */}
         <motion.div variants={fadeUpVariants}>
-          <Card className="p-6 space-y-4">
+          <Card className="p-6 sm:p-7 space-y-4 rounded-2xl border-slate-200/90 shadow-xs">
             <div>
-              <div className="flex items-center space-x-2">
-                <UserPlus className="w-4 h-4 text-blue-600" />
-                <h3 className="text-sm font-bold text-slate-900">Invite Campus Members</h3>
+              <div className="flex items-center space-x-2.5">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                  <UserPlus className="w-4 h-4" />
+                </div>
+                <h3 className="text-sm font-bold text-[#172033]">Invite Campus Members</h3>
               </div>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 mt-1 font-normal">
                 Send an onboarding invite to students, campus counselors, or institutional staff.
               </p>
             </div>
@@ -164,13 +166,13 @@ export const InstitutionDashboard = () => {
               />
 
               <div className="space-y-1.5 text-left">
-                <label className="block text-xs font-semibold text-slate-700 tracking-tight">
+                <label className="block text-xs font-bold text-slate-700 tracking-tight">
                   Role
                 </label>
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
-                  className="w-full bg-white text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                  className="w-full bg-white text-sm text-[#172033] border border-slate-200 rounded-xl px-3.5 py-2.5 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 cursor-pointer"
                 >
                   <option value="STUDENT">Student</option>
                   <option value="INSTITUTION_STAFF">Counselor / Staff</option>
@@ -181,8 +183,8 @@ export const InstitutionDashboard = () => {
                 <Button
                   type="submit"
                   variant="primary"
-                  size="md"
-                  className="w-full"
+                  size="default"
+                  className="w-full min-h-[44px]"
                   isLoading={isSubmitting}
                 >
                   Send Invite

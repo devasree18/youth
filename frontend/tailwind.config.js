@@ -8,51 +8,51 @@ export default {
     extend: {
       colors: {
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a', // Deep navy
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#4f46e5', // Deep Indigo / Modern Royal Blue
+          700: '#4338ca',
+          800: '#3730a3', // Darker Indigo
+          900: '#312e81',
         },
-        secondary: {
-          50: '#faf5ff',
-          100: '#f3e8ff',
-          200: '#e9d5ff',
-          300: '#d8b4fe',
-          400: '#c084fc',
-          500: '#a855f7',
-          600: '#9333ea', // Purple
-          700: '#7e22ce',
-          800: '#6b21a8',
-          900: '#581c87',
+        lavender: {
+          50: '#f5f7ff',
+          100: '#eef2ff',
+          200: '#e0e7ff',
+        },
+        teal: {
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          500: '#10b981',
+          600: '#059669',
         },
         success: {
-          50: '#f0fdf4',
-          100: '#dcfce7',
-          500: '#22c55e', // Subtle green for positive progress
-          600: '#16a34a',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          500: '#10b981',
+          600: '#059669',
         },
-        accent: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6', // Teal
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
+        warning: {
+          50: '#fef3c7',
+          100: '#fde68a',
+          500: '#f59e0b',
+          600: '#d97706',
         },
-        background: '#f8fafc', // Very light neutral background
+        danger: {
+          50: '#fff1f2',
+          100: '#ffe4e6',
+          500: '#f43f5e',
+          600: '#e11d48',
+        },
+        background: '#f8fafc',
+        surface: '#ffffff',
       },
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        sans: ['Manrope', 'Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',

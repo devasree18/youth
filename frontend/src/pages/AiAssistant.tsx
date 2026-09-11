@@ -110,9 +110,9 @@ export const AiAssistant = () => {
       title="AI Wellness Companion"
       subtitle="Confidential conversational guidance with automated crisis detection"
     >
-      <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-12rem)] min-h-[500px]">
+      <div className="max-w-3xl mx-auto flex flex-col h-[calc(100vh-12rem)] min-h-[520px]">
         {/* Chat message history container */}
-        <Card className="flex-1 flex flex-col overflow-hidden p-0 bg-white shadow-xs">
+        <Card className="flex-1 flex flex-col overflow-hidden p-0 bg-white shadow-xs border-slate-200/90 rounded-2xl">
           {/* Messages list */}
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
             {messages.map((msg, idx) => {
@@ -128,39 +128,39 @@ export const AiAssistant = () => {
                   }`}
                 >
                   {isAi && (
-                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 border border-blue-100">
+                    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-100">
                       <Bot className="w-4 h-4" />
                     </div>
                   )}
 
                   <div
-                    className={`max-w-[85%] sm:max-w-[75%] rounded-xl p-4 text-xs sm:text-sm leading-relaxed ${
+                    className={`max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
                       isAi
-                        ? 'bg-slate-50 border border-slate-200 text-slate-800'
-                        : 'bg-blue-600 text-white'
+                        ? 'bg-slate-50/90 border border-slate-200/80 text-[#172033]'
+                        : 'bg-indigo-600 text-white font-normal'
                     }`}
                   >
                     <p className="whitespace-pre-wrap">{msg.text}</p>
 
                     {msg.isCrisis && (
-                      <div className="mt-3 pt-3 border-t border-rose-200 bg-rose-50 -mx-4 -mb-4 p-3 rounded-b-xl text-xs text-rose-900 flex flex-col gap-1.5">
+                      <div className="mt-3 pt-3 border-t border-rose-200 bg-rose-50 -mx-4 -mb-4 p-3 rounded-b-2xl text-xs text-rose-950 flex flex-col gap-1.5">
                         <div className="flex items-center space-x-1.5 font-bold text-rose-700">
-                          <ShieldAlert className="w-3.5 h-3.5" />
+                          <ShieldAlert className="w-4 h-4" />
                           <span>Emergency Helpline Interception</span>
                         </div>
-                        <p className="text-[11px] text-rose-800">
+                        <p className="text-[11px] text-rose-900 leading-relaxed">
                           Our safety filters detected elevated distress. Please reach out to licensed counselors immediately:
                         </p>
                         <div className="flex flex-wrap gap-2 pt-1">
                           <a
                             href="tel:14416"
-                            className="bg-white border border-rose-300 text-rose-700 px-2.5 py-1 rounded font-semibold text-xs hover:bg-rose-100 transition-colors"
+                            className="bg-white border border-rose-300 text-rose-700 px-3 py-1.5 rounded-lg font-bold text-xs hover:bg-rose-100 transition-colors"
                           >
                             Tele-MANAS (14416)
                           </a>
                           <a
                             href="tel:18005990019"
-                            className="bg-white border border-rose-300 text-rose-700 px-2.5 py-1 rounded font-semibold text-xs hover:bg-rose-100 transition-colors"
+                            className="bg-white border border-rose-300 text-rose-700 px-3 py-1.5 rounded-lg font-bold text-xs hover:bg-rose-100 transition-colors"
                           >
                             KIRAN (1800-599-0019)
                           </a>
@@ -170,7 +170,7 @@ export const AiAssistant = () => {
                   </div>
 
                   {!isAi && (
-                    <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                    <div className="w-8 h-8 rounded-xl bg-[#172033] text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
                       <User className="w-4 h-4" />
                     </div>
                   )}
@@ -184,22 +184,22 @@ export const AiAssistant = () => {
                 animate={{ opacity: 1 }}
                 className="flex items-start space-x-3"
               >
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
                   <Bot className="w-4 h-4" />
                 </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center space-x-2 text-xs text-slate-500">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:0.2s]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:0.4s]" />
-                  <span className="text-[11px] ml-1">Reflecting...</span>
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 flex items-center space-x-2 text-xs text-slate-500">
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse [animation-delay:0.2s]" />
+                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse [animation-delay:0.4s]" />
+                  <span className="text-[11px] font-medium ml-1 text-slate-600">Reflecting...</span>
                 </div>
               </motion.div>
             )}
           </div>
 
           {/* Quick Starter Prompts */}
-          <div className="px-4 py-2 border-t border-slate-100 bg-slate-50/50 flex items-center space-x-2 overflow-x-auto">
-            <span className="text-[11px] font-semibold text-slate-400 shrink-0 uppercase tracking-wide">
+          <div className="px-4 py-2.5 border-t border-slate-100 bg-slate-50/50 flex items-center space-x-2 overflow-x-auto">
+            <span className="text-[10px] font-bold text-slate-400 shrink-0 uppercase tracking-wider">
               Suggested:
             </span>
             {SUGGESTED_PROMPTS.map((prompt, i) => (
@@ -209,7 +209,7 @@ export const AiAssistant = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSend(prompt)}
                 disabled={isLoading}
-                className="text-[11px] font-medium bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 px-2.5 py-1 rounded-md shrink-0 transition-colors cursor-pointer"
+                className="text-[11px] font-medium bg-white text-slate-700 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 px-3 py-1.5 rounded-full shrink-0 transition-colors cursor-pointer"
               >
                 {prompt}
               </motion.button>
@@ -217,28 +217,28 @@ export const AiAssistant = () => {
           </div>
 
           {/* Input Box Footer */}
-          <div className="p-3 sm:p-4 border-t border-slate-200 bg-white">
+          <div className="p-3 sm:p-4 border-t border-slate-200/80 bg-white">
             <div className="flex items-end space-x-2">
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Type your message here... (Shift + Enter for new line)"
+                placeholder="Share what is on your mind... (Shift + Enter for new line)"
                 rows={1}
-                className="flex-1 max-h-32 min-h-[42px] bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 resize-none transition-colors"
+                className="flex-1 max-h-32 min-h-[44px] bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs sm:text-sm text-[#172033] placeholder:text-slate-400 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none transition-all"
               />
               <Button
                 variant="primary"
-                size="md"
+                size="default"
                 onClick={() => handleSend()}
                 disabled={!input.trim() || isLoading}
-                className="h-[42px] px-3.5 shrink-0"
+                className="min-h-[44px] h-11 px-4 shrink-0"
               >
                 <Send className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-[10px] text-slate-400 text-center mt-2">
-              Conversations are confidential. AI responses are supportive but do not constitute formal psychiatric treatment.
+            <p className="text-[10px] text-slate-400 text-center mt-2.5">
+              Conversations are confidential. AI responses provide supportive reflection and do not substitute medical care.
             </p>
           </div>
         </Card>

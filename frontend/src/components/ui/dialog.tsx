@@ -58,7 +58,7 @@ export const Dialog = ({
             animate="animate"
             exit="exit"
             className={cn(
-              'relative w-full rounded-xl border border-slate-200 bg-white shadow-xl overflow-hidden z-10',
+              'relative w-full rounded-2xl border border-slate-200 bg-white shadow-xl overflow-hidden z-10',
               {
                 'max-w-sm': maxWidth === 'sm',
                 'max-w-md': maxWidth === 'md',

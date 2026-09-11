@@ -21,6 +21,7 @@ import institutionRoutes from './routes/institution';
 import wellbeingRoutes from './routes/wellbeing';
 import crisisRoutes from './routes/crisis';
 import appointmentRoutes from './routes/appointments';
+import gamesRoutes from './routes/games';
 import { errorHandler } from './middleware/errors';
 
 const app = express();
@@ -125,6 +126,7 @@ v1Router.use('/institution', institutionRoutes);
 v1Router.use('/wellbeing', wellbeingRoutes);
 v1Router.use('/crisis', crisisRoutes);
 v1Router.use('/appointments', appointmentRoutes);
+v1Router.use('/games', gamesRoutes);
 
 app.use('/api/v1', v1Router);
 

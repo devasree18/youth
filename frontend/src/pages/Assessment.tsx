@@ -206,12 +206,12 @@ export const Assessment = () => {
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-6 text-center">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                   Calculated Score
                 </span>
-                <div className="text-4xl font-extrabold text-slate-900 my-1">
-                  {displayScore} <span className="text-base font-medium text-slate-400">/ 100</span>
+                <div className="text-4xl font-extrabold text-[#172033] my-1.5">
+                  {displayScore} <span className="text-base font-normal text-slate-400">/ 100</span>
                 </div>
                 <Badge
                   variant={
@@ -224,7 +224,7 @@ export const Assessment = () => {
                   dot
                   size="md"
                 >
-                  {result.interpretationLabel || (displayScore >= 75 ? 'Optimal' : 'Moderate')}
+                  {result.interpretationLabel || (displayScore >= 75 ? 'Optimal Wellbeing' : 'Moderate Stress')}
                 </Badge>
               </div>
 
@@ -240,24 +240,24 @@ export const Assessment = () => {
                   ]).map((rec, idx) => (
                     <li
                       key={idx}
-                      className="flex items-start space-x-2.5 text-xs text-slate-700 bg-white border border-slate-200 p-3 rounded-lg"
+                      className="flex items-start space-x-2.5 text-xs text-slate-700 bg-white border border-slate-200 p-3.5 rounded-xl shadow-xs"
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 shrink-0" />
-                      <span>{rec}</span>
+                      <span className="w-2 h-2 rounded-full bg-indigo-600 mt-1 shrink-0" />
+                      <span className="leading-relaxed">{rec}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <Button variant="secondary" size="md" onClick={resetAssessment} leftIcon={<RotateCcw className="w-4 h-4" />}>
+                <Button variant="secondary" size="default" onClick={resetAssessment} leftIcon={<RotateCcw className="w-4 h-4" />}>
                   Retake Assessment
                 </Button>
                 <div className="flex items-center space-x-2 w-full sm:w-auto">
-                  <Button variant="outline" size="md" onClick={() => navigate('/counselors')}>
-                    Book Counselor
+                  <Button variant="outline" size="default" onClick={() => navigate('/counselors')}>
+                    Find Counselor
                   </Button>
-                  <Button variant="primary" size="md" onClick={() => navigate('/dashboard')}>
+                  <Button variant="primary" size="default" onClick={() => navigate('/dashboard')}>
                     Return to Dashboard
                   </Button>
                 </div>
@@ -266,18 +266,18 @@ export const Assessment = () => {
           </motion.div>
         ) : (
           /* Active Question Step View */
-          <Card className="p-6 sm:p-8 space-y-6">
+          <Card className="p-6 sm:p-8 space-y-6 rounded-2xl border-slate-200/90 shadow-xs">
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-semibold text-slate-700">
+                <span className="font-bold text-[#172033]">
                   Question {currentStep + 1} of {totalQuestions}
                 </span>
-                <span>{Math.round(progress)}% Completed</span>
+                <span className="font-semibold">{Math.round(progress)}% Completed</span>
               </div>
 
-              <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <motion.div
-                  className="bg-blue-600 h-1.5 rounded-full"
+                  className="bg-indigo-600 h-2 rounded-full"
                   initial={false}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -295,10 +295,10 @@ export const Assessment = () => {
                 className="space-y-4"
               >
                 <div className="space-y-1">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                  <h3 className="text-base sm:text-lg font-bold text-[#172033] leading-snug">
                     {currentQuestion?.text}
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 font-normal">
                     Choose the option that most closely reflects your experience over the past 7 days.
                   </p>
                 </div>
@@ -312,17 +312,17 @@ export const Assessment = () => {
                         whileHover={{ scale: 1.005 }}
                         whileTap={{ scale: 0.995 }}
                         onClick={() => handleSelectOption(currentQuestion.id, opt.value)}
-                        className={`w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                        className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-medium transition-all duration-150 flex items-center justify-between cursor-pointer ${
                           isSelected
-                            ? 'bg-blue-50 border-blue-600 text-blue-900 font-semibold shadow-xs'
+                            ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-semibold shadow-xs ring-2 ring-indigo-500/20'
                             : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                         }`}
                       >
                         <span>{opt.label}</span>
                         <div
-                          className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 ${
                             isSelected
-                              ? 'border-blue-600 bg-blue-600 text-white'
+                              ? 'border-indigo-600 bg-indigo-600 text-white'
                               : 'border-slate-300 bg-white'
                           }`}
                         >
@@ -338,7 +338,7 @@ export const Assessment = () => {
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
               <Button
                 variant="secondary"
-                size="md"
+                size="default"
                 onClick={handlePrevious}
                 disabled={currentStep === 0}
                 leftIcon={<ArrowLeft className="w-4 h-4" />}
@@ -348,7 +348,7 @@ export const Assessment = () => {
 
               <Button
                 variant="primary"
-                size="md"
+                size="default"
                 onClick={handleNext}
                 disabled={!answers[currentQuestion?.id]}
                 isLoading={submitting}

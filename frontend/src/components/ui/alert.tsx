@@ -4,16 +4,16 @@ import { Info, AlertTriangle, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const alertVariants = cva(
-  'relative w-full rounded-xl border p-4 text-sm [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-slate-950',
+  'relative w-full rounded-2xl border p-4 text-sm [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-slate-950',
   {
     variants: {
       variant: {
-        default: 'bg-white text-slate-950 border-slate-200',
-        info: 'bg-blue-50/70 border-blue-200/80 text-blue-900 [&>svg]:text-blue-600',
-        warning: 'bg-amber-50/70 border-amber-200/80 text-amber-900 [&>svg]:text-amber-600',
-        destructive: 'bg-rose-50/70 border-rose-200/80 text-rose-900 [&>svg]:text-rose-600',
-        error: 'bg-rose-50/70 border-rose-200/80 text-rose-900 [&>svg]:text-rose-600',
-        success: 'bg-emerald-50/70 border-emerald-200/80 text-emerald-900 [&>svg]:text-emerald-600',
+        default: 'bg-white text-[#172033] border-slate-200',
+        info: 'bg-indigo-50/70 border-indigo-200/80 text-indigo-950 [&>svg]:text-indigo-600',
+        warning: 'bg-amber-50/70 border-amber-200/80 text-amber-950 [&>svg]:text-amber-600',
+        destructive: 'bg-rose-50/70 border-rose-200/80 text-rose-950 [&>svg]:text-rose-600',
+        error: 'bg-rose-50/70 border-rose-200/80 text-rose-950 [&>svg]:text-rose-600',
+        success: 'bg-emerald-50/70 border-emerald-200/80 text-emerald-950 [&>svg]:text-emerald-600',
       },
     },
     defaultVariants: {

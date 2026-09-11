@@ -10,6 +10,7 @@ import Community from './pages/Community';
 import SolutionHub from './pages/SolutionHub';
 import CounselorMarketplace from './pages/CounselorMarketplace';
 import InstitutionDashboard from './pages/InstitutionDashboard';
+import Games from './pages/Games';
 import Login from './pages/Login';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/assessment" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
+          <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
           <Route path="/resources" element={<ProtectedRoute><ResourceHub /></ProtectedRoute>} />
           <Route path="/ai-assistant" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
           <Route path="/ai" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />

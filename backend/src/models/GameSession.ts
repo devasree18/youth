@@ -1,6 +1,12 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export type GameType = 'BREATHING_FLOW' | 'FOCUS_TAP' | 'MOOD_MATCH';
+export type GameType =
+  | 'FOCUS_ORBIT'
+  | 'CALM_GARDEN'
+  | 'PATH_OF_BALANCE'
+  | 'BREATHING_FLOW'
+  | 'FOCUS_TAP'
+  | 'MOOD_MATCH';
 export type GameStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
 
 export interface GameReflection {
@@ -19,6 +25,7 @@ export interface IGameSession extends Document {
   status: GameStatus;
   resultSummary?: string;
   accuracy?: number;
+  metrics?: Record<string, any>;
   preCheckin?: string;
   postCheckin?: string;
   reflection?: GameReflection;
@@ -34,7 +41,14 @@ const gameSessionSchema = new Schema<IGameSession>(
     tenantId: { type: Schema.Types.ObjectId, ref: 'Tenant', index: true },
     gameType: {
       type: String,
-      enum: ['BREATHING_FLOW', 'FOCUS_TAP', 'MOOD_MATCH'],
+      enum: [
+        'FOCUS_ORBIT',
+        'CALM_GARDEN',
+        'PATH_OF_BALANCE',
+        'BREATHING_FLOW',
+        'FOCUS_TAP',
+        'MOOD_MATCH',
+      ],
       required: true,
       index: true,
     },
@@ -49,6 +63,7 @@ const gameSessionSchema = new Schema<IGameSession>(
     },
     resultSummary: { type: String, trim: true, maxlength: 1000 },
     accuracy: { type: Number, min: 0, max: 100 },
+    metrics: { type: Schema.Types.Mixed },
     preCheckin: { type: String, trim: true, maxlength: 100 },
     postCheckin: { type: String, trim: true, maxlength: 100 },
     reflection: {

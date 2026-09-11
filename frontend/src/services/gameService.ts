@@ -1,7 +1,13 @@
 import { apiClient } from '../api/apiClient';
 import type { ApiResponse } from '../api/apiClient';
 
-export type GameType = 'BREATHING_FLOW' | 'FOCUS_TAP' | 'MOOD_MATCH';
+export type GameType =
+  | 'FOCUS_ORBIT'
+  | 'CALM_GARDEN'
+  | 'PATH_OF_BALANCE'
+  | 'BREATHING_FLOW'
+  | 'FOCUS_TAP'
+  | 'MOOD_MATCH';
 export type GameStatus = 'IN_PROGRESS' | 'COMPLETED' | 'ABANDONED';
 
 export interface GameReflection {
@@ -20,6 +26,7 @@ export interface GameSession {
   status: GameStatus;
   resultSummary?: string;
   accuracy?: number;
+  metrics?: Record<string, any>;
   preCheckin?: string;
   postCheckin?: string;
   reflection?: GameReflection;
@@ -84,9 +91,10 @@ export const gameService = {
   async startSession(
     gameType: GameType,
     preCheckin?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
+    metrics?: Record<string, any>
   ): Promise<ApiResponse<GameSession>> {
-    return apiClient.post('/games/sessions', { gameType, preCheckin, metadata });
+    return apiClient.post('/games/sessions', { gameType, preCheckin, metadata, metrics });
   },
 
   async completeSession(
@@ -96,6 +104,7 @@ export const gameService = {
       durationSeconds?: number;
       resultSummary?: string;
       accuracy?: number;
+      metrics?: Record<string, any>;
       postCheckin?: string;
       reflection?: {
         question?: string;

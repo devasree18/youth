@@ -38,8 +38,54 @@ export class SignalEngineService {
   /**
    * Generates a non-diagnostic, supportive insight for a completed game session.
    */
-  public static generateSessionInsight(session: Partial<IGameSession>): string {
-    const { gameType, preCheckin, postCheckin } = session;
+  public static async generateSessionInsight(session: Partial<IGameSession>): Promise<string> {
+    const { gameType, preCheckin, postCheckin, userId } = session;
+
+    if (gameType === 'FOCUS_ORBIT') {
+      if (userId && mongoose.connection.readyState === 1) {
+        try {
+          const prevSessions = await GameSession.find({
+            userId,
+            gameType: 'FOCUS_ORBIT',
+            status: 'COMPLETED',
+            _id: { $ne: session._id },
+          }).sort({ createdAt: -1 }).limit(1);
+
+          if (prevSessions.length > 0) {
+            const prevAcc = prevSessions[0].accuracy || 0;
+            const curAcc = session.accuracy || 0;
+            if (curAcc >= prevAcc && curAcc > 0) {
+              return 'Focus reset complete. Your focus was more consistent than in your last session.';
+            }
+          }
+        } catch {
+          // ignore lookup errors
+        }
+      }
+      return 'Focus reset complete. You spent a few minutes practising present-moment attention.';
+    }
+
+    if (gameType === 'CALM_GARDEN') {
+      if (userId && mongoose.connection.readyState === 1) {
+        try {
+          const calmCount = await GameSession.countDocuments({
+            userId,
+            gameType: { $in: ['CALM_GARDEN', 'BREATHING_FLOW'] },
+            status: 'COMPLETED',
+          });
+          if (calmCount >= 2) {
+            return 'Your garden is growing. You often choose calming activities. Keep taking small moments for yourself.';
+          }
+        } catch {
+          // ignore lookup errors
+        }
+      }
+      return 'Your garden is growing. Taking a quiet pause can be a helpful part of a busy day.';
+    }
+
+    if (gameType === 'PATH_OF_BALANCE') {
+      return 'You completed a small reset journey. Different moments call for different kinds of support. Explore what helps you feel more balanced.';
+    }
 
     if (gameType === 'BREATHING_FLOW') {
       if (postCheckin === 'overwhelmed' || postCheckin === 'still_overwhelmed') {
@@ -90,9 +136,20 @@ export class SignalEngineService {
 
       // Coping preference
       if (session.status === 'COMPLETED') {
+        let pref = 'mindful_reset';
+        if (session.gameType === 'FOCUS_ORBIT' || session.gameType === 'FOCUS_TAP') {
+          pref = 'grounding';
+        } else if (session.gameType === 'CALM_GARDEN' || session.gameType === 'BREATHING_FLOW') {
+          pref = 'calm_relaxation';
+        } else if (session.gameType === 'PATH_OF_BALANCE') {
+          pref = 'mindful_pacing';
+        } else if (session.gameType === 'MOOD_MATCH') {
+          pref = 'emotional_labeling';
+        }
+
         signalsToCreate.push({
           signalType: 'COPING_PREFERENCE',
-          value: session.gameType === 'BREATHING_FLOW' ? 'breathwork' : session.gameType === 'FOCUS_TAP' ? 'grounding' : 'emotional_labeling',
+          value: pref,
           confidence: 0.7,
           userReported: false,
         });

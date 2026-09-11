@@ -9,9 +9,17 @@ import { SignalEngineService } from '../services/SignalEngineService';
 const router = express.Router();
 
 const createSessionSchema = z.object({
-  gameType: z.enum(['BREATHING_FLOW', 'FOCUS_TAP', 'MOOD_MATCH']),
+  gameType: z.enum([
+    'FOCUS_ORBIT',
+    'CALM_GARDEN',
+    'PATH_OF_BALANCE',
+    'BREATHING_FLOW',
+    'FOCUS_TAP',
+    'MOOD_MATCH',
+  ]),
   preCheckin: z.string().max(100).optional(),
   metadata: z.record(z.string(), z.any()).optional(),
+  metrics: z.record(z.string(), z.any()).optional(),
 });
 
 const updateSessionSchema = z.object({
@@ -19,6 +27,7 @@ const updateSessionSchema = z.object({
   durationSeconds: z.number().min(0).max(7200).optional(),
   resultSummary: z.string().max(1000).optional(),
   accuracy: z.number().min(0).max(100).optional(),
+  metrics: z.record(z.string(), z.any()).optional(),
   postCheckin: z.string().max(100).optional(),
   reflection: z
     .object({
@@ -44,7 +53,7 @@ router.post('/sessions', authenticateToken, async (req: AuthRequest, res, next) 
       );
     }
 
-    const { gameType, preCheckin, metadata } = parseResult.data;
+    const { gameType, preCheckin, metadata, metrics } = parseResult.data;
 
     const session = new GameSession({
       userId: req.user?.userId,
@@ -53,6 +62,7 @@ router.post('/sessions', authenticateToken, async (req: AuthRequest, res, next) 
       preCheckin,
       startedAt: new Date(),
       status: 'IN_PROGRESS',
+      metrics: metrics || {},
       metadata: metadata || {},
     });
 
@@ -96,8 +106,16 @@ router.patch('/sessions/:id', authenticateToken, async (req: AuthRequest, res, n
       return sendError(res, 404, 'NOT_FOUND', 'Game session not found or unauthorized');
     }
 
-    const { status, durationSeconds, resultSummary, accuracy, postCheckin, reflection, metadata } =
-      parseResult.data;
+    const {
+      status,
+      durationSeconds,
+      resultSummary,
+      accuracy,
+      metrics,
+      postCheckin,
+      reflection,
+      metadata,
+    } = parseResult.data;
 
     // Safety check on optional reflection text
     let crisisTriggered = false;
@@ -123,6 +141,9 @@ router.patch('/sessions/:id', authenticateToken, async (req: AuthRequest, res, n
     if (accuracy !== undefined) {
       session.accuracy = accuracy;
     }
+    if (metrics !== undefined) {
+      session.metrics = { ...(session.metrics || {}), ...metrics };
+    }
     if (postCheckin !== undefined) {
       session.postCheckin = postCheckin;
     }
@@ -138,7 +159,7 @@ router.patch('/sessions/:id', authenticateToken, async (req: AuthRequest, res, n
     }
 
     // Generate non-diagnostic supportive insight
-    session.insight = SignalEngineService.generateSessionInsight(session);
+    session.insight = await SignalEngineService.generateSessionInsight(session);
 
     await session.save();
 
@@ -167,8 +188,17 @@ router.get('/sessions', authenticateToken, async (req: AuthRequest, res, next) =
     const limit = Math.min(parseInt((req.query.limit as string) || '20', 10), 50);
     const gameType = req.query.gameType as GameType | undefined;
 
+    const validGameTypes: GameType[] = [
+      'FOCUS_ORBIT',
+      'CALM_GARDEN',
+      'PATH_OF_BALANCE',
+      'BREATHING_FLOW',
+      'FOCUS_TAP',
+      'MOOD_MATCH',
+    ];
+
     const query: any = { userId: req.user?.userId };
-    if (gameType && ['BREATHING_FLOW', 'FOCUS_TAP', 'MOOD_MATCH'].includes(gameType)) {
+    if (gameType && validGameTypes.includes(gameType)) {
       query.gameType = gameType;
     }
 

@@ -95,7 +95,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const studentNavItems = [
     { label: 'Home', path: '/dashboard', icon: Home },
     { label: 'Check-in', path: '/assessment', icon: Sparkles },
-    { label: 'Reset', path: '/games', icon: Gamepad2 },
+    { label: 'Reset Games', path: '/games', icon: Gamepad2 },
     { label: 'Journal', path: '/solutions', icon: BookMarked },
     { label: 'Support', path: '/ai-assistant', icon: MessageSquare },
     { label: 'Resources', path: '/resources', icon: BookOpen },

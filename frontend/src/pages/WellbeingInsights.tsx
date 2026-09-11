@@ -78,7 +78,7 @@ export const WellbeingInsights: React.FC = () => {
           initial="initial"
           animate="animate"
           variants={fadeUpVariants}
-          className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-indigo-50/90 via-white to-teal-50/60 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+          className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-emerald-50/90 via-white to-slate-50/60 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
         >
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center space-x-2">
@@ -90,7 +90,7 @@ export const WellbeingInsights: React.FC = () => {
                 Confidential to you
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-[#172033] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight">
               Your wellbeing, at a glance
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
@@ -101,14 +101,14 @@ export const WellbeingInsights: React.FC = () => {
             </p>
           </div>
 
-          <div className="w-14 h-14 rounded-2xl bg-white border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-xs">
+          <div className="w-14 h-14 rounded-2xl bg-white border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 shadow-xs">
             <Sparkles className="w-7 h-7" />
           </div>
         </motion.div>
 
         {loading ? (
           <div className="p-12 text-center text-slate-400 text-sm">
-            <Sparkles className="w-6 h-6 animate-spin mx-auto mb-2 text-indigo-500" />
+            <Sparkles className="w-6 h-6 animate-spin mx-auto mb-2 text-emerald-500" />
             Loading your private wellbeing patterns...
           </div>
         ) : error ? (
@@ -142,7 +142,7 @@ export const WellbeingInsights: React.FC = () => {
                           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                             1. Today's Check-in
                           </span>
-                          <h4 className="text-sm font-bold text-[#172033]">
+                          <h4 className="text-sm font-bold text-[#111827]">
                             {insights.todayCheckIn.checkedInToday
                               ? 'Check-in Recorded'
                               : 'Check-in Needed'}
@@ -170,7 +170,7 @@ export const WellbeingInsights: React.FC = () => {
                       Self-reported daily weather
                     </span>
                     <Link to={insights.todayCheckIn.recommendedAction.route}>
-                      <Button size="sm" className="text-xs font-bold shadow-xs">
+                      <Button variant="primary" size="sm" className="text-xs font-bold shadow-xs">
                         <span>{insights.todayCheckIn.recommendedAction.label}</span>
                         <ArrowRight className="w-3.5 h-3.5 ml-1" />
                       </Button>
@@ -195,7 +195,7 @@ export const WellbeingInsights: React.FC = () => {
                           className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
                             insights.suggestedStep.isCrisisSupport
                               ? 'bg-rose-100 text-rose-700 border border-rose-200'
-                              : 'bg-indigo-50 border border-indigo-100 text-indigo-600'
+                              : 'bg-emerald-50 border border-emerald-100 text-emerald-700'
                           }`}
                         >
                           {insights.suggestedStep.isCrisisSupport ? (
@@ -208,7 +208,7 @@ export const WellbeingInsights: React.FC = () => {
                           <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                             4. Suggested Next Step
                           </span>
-                          <h4 className="text-sm font-bold text-[#172033]">
+                          <h4 className="text-sm font-bold text-[#111827]">
                             {insights.suggestedStep.isCrisisSupport
                               ? 'Immediate Support'
                               : 'What May Help Today'}
@@ -237,12 +237,9 @@ export const WellbeingInsights: React.FC = () => {
                     </span>
                     <Link to={insights.suggestedStep.actionRoute}>
                       <Button
+                        variant={insights.suggestedStep.isCrisisSupport ? 'destructive' : 'primary'}
                         size="sm"
-                        className={`text-xs font-bold shadow-xs ${
-                          insights.suggestedStep.isCrisisSupport
-                            ? 'bg-rose-600 hover:bg-rose-700 text-white'
-                            : ''
-                        }`}
+                        className="text-xs font-bold shadow-xs"
                       >
                         <span>{insights.suggestedStep.actionLabel}</span>
                         <ArrowRight className="w-3.5 h-3.5 ml-1" />
@@ -265,7 +262,7 @@ export const WellbeingInsights: React.FC = () => {
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                         2. Focus and Reset Activity
                       </span>
-                      <h3 className="text-base font-bold text-[#172033]">
+                      <h3 className="text-base font-bold text-[#111827]">
                         {insights.focusReset.title}
                       </h3>
                     </div>
@@ -285,7 +282,7 @@ export const WellbeingInsights: React.FC = () => {
                 {/* Soft Metrics Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                    <span className="text-lg font-extrabold text-[#172033] block">
+                    <span className="text-lg font-extrabold text-[#111827] block">
                       {insights.focusReset.weeklyResetCount}
                     </span>
                     <span className="text-[10px] font-semibold text-slate-500">
@@ -294,7 +291,7 @@ export const WellbeingInsights: React.FC = () => {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                    <span className="text-lg font-extrabold text-[#172033] block">
+                    <span className="text-lg font-extrabold text-[#111827] block">
                       {insights.focusReset.totalMinutes}m
                     </span>
                     <span className="text-[10px] font-semibold text-slate-500">
@@ -303,7 +300,7 @@ export const WellbeingInsights: React.FC = () => {
                   </div>
 
                   <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-center">
-                    <span className="text-xs font-bold text-indigo-700 block truncate">
+                    <span className="text-xs font-bold text-emerald-800 block truncate">
                       {insights.focusReset.favoriteGame.replace('_', ' ')}
                     </span>
                     <span className="text-[10px] font-semibold text-slate-500">
@@ -336,7 +333,7 @@ export const WellbeingInsights: React.FC = () => {
                             className="p-3 rounded-2xl bg-slate-50/70 border border-slate-100 flex items-center justify-between text-xs"
                           >
                             <div className="flex items-center space-x-2.5 overflow-hidden">
-                              <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-indigo-600 shrink-0">
+                              <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-emerald-700 shrink-0">
                                 <Icon className="w-3.5 h-3.5" />
                               </div>
                               <span className="font-bold text-slate-800 capitalize truncate">
@@ -367,7 +364,7 @@ export const WellbeingInsights: React.FC = () => {
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
                         3. Emotional Wellbeing Trend
                       </span>
-                      <h3 className="text-base font-bold text-[#172033]">
+                      <h3 className="text-base font-bold text-[#111827]">
                         {insights.emotionalTrend.title}
                       </h3>
                     </div>
@@ -392,11 +389,11 @@ export const WellbeingInsights: React.FC = () => {
             </motion.div>
 
             {/* Privacy Protection Notice */}
-            <div className="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-100/70 flex items-start space-x-3 text-xs text-indigo-950">
-              <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100/70 flex items-start space-x-3 text-xs text-emerald-950">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <p className="font-bold text-indigo-900">Privacy & Data Protection Principles</p>
-                <p className="text-[11px] text-indigo-800 leading-relaxed font-normal">
+                <p className="font-bold text-emerald-900">Privacy & Data Protection Principles</p>
+                <p className="text-[11px] text-emerald-800 leading-relaxed font-normal">
                   YOUTH calculates personal insights securely on the server without clinical labeling or scoring. Your private gameplay and reflections are never shared with campus administrators, advertisers, or peers.
                 </p>
               </div>

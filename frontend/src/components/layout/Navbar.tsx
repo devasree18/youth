@@ -74,13 +74,13 @@ export const Navbar = () => {
         {/* Left: YOUTH logo */}
         <Link
           to={user ? '/dashboard' : '/'}
-          className="flex items-center space-x-2.5 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 rounded-xl"
+          className="flex items-center space-x-2.5 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 rounded-xl"
           aria-label="YOUTH Home"
         >
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-xs">
+          <div className="w-8 h-8 rounded-xl bg-[#111827] text-white flex items-center justify-center font-bold text-base shadow-xs">
             Y
           </div>
-          <span className="text-base font-bold tracking-tight text-[#172033]">YOUTH</span>
+          <span className="text-base font-bold tracking-tight text-[#111827]">YOUTH</span>
         </Link>
 
         {/* Center: Desktop Navigation Links */}
@@ -91,7 +91,7 @@ export const Navbar = () => {
               <a
                 key={link.label}
                 href={link.path}
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#172033] hover:bg-slate-50 transition-colors duration-150"
+                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#111827] hover:bg-slate-50 transition-colors duration-150"
               >
                 {link.label}
               </a>
@@ -101,8 +101,8 @@ export const Navbar = () => {
                 to={link.path}
                 className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors duration-150 ${
                   isActive
-                    ? 'bg-indigo-50 text-indigo-700 font-bold'
-                    : 'text-slate-600 hover:text-[#172033] hover:bg-slate-50'
+                    ? 'bg-emerald-50 text-emerald-800 font-bold'
+                    : 'text-slate-600 hover:text-[#111827] hover:bg-slate-50'
                 }`}
               >
                 {link.label}
@@ -117,9 +117,9 @@ export const Navbar = () => {
             <div className="flex items-center space-x-2.5">
               <Link
                 to="/dashboard"
-                className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-indigo-50/80 hover:bg-indigo-100/80 text-indigo-700 transition-colors text-xs font-bold"
+                className="flex items-center space-x-2 px-3 py-2 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-800 transition-colors text-xs font-bold"
               >
-                <LayoutDashboard className="w-3.5 h-3.5 text-indigo-600" />
+                <LayoutDashboard className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Dashboard</span>
               </Link>
 
@@ -136,7 +136,7 @@ export const Navbar = () => {
             <div className="flex items-center space-x-2">
               <Link
                 to="/login"
-                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#172033] hover:bg-slate-50 transition-colors"
+                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#111827] hover:bg-slate-50 transition-colors"
               >
                 Sign in
               </Link>
@@ -161,7 +161,7 @@ export const Navbar = () => {
           </Link>
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+            className="p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
             aria-label="Open menu"
             aria-expanded={mobileMenuOpen}
           >
@@ -190,10 +190,10 @@ export const Navbar = () => {
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div className="flex items-center space-x-2.5">
-                <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                <div className="w-7 h-7 rounded-lg bg-[#111827] text-white flex items-center justify-center font-bold text-sm">
                   Y
                 </div>
-                <span className="font-bold text-[#172033] text-sm">YOUTH</span>
+                <span className="font-bold text-[#111827] text-sm">YOUTH</span>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
@@ -224,11 +224,11 @@ export const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition-colors ${
                       isActive
-                        ? 'bg-indigo-50 text-indigo-700 font-bold'
+                        ? 'bg-emerald-50 text-emerald-800 font-bold'
                         : 'text-slate-700 hover:bg-slate-50'
                     }`}
                   >
-                    {link.icon && <link.icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />}
+                    {link.icon && <link.icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />}
                     <span>{link.label}</span>
                   </Link>
                 );
@@ -253,7 +253,7 @@ export const Navbar = () => {
                   <Link
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors min-h-[44px]"
+                    className="w-full flex items-center justify-center py-2.5 rounded-xl bg-[#00C853] text-white text-xs font-bold hover:bg-[#00B048] transition-colors min-h-[44px]"
                   >
                     Go to Dashboard
                   </Link>
@@ -273,7 +273,7 @@ export const Navbar = () => {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-full flex items-center justify-center py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors min-h-[44px]"
+                    className="w-full flex items-center justify-center py-2.5 rounded-xl bg-[#00C853] text-white text-xs font-bold hover:bg-[#00B048] transition-colors min-h-[44px]"
                   >
                     Get started
                   </Link>

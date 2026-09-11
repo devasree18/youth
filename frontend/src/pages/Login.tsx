@@ -61,18 +61,18 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between antialiased w-full overflow-x-hidden">
+    <div className="min-h-screen bg-[#FAFAF8] flex flex-col justify-between antialiased w-full overflow-x-hidden">
       {/* Top minimal header with safe top padding on mobile */}
-      <header className="pt-[env(safe-area-inset-top,0px)] px-4 sm:px-8 border-b border-slate-200/80 bg-white flex items-center justify-between min-h-[4rem]">
+      <header className="pt-[env(safe-area-inset-top,0px)] px-4 sm:px-8 border-b border-slate-200/80 bg-white/95 backdrop-blur-md flex items-center justify-between min-h-[4rem]">
         <Link to="/" className="flex items-center space-x-2.5 py-3">
-          <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
+          <div className="w-8 h-8 rounded-xl bg-[#111827] text-white flex items-center justify-center font-bold text-sm shadow-xs">
             Y
           </div>
-          <span className="text-base font-bold tracking-tight text-[#172033]">YOUTH</span>
+          <span className="text-base font-bold tracking-tight text-[#111827]">YOUTH</span>
         </Link>
         <Link
           to="/"
-          className="text-xs font-semibold text-slate-600 hover:text-[#172033] transition-colors py-2 px-3 rounded-lg min-h-[40px] flex items-center"
+          className="text-xs font-semibold text-slate-600 hover:text-[#111827] transition-colors py-2 px-3 rounded-lg min-h-[40px] flex items-center"
         >
           Back to home
         </Link>
@@ -84,10 +84,10 @@ export const Login = () => {
           variants={fadeUpVariants}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-md bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 shadow-xs"
+          className="w-full max-w-md bg-white rounded-2xl border border-slate-200/90 p-5 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
         >
           <div className="text-center mb-6">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#172033] tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#111827] tracking-tight">
               {isLogin ? 'Sign in to YOUTH' : 'Create your YOUTH account'}
             </h1>
             <p className="text-xs text-slate-500 mt-1 font-normal">
@@ -105,7 +105,7 @@ export const Login = () => {
                   setError('');
                 }}
                 className={`py-2.5 rounded-lg transition-all cursor-pointer min-h-[40px] ${
-                  isLogin ? 'bg-white text-[#172033] font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  isLogin ? 'bg-white text-[#111827] font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Sign In
@@ -117,7 +117,7 @@ export const Login = () => {
                   setError('');
                 }}
                 className={`py-2.5 rounded-lg transition-all cursor-pointer min-h-[40px] ${
-                  !isLogin ? 'bg-white text-[#172033] font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                  !isLogin ? 'bg-white text-[#111827] font-bold shadow-xs' : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 Create Account
@@ -172,11 +172,11 @@ export const Login = () => {
                             onClick={() => setRole(item.id as any)}
                             className={`flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-xs transition-all cursor-pointer active:scale-[0.98] min-h-[52px] ${
                               isSelected
-                                ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-bold shadow-xs ring-2 ring-indigo-500/20'
+                                ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold shadow-xs ring-2 ring-emerald-500/20'
                                 : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                             }`}
                           >
-                            <Icon className={`w-4 h-4 mb-1 ${isSelected ? 'text-indigo-600' : 'text-slate-400'}`} />
+                            <Icon className={`w-4 h-4 mb-1 ${isSelected ? 'text-emerald-600' : 'text-slate-400'}`} />
                             <span>{item.label}</span>
                           </button>
                         );

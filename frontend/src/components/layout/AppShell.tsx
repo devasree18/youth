@@ -179,7 +179,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const userFirstName = user?.name ? user.name.split(' ')[0] : 'Student';
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#172033] flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-900 w-full overflow-x-hidden">
+    <div className="min-h-screen bg-[#FAFAF8] text-[#111827] flex flex-col antialiased selection:bg-emerald-100 selection:text-emerald-900 w-full overflow-x-hidden">
       <div className="flex-1 flex w-full max-w-[1440px] mx-auto min-h-screen">
         {/* =========================================================================
             1. AUTHENTICATED DESKTOP SIDEBAR (Slim, Minimal, Collapsible)
@@ -197,11 +197,11 @@ export const AppShell: React.FC<AppShellProps> = ({
               className="flex items-center space-x-2.5 overflow-hidden focus:outline-hidden"
               aria-label="YOUTH Dashboard"
             >
-              <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
+              <div className="w-8 h-8 rounded-xl bg-[#111827] text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs">
                 Y
               </div>
               {!sidebarCollapsed && (
-                <span className="text-base font-bold tracking-tight text-[#172033] truncate">
+                <span className="text-base font-bold tracking-tight text-[#111827] truncate">
                   YOUTH
                 </span>
               )}
@@ -229,11 +229,11 @@ export const AppShell: React.FC<AppShellProps> = ({
                   title={sidebarCollapsed ? item.label : undefined}
                   className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors duration-150 ${
                     isActive
-                      ? 'bg-indigo-50 text-indigo-700 font-bold'
-                      : 'text-slate-600 hover:text-[#172033] hover:bg-slate-50'
+                      ? 'bg-emerald-50 text-emerald-800 font-bold'
+                      : 'text-slate-600 hover:text-[#111827] hover:bg-slate-50'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
                   {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                 </Link>
               );
@@ -244,17 +244,17 @@ export const AppShell: React.FC<AppShellProps> = ({
           <div className="p-3 border-t border-slate-100 bg-white space-y-1">
             <button
               onClick={() => setSettingsModalOpen(true)}
-              className={`w-full flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#172033] hover:bg-slate-50 transition-colors cursor-pointer ${
+              className={`w-full flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#111827] hover:bg-slate-50 transition-colors cursor-pointer ${
                 sidebarCollapsed ? 'justify-center' : ''
               }`}
               title="Profile & Settings"
             >
-              <div className="w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center text-xs font-bold shrink-0">
+              <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xs font-bold shrink-0">
                 {userInitial}
               </div>
               {!sidebarCollapsed && (
                 <div className="text-left leading-tight truncate flex-1">
-                  <p className="text-xs font-bold text-[#172033] truncate">{userFirstName}</p>
+                  <p className="text-xs font-bold text-[#111827] truncate">{userFirstName}</p>
                   <p className="text-[10px] text-slate-400 capitalize truncate">{userRole}</p>
                 </div>
               )}
@@ -264,7 +264,7 @@ export const AppShell: React.FC<AppShellProps> = ({
               <div className="flex items-center justify-between px-2 pt-1">
                 <button
                   onClick={() => setSettingsModalOpen(true)}
-                  className="inline-flex items-center space-x-1.5 text-[11px] font-medium text-slate-500 hover:text-indigo-600 py-1 transition-colors cursor-pointer"
+                  className="inline-flex items-center space-x-1.5 text-[11px] font-medium text-slate-500 hover:text-emerald-600 py-1 transition-colors cursor-pointer"
                 >
                   <Settings className="w-3.5 h-3.5" />
                   <span>Settings</span>
@@ -284,7 +284,7 @@ export const AppShell: React.FC<AppShellProps> = ({
         {/* =========================================================================
             2. MAIN CONTENT AREA & AUTHENTICATED HEADER
             ========================================================================= */}
-        <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
+        <div className="flex-1 flex flex-col min-w-0 bg-[#FAFAF8]">
           {/* Top Header (Safe Area Aware on Android) */}
           <header className="pt-[env(safe-area-inset-top,0px)] px-4 sm:px-8 border-b border-slate-200/80 bg-white/95 backdrop-blur-md flex items-center justify-between sticky top-0 z-30 shrink-0 min-h-[4rem]">
             <div className="flex items-center space-x-3 py-2">
@@ -296,7 +296,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <Menu className="w-5 h-5" />
               </button>
               <div className="min-w-0">
-                <h1 className="text-sm sm:text-base font-bold text-[#172033] tracking-tight leading-tight truncate">
+                <h1 className="text-sm sm:text-base font-bold text-[#111827] tracking-tight leading-tight truncate">
                   {title}
                 </h1>
                 {subtitle && (
@@ -337,26 +337,26 @@ export const AppShell: React.FC<AppShellProps> = ({
                 {notificationsOpen && (
                   <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                      <h4 className="text-xs font-bold text-[#172033]">Notifications</h4>
+                      <h4 className="text-xs font-bold text-[#111827]">Notifications</h4>
                       <button
                         onClick={() => setNotificationsOpen(false)}
-                        className="text-[10px] text-indigo-600 font-semibold hover:underline cursor-pointer"
+                        className="text-[10px] text-emerald-600 font-semibold hover:underline cursor-pointer"
                       >
                         Dismiss
                       </button>
                     </div>
                     <div className="mt-3 space-y-2">
-                      <div className="p-3 rounded-xl bg-indigo-50/50 border border-indigo-100/60 flex items-start space-x-2.5">
-                        <CheckCircle2 className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+                      <div className="p-3 rounded-xl bg-emerald-50/50 border border-emerald-100/60 flex items-start space-x-2.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                         <div>
-                          <p className="text-xs font-bold text-[#172033]">Daily check-in ready</p>
+                          <p className="text-xs font-bold text-[#111827]">Daily check-in ready</p>
                           <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
                             Take a moment to record your emotional balance today.
                           </p>
                           <Link
                             to="/assessment"
                             onClick={() => setNotificationsOpen(false)}
-                            className="inline-block mt-2 text-[11px] font-bold text-indigo-600 hover:underline"
+                            className="inline-block mt-2 text-[11px] font-bold text-emerald-700 hover:underline"
                           >
                             Start check-in →
                           </Link>
@@ -378,7 +378,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                   aria-label="Open profile menu"
                   aria-expanded={profileDropdownOpen}
                 >
-                  <div className="w-7 h-7 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center text-xs font-bold">
+                  <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xs font-bold">
                     {userInitial}
                   </div>
                 </button>
@@ -386,11 +386,11 @@ export const AppShell: React.FC<AppShellProps> = ({
                 {profileDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="px-3 py-2.5 border-b border-slate-100 mb-1">
-                      <p className="text-xs font-bold text-[#172033] truncate">
+                      <p className="text-xs font-bold text-[#111827] truncate">
                         {user?.name || 'Student Account'}
                       </p>
                       <p className="text-[11px] text-slate-500 truncate">{user?.email || 'Confidential Student'}</p>
-                      <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-wider">
+                      <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold uppercase tracking-wider">
                         {userRole}
                       </span>
                     </div>
@@ -462,7 +462,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           <Link
             to="/dashboard"
             className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
-              location.pathname === '/dashboard' ? 'text-indigo-600 font-bold' : 'text-slate-500'
+              location.pathname === '/dashboard' ? 'text-emerald-700 font-bold' : 'text-slate-500'
             }`}
           >
             <Home className="w-5 h-5 mb-0.5 shrink-0" />
@@ -472,7 +472,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           <Link
             to="/assessment"
             className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
-              location.pathname === '/assessment' ? 'text-indigo-600 font-bold' : 'text-slate-500'
+              location.pathname === '/assessment' ? 'text-emerald-700 font-bold' : 'text-slate-500'
             }`}
           >
             <Sparkles className="w-5 h-5 mb-0.5 shrink-0" />
@@ -482,7 +482,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           <Link
             to="/solutions"
             className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
-              location.pathname === '/solutions' ? 'text-indigo-600 font-bold' : 'text-slate-500'
+              location.pathname === '/solutions' ? 'text-emerald-700 font-bold' : 'text-slate-500'
             }`}
           >
             <BookMarked className="w-5 h-5 mb-0.5 shrink-0" />
@@ -492,7 +492,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           <Link
             to="/ai-assistant"
             className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
-              location.pathname === '/ai-assistant' || location.pathname === '/ai' ? 'text-indigo-600 font-bold' : 'text-slate-500'
+              location.pathname === '/ai-assistant' || location.pathname === '/ai' ? 'text-emerald-700 font-bold' : 'text-slate-500'
             }`}
           >
             <MessageSquare className="w-5 h-5 mb-0.5 shrink-0" />
@@ -501,7 +501,7 @@ export const AppShell: React.FC<AppShellProps> = ({
 
           <button
             onClick={() => setMobileDrawerOpen(true)}
-            className="flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold text-slate-500 hover:text-indigo-600 cursor-pointer"
+            className="flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold text-slate-500 hover:text-emerald-600 cursor-pointer"
             aria-label="Profile and secondary pages"
           >
             <User className="w-5 h-5 mb-0.5 shrink-0" />
@@ -529,11 +529,11 @@ export const AppShell: React.FC<AppShellProps> = ({
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
               <div className="flex items-center space-x-2.5">
-                <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                <div className="w-7 h-7 rounded-lg bg-[#111827] text-white flex items-center justify-center font-bold text-xs">
                   Y
                 </div>
                 <div>
-                  <p className="font-bold text-[#172033] text-xs leading-none">{userFirstName}</p>
+                  <p className="font-bold text-[#111827] text-xs leading-none">{userFirstName}</p>
                   <p className="text-[10px] text-slate-400 capitalize mt-0.5">{userRole}</p>
                 </div>
               </div>
@@ -560,10 +560,10 @@ export const AppShell: React.FC<AppShellProps> = ({
                     to={item.path}
                     onClick={() => setMobileDrawerOpen(false)}
                     className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold min-h-[44px] ${
-                      isActive ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                      isActive ? 'bg-emerald-50 text-emerald-800 font-bold' : 'text-slate-700 hover:bg-slate-50'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : 'text-slate-400'}`} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -641,11 +641,11 @@ export const AppShell: React.FC<AppShellProps> = ({
           <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-200/90 max-w-md w-full p-5 sm:p-6 z-10 animate-in fade-in zoom-in-95 duration-150 space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2.5">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center font-bold text-xs">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center font-bold text-xs">
                   {userInitial}
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-[#172033]">{user?.name || 'Account Details'}</h3>
+                  <h3 className="text-sm font-bold text-[#111827]">{user?.name || 'Account Details'}</h3>
                   <p className="text-[11px] text-slate-500">{user?.email || 'Confidential Student'}</p>
                 </div>
               </div>
@@ -677,7 +677,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <Link
                   to="/assessment"
                   onClick={() => setSettingsModalOpen(false)}
-                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors flex items-center justify-between min-h-[44px]"
+                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-colors flex items-center justify-between min-h-[44px]"
                 >
                   <span>Assessments</span>
                   <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
@@ -685,7 +685,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <Link
                   to="/counselors"
                   onClick={() => setSettingsModalOpen(false)}
-                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors flex items-center justify-between min-h-[44px]"
+                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 transition-colors flex items-center justify-between min-h-[44px]"
                 >
                   <span>Appointments</span>
                   <ExternalLink className="w-3.5 h-3.5 text-slate-400" />

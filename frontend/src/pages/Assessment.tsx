@@ -242,7 +242,7 @@ export const Assessment = () => {
                       key={idx}
                       className="flex items-start space-x-2.5 text-xs text-slate-700 bg-white border border-slate-200 p-3.5 rounded-xl shadow-xs"
                     >
-                      <span className="w-2 h-2 rounded-full bg-indigo-600 mt-1 shrink-0" />
+                      <span className="w-2 h-2 rounded-full bg-emerald-600 mt-1 shrink-0" />
                       <span className="leading-relaxed">{rec}</span>
                     </li>
                   ))}
@@ -269,7 +269,7 @@ export const Assessment = () => {
           <Card className="p-6 sm:p-8 space-y-6 rounded-2xl border-slate-200/90 shadow-xs">
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs text-slate-500">
-                <span className="font-bold text-[#172033]">
+                <span className="font-bold text-[#111827]">
                   Question {currentStep + 1} of {totalQuestions}
                 </span>
                 <span className="font-semibold">{Math.round(progress)}% Completed</span>
@@ -277,7 +277,7 @@ export const Assessment = () => {
 
               <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                 <motion.div
-                  className="bg-indigo-600 h-2 rounded-full"
+                  className="bg-emerald-600 h-2 rounded-full"
                   initial={false}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.2, ease: 'easeOut' }}
@@ -295,7 +295,7 @@ export const Assessment = () => {
                 className="space-y-4"
               >
                 <div className="space-y-1">
-                  <h3 className="text-base sm:text-lg font-bold text-[#172033] leading-snug">
+                  <h3 className="text-base sm:text-lg font-bold text-[#111827] leading-snug">
                     {currentQuestion?.text}
                   </h3>
                   <p className="text-xs text-slate-500 font-normal">
@@ -314,7 +314,7 @@ export const Assessment = () => {
                         onClick={() => handleSelectOption(currentQuestion.id, opt.value)}
                         className={`w-full text-left p-4 rounded-xl border text-xs sm:text-sm font-medium transition-all duration-150 flex items-center justify-between cursor-pointer ${
                           isSelected
-                            ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-semibold shadow-xs ring-2 ring-indigo-500/20'
+                            ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-semibold shadow-xs ring-2 ring-emerald-500/20'
                             : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                         }`}
                       >
@@ -322,7 +322,7 @@ export const Assessment = () => {
                         <div
                           className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ml-3 ${
                             isSelected
-                              ? 'border-indigo-600 bg-indigo-600 text-white'
+                              ? 'border-emerald-600 bg-emerald-600 text-white'
                               : 'border-slate-300 bg-white'
                           }`}
                         >

@@ -203,11 +203,11 @@ export const CounselorMarketplace = () => {
                       onClick={() => setSelectedSlot(slot)}
                       className={`p-3.5 rounded-xl text-left border text-xs transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-indigo-50 border-indigo-600 text-indigo-950 font-semibold shadow-xs ring-2 ring-indigo-500/20'
+                          ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-semibold shadow-xs ring-2 ring-emerald-500/20'
                           : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      <div className="font-bold text-[#172033]">{getDayName(slot.dayOfWeek)}</div>
+                      <div className="font-bold text-[#111827]">{getDayName(slot.dayOfWeek)}</div>
                       <div className="text-[11px] text-slate-500 flex items-center mt-1 font-medium">
                         <Clock className="w-3.5 h-3.5 mr-1 text-slate-400" />
                         {slot.startTime} – {slot.endTime}
@@ -220,8 +220,8 @@ export const CounselorMarketplace = () => {
 
             <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs text-slate-500 space-y-1">
               <div className="flex items-center space-x-1.5">
-                <Video className="w-4 h-4 text-indigo-600" />
-                <span className="font-bold text-[#172033]">Private End-to-End Encrypted Telehealth</span>
+                <Video className="w-4 h-4 text-emerald-600" />
+                <span className="font-bold text-[#111827]">Private End-to-End Encrypted Telehealth</span>
               </div>
               <p className="leading-relaxed">Appointments are conducted securely. A confidential video link will be sent prior to the session.</p>
             </div>

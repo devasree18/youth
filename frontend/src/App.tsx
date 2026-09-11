@@ -21,8 +21,8 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-4">
-        <div className="w-8 h-8 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin mb-3"></div>
+      <div className="min-h-screen bg-[#FAFAF8] flex flex-col items-center justify-center p-4">
+        <div className="w-8 h-8 rounded-full border-2 border-emerald-600 border-t-transparent animate-spin mb-3"></div>
         <p className="text-xs font-medium text-slate-500">Restoring session...</p>
       </div>
     );
@@ -40,6 +40,7 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/crisis" element={<Crisis />} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/wellbeing-insights" element={<ProtectedRoute><WellbeingInsights /></ProtectedRoute>} />
             <Route path="/assessment" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
@@ -47,7 +48,6 @@ function App() {
             <Route path="/resources" element={<ProtectedRoute><ResourceHub /></ProtectedRoute>} />
             <Route path="/ai-assistant" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
             <Route path="/ai" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
-            <Route path="/crisis" element={<ProtectedRoute><Crisis /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
             <Route path="/solutions" element={<ProtectedRoute><SolutionHub /></ProtectedRoute>} />
             <Route path="/counselors" element={<ProtectedRoute><CounselorMarketplace /></ProtectedRoute>} />

@@ -1,0 +1,153 @@
+/* ==========================================================================
+   GOOGLE-GRADE ATTRACTIVE HERO & WELLBEING STYLES
+   Modern typography, luminous gradients, glassmorphism & fluid micro-interactions
+   ========================================================================== */
+
+/* Ambient subtle background grid */
+.google-bg-canvas {
+  background-color: #ffffff;
+  background-image: 
+    radial-gradient(rgba(99, 102, 241, 0.07) 1.2px, transparent 1.2px),
+    radial-gradient(rgba(14, 165, 233, 0.05) 1.2px, transparent 1.2px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+/* Luminous animated aura */
+.hero-ambient-glow {
+  background: 
+    radial-gradient(ellipse 60% 40% at 20% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 85% 25%, rgba(20, 184, 166, 0.10) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 50% 60%, rgba(59, 130, 246, 0.08) 0%, transparent 60%);
+}
+
+/* Shimmer animated gradient text */
+.gradient-text-hero {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 30%, #4f46e5 60%, #0d9488 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Attractive Primary Button with Subtle Shimmer */
+.hero-btn-primary {
+  background: linear-gradient(135deg, #1a73e8 0%, #2563eb 50%, #4f46e5 100%);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 14px -2px rgba(26, 115, 232, 0.4), 0 2px 6px -1px rgba(26, 115, 232, 0.2);
+  transition: all 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px -3px rgba(26, 115, 232, 0.5), 0 4px 10px -2px rgba(79, 70, 229, 0.3);
+}
+
+.hero-btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(60deg, transparent 40%, rgba(255, 255, 255, 0.25) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 650ms ease;
+}
+
+.hero-btn-primary:hover::after {
+  transform: translateX(100%);
+}
+
+.hero-btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Frosted Secondary Button */
+.hero-btn-secondary {
+  background: rgba(248, 250, 252, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-btn-secondary:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.hero-btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   ASTRO-STYLE HANGING ANIMATION CARDS & HERO STYLES
+   Curved clothesline, hanging photo cards with clips, modern typography
+   ========================================================================== */
+
+/* Hanging Card Clip (Clothes Peg) */
+.hanging-clip {
+  width: 18px;
+  height: 28px;
+  background: #00c853; /* vibrant emerald green like ASTRO reference */
+  border-radius: 4px;
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hanging-clip::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Hanging Card Container */
+.hanging-polaroid-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px -6px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06);
+  transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top center;
+  cursor: pointer;
+}
+
+.hanging-polaroid-card:hover {
+  transform: translateY(-8px) scale(1.05) !important;
+  box-shadow: 0 24px 48px -10px rgba(0, 0, 0, 0.2), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+  z-index: 30 !important;
+}
+
+/* ASTRO Emerald Green Action Button */
+.astro-btn-green {
+  background-color: #00c853;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 200, 83, 0.35);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.astro-btn-green:hover {
+  background-color: #00b34a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 200, 83, 0.45);
+}
+
+.astro-btn-green:active {
+  transform: scale(0.98);
+}
+
+

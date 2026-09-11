@@ -119,7 +119,7 @@ export const ResourceHub = () => {
               placeholder="Search guides, topics, or stress techniques..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-3.5 py-2.5 min-h-[44px] bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-[#172033] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 focus:bg-white transition-all placeholder:text-slate-400"
+              className="w-full pl-10 pr-3.5 py-2.5 min-h-[44px] bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-[#111827] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:bg-white transition-all placeholder:text-slate-400"
             />
           </div>
 
@@ -130,7 +130,7 @@ export const ResourceHub = () => {
                 onClick={() => setActiveCategory(c)}
                 className={`whitespace-nowrap px-3.5 py-2 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer active:scale-[0.98] ${
                   activeCategory === c
-                    ? 'bg-indigo-600 text-white shadow-xs font-bold'
+                    ? 'bg-[#111827] text-white shadow-xs font-bold'
                     : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
@@ -177,7 +177,7 @@ export const ResourceHub = () => {
                 >
                   <Card
                     hoverable
-                    className="p-5 sm:p-6 h-full flex flex-col justify-between space-y-4 rounded-2xl border-slate-200/90 hover:border-indigo-200 hover:shadow-sm"
+                    className="p-5 sm:p-6 h-full flex flex-col justify-between space-y-4 rounded-2xl border-slate-200/90 hover:border-emerald-200 hover:shadow-sm"
                   >
                     <div>
                       <div className="flex items-center justify-between mb-3">
@@ -190,7 +190,7 @@ export const ResourceHub = () => {
                         </span>
                       </div>
 
-                      <h3 className="text-sm font-bold text-[#172033] leading-snug line-clamp-2">
+                      <h3 className="text-sm font-bold text-[#111827] leading-snug line-clamp-2">
                         {resource.title}
                       </h3>
                       <p className="text-xs text-slate-500 mt-2 leading-relaxed line-clamp-3 font-normal">
@@ -198,7 +198,7 @@ export const ResourceHub = () => {
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-indigo-600 group-hover:text-indigo-800">
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700 group-hover:text-emerald-900">
                       <span>Read full guide</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </div>

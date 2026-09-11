@@ -24,7 +24,7 @@ const MOODS = [
   { label: 'Low', emoji: '😟', value: 'low', color: 'hover:border-amber-300 hover:bg-amber-50/50' },
   { label: 'Okay', emoji: '😐', value: 'okay', color: 'hover:border-slate-300 hover:bg-slate-50' },
   { label: 'Good', emoji: '🙂', value: 'good', color: 'hover:border-teal-300 hover:bg-teal-50/50' },
-  { label: 'Great', emoji: '😄', value: 'great', color: 'hover:border-indigo-300 hover:bg-indigo-50/50' },
+  { label: 'Great', emoji: '😄', value: 'great', color: 'hover:border-emerald-300 hover:bg-emerald-50/50' },
 ];
 
 export const Dashboard = () => {
@@ -111,7 +111,7 @@ export const Dashboard = () => {
       >
         {/* ==================== 1. MAIN WELCOME & GREETING ==================== */}
         <motion.div variants={fadeUpVariants} className="space-y-1 text-left">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#172033] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#111827] tracking-tight">
             Hi, {firstName}.
           </h1>
           <p className="text-sm sm:text-base text-slate-500 font-normal">
@@ -130,7 +130,7 @@ export const Dashboard = () => {
                   onClick={() => handleMoodSelect(mood.value)}
                   className={`flex flex-col items-center justify-center p-2 sm:p-4 rounded-2xl border transition-all duration-150 cursor-pointer text-center active:scale-[0.98] min-h-[64px] sm:min-h-[76px] ${
                     isSelected
-                      ? 'bg-indigo-50/90 border-indigo-500 text-indigo-900 shadow-xs ring-2 ring-indigo-500/20'
+                      ? 'bg-emerald-50/90 border-emerald-500 text-emerald-950 shadow-xs ring-2 ring-emerald-500/20'
                       : `bg-white border-slate-200/80 text-slate-700 ${mood.color}`
                   }`}
                 >
@@ -166,11 +166,11 @@ export const Dashboard = () => {
           </h2>
           <Card className="p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-slate-200/90 hover:border-slate-300">
             <div className="flex items-start space-x-3.5">
-              <div className="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100/80 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100/80 flex items-center justify-center shrink-0 mt-0.5">
                 <ActionIcon className="w-5 h-5" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-[#172033] leading-tight">
+                <h3 className="text-sm font-bold text-[#111827] leading-tight">
                   {todayAction.title}
                 </h3>
                 <p className="text-xs text-slate-500 leading-relaxed max-w-md font-normal">
@@ -180,7 +180,7 @@ export const Dashboard = () => {
             </div>
 
             <Link to={todayAction.link} className="shrink-0 w-full sm:w-auto">
-              <Button size="default" className="w-full sm:w-auto" rightIcon={<ArrowRight className="w-4 h-4" />}>
+              <Button variant="primary" size="default" className="w-full sm:w-auto" rightIcon={<ArrowRight className="w-4 h-4" />}>
                 {todayAction.buttonLabel}
               </Button>
             </Link>
@@ -195,21 +195,21 @@ export const Dashboard = () => {
             </h2>
             <Link
               to="/wellbeing-insights"
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"
+              className="text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition-colors flex items-center gap-1"
             >
               View full insights <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <Link to="/wellbeing-insights" className="block group">
-            <Card className="p-5 bg-gradient-to-br from-indigo-50/60 via-white to-teal-50/40 border-slate-200/90 group-hover:border-indigo-300 transition-all rounded-2xl shadow-xs">
+            <Card className="p-5 bg-gradient-to-br from-emerald-50/50 via-white to-slate-50/40 border-slate-200/90 group-hover:border-emerald-300 transition-all rounded-2xl shadow-xs">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start space-x-3.5">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-2xs">
+                  <div className="w-10 h-10 rounded-xl bg-white border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
                     <Sparkles className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[#172033] group-hover:text-indigo-600 transition-colors">
+                    <h3 className="text-sm font-bold text-[#111827] group-hover:text-emerald-700 transition-colors">
                       Your wellbeing, at a glance
                     </h3>
                     <p className="text-xs text-slate-500 leading-relaxed max-w-md font-normal mt-0.5">
@@ -217,7 +217,7 @@ export const Dashboard = () => {
                     </p>
                   </div>
                 </div>
-                <div className="shrink-0 hidden sm:flex items-center text-xs font-semibold text-indigo-600">
+                <div className="shrink-0 hidden sm:flex items-center text-xs font-semibold text-emerald-700">
                   <span>Explore</span>
                   <ArrowRight className="w-4 h-4 ml-1" />
                 </div>
@@ -236,13 +236,13 @@ export const Dashboard = () => {
             {/* AI Support */}
             <Link
               to="/ai-assistant"
-              className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all duration-150 flex items-start space-x-3.5 group shadow-xs active:scale-[0.99]"
+              className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-emerald-200 hover:bg-emerald-50/20 transition-all duration-150 flex items-start space-x-3.5 group shadow-xs active:scale-[0.99]"
             >
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-indigo-100 transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-100 transition-colors">
                 <MessageSquare className="w-4 h-4" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-xs font-bold text-[#172033] group-hover:text-indigo-600 transition-colors">
+                <h4 className="text-xs font-bold text-[#111827] group-hover:text-emerald-700 transition-colors">
                   Talk with AI Support
                 </h4>
                 <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
@@ -256,11 +256,11 @@ export const Dashboard = () => {
               to="/counselors"
               className="p-4 rounded-2xl bg-white border border-slate-200/80 hover:border-emerald-200 hover:bg-emerald-50/30 transition-all duration-150 flex items-start space-x-3.5 group shadow-xs active:scale-[0.99]"
             >
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-100 transition-colors">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-100 transition-colors">
                 <UserCheck className="w-4 h-4" />
               </div>
               <div className="space-y-0.5">
-                <h4 className="text-xs font-bold text-[#172033] group-hover:text-emerald-700 transition-colors">
+                <h4 className="text-xs font-bold text-[#111827] group-hover:text-emerald-700 transition-colors">
                   Find a counselor
                 </h4>
                 <p className="text-[11px] text-slate-500 leading-relaxed font-normal">
@@ -287,10 +287,10 @@ export const Dashboard = () => {
             </h2>
             <div className="bg-white border border-slate-200/80 rounded-xl p-3.5 flex items-center justify-between text-xs text-slate-600 shadow-xs">
               <div className="flex items-center space-x-2.5">
-                <Calendar className="w-4 h-4 text-indigo-500" />
-                <span>Last check-in logged: <strong className="text-[#172033]">Today</strong></span>
+                <Calendar className="w-4 h-4 text-emerald-600" />
+                <span>Last check-in logged: <strong className="text-[#111827]">Today</strong></span>
               </div>
-              <Link to="/assessment" className="text-indigo-600 hover:text-indigo-800 font-semibold text-xs transition-colors">
+              <Link to="/assessment" className="text-emerald-700 hover:text-emerald-900 font-semibold text-xs transition-colors">
                 View check-in history →
               </Link>
             </div>

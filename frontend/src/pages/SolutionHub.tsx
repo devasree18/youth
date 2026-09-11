@@ -169,11 +169,11 @@ export const SolutionHub = () => {
             onClick={() => setActiveTab('journal')}
             className={`flex-1 py-2.5 rounded-lg transition-all flex items-center justify-center space-x-1.5 min-h-[40px] cursor-pointer ${
               activeTab === 'journal'
-                ? 'bg-white text-indigo-950 font-bold shadow-xs'
+                ? 'bg-white text-[#111827] font-bold shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <BookMarked className="w-4 h-4 text-indigo-600" />
+            <BookMarked className="w-4 h-4 text-emerald-600" />
             <span>Private Journal</span>
           </button>
           <button
@@ -181,11 +181,11 @@ export const SolutionHub = () => {
             onClick={() => setActiveTab('toolkit')}
             className={`flex-1 py-2.5 rounded-lg transition-all flex items-center justify-center space-x-1.5 min-h-[40px] cursor-pointer ${
               activeTab === 'toolkit'
-                ? 'bg-white text-indigo-950 font-bold shadow-xs'
+                ? 'bg-white text-[#111827] font-bold shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Wind className="w-4 h-4 text-teal-600" />
+            <Wind className="w-4 h-4 text-emerald-600" />
             <span>Grounding Toolkit</span>
           </button>
         </div>
@@ -201,9 +201,9 @@ export const SolutionHub = () => {
             className="space-y-5"
           >
             {/* Privacy Badge */}
-            <div className="p-3.5 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex items-center justify-between text-xs text-indigo-950">
+            <div className="p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-2xl flex items-center justify-between text-xs text-emerald-950">
               <div className="flex items-center space-x-2">
-                <Lock className="w-4 h-4 text-indigo-600 shrink-0" />
+                <Lock className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Your reflections are stored privately and confidentially on your device.</span>
               </div>
               <Badge variant="primary" size="sm">Encrypted</Badge>
@@ -260,7 +260,7 @@ export const SolutionHub = () => {
                         key={i}
                         type="button"
                         onClick={() => setNewContent((prev) => (prev ? `${prev}\n\n${prompt}` : prompt))}
-                        className="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 px-3 py-1.5 rounded-full whitespace-nowrap transition-colors cursor-pointer min-h-[32px]"
+                        className="text-[11px] text-slate-600 bg-slate-50 border border-slate-200 hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-200 px-3 py-1.5 rounded-full whitespace-nowrap transition-colors cursor-pointer min-h-[32px]"
                       >
                         {prompt}
                       </button>
@@ -274,7 +274,7 @@ export const SolutionHub = () => {
                     placeholder="Entry Title (optional)"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#172033] placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 min-h-[44px]"
+                    className="w-full px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-[#111827] placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 min-h-[44px]"
                   />
 
                   {/* Mood Tag Selection */}
@@ -290,7 +290,7 @@ export const SolutionHub = () => {
                           onClick={() => setSelectedTag(tag)}
                           className={`px-3 py-1 rounded-full text-xs font-semibold transition-all cursor-pointer min-h-[32px] ${
                             selectedTag === tag
-                              ? 'bg-indigo-600 text-white shadow-2xs'
+                              ? 'bg-[#111827] text-white shadow-2xs'
                               : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                           }`}
                         >
@@ -306,7 +306,7 @@ export const SolutionHub = () => {
                     placeholder="Express your thoughts freely and unhurriedly..."
                     value={newContent}
                     onChange={(e) => setNewContent(e.target.value)}
-                    className="w-full p-3.5 text-xs sm:text-sm text-[#172033] placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-y min-h-[120px]"
+                    className="w-full p-3.5 text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 resize-y min-h-[120px]"
                   />
 
                   <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
@@ -341,7 +341,7 @@ export const SolutionHub = () => {
 
               {journalEntries.length === 0 ? (
                 <div className="p-8 text-center bg-white rounded-2xl border border-slate-200/80 text-xs text-slate-400">
-                  <Sparkles className="w-6 h-6 mx-auto mb-2 text-indigo-400" />
+                  <Sparkles className="w-6 h-6 mx-auto mb-2 text-emerald-400" />
                   No journal entries yet. Tap above to write your first reflection.
                 </div>
               ) : (
@@ -350,8 +350,8 @@ export const SolutionHub = () => {
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
-                          <h4 className="text-sm font-bold text-[#172033]">{entry.title}</h4>
-                          <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-[10px] font-bold">
+                          <h4 className="text-sm font-bold text-[#111827]">{entry.title}</h4>
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold">
                             {entry.moodTag}
                           </span>
                         </div>
@@ -398,11 +398,11 @@ export const SolutionHub = () => {
                   <div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center">
                           <Wind className="w-5 h-5" />
                         </div>
                         <div>
-                          <h3 className="text-sm font-bold text-[#172033]">Box Breathing (4-4-4-4)</h3>
+                          <h3 className="text-sm font-bold text-[#111827]">Box Breathing (4-4-4-4)</h3>
                           <p className="text-[11px] text-slate-500 font-normal">Regulate autonomic nervous system</p>
                         </div>
                       </div>
@@ -414,12 +414,12 @@ export const SolutionHub = () => {
                       <motion.div
                         animate={{ scale: getBreathingScale() }}
                         transition={{ duration: 0.8, ease: 'easeInOut' }}
-                        className="w-36 h-36 rounded-3xl bg-indigo-50/70 border-2 border-indigo-200/80 flex flex-col items-center justify-center text-center p-4 shadow-xs ring-4 ring-indigo-500/10"
+                        className="w-36 h-36 rounded-3xl bg-emerald-50/70 border-2 border-emerald-200/80 flex flex-col items-center justify-center text-center p-4 shadow-xs ring-4 ring-emerald-500/10"
                       >
-                        <span className="text-xs font-bold uppercase tracking-wider text-indigo-600">
+                        <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
                           {breathingPhase}
                         </span>
-                        <span className="text-4xl font-extrabold text-[#172033] mt-1 font-mono">
+                        <span className="text-4xl font-extrabold text-[#111827] mt-1 font-mono">
                           {breathCount}s
                         </span>
                       </motion.div>
@@ -523,11 +523,11 @@ export const SolutionHub = () => {
             <motion.div variants={fadeUpVariants}>
               <Card className="p-6 sm:p-7 space-y-4 rounded-2xl border-slate-200/90 shadow-xs bg-white">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center">
                     <Brain className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-[#172033]">Cognitive Reframing Template</h3>
+                    <h3 className="text-sm font-bold text-[#111827]">Cognitive Reframing Template</h3>
                     <p className="text-xs text-slate-500 font-normal">Transform automatic stressful thoughts into balanced perspectives.</p>
                   </div>
                 </div>

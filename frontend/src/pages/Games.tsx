@@ -55,7 +55,7 @@ const GAMES_LIST: GameItem[] = [
       'Gently tap soft glowing orbs across the screen to practice present-moment awareness and steady attention.',
     estimatedTime: '45 secs',
     icon: Target,
-    accentColor: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    accentColor: 'bg-emerald-50 text-emerald-700 border-emerald-100',
     badge: 'Reaction & Attention',
   },
   {
@@ -77,7 +77,7 @@ const GAMES_LIST: GameItem[] = [
       'Guide your calm traveler along a scenic trail, collect restorative coping items, and explore what brings you balance.',
     estimatedTime: '60–90 secs',
     icon: Compass,
-    accentColor: 'bg-violet-50 text-violet-600 border-violet-100',
+    accentColor: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     badge: 'Mindful Pacing & Choices',
   },
 ];
@@ -270,7 +270,7 @@ export const Games = () => {
               initial="initial"
               animate="animate"
               variants={fadeUpVariants}
-              className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-indigo-50/80 via-white to-teal-50/50 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+              className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-emerald-50/80 via-white to-slate-50/50 border border-slate-200/80 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
             >
               <div className="space-y-2 max-w-xl">
                 <div className="inline-flex items-center space-x-2">
@@ -278,7 +278,7 @@ export const Games = () => {
                     Playable Mindful Resets
                   </Badge>
                 </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-[#172033] tracking-tight">
+                <h2 className="text-xl sm:text-2xl font-extrabold text-[#111827] tracking-tight">
                   Take a calm pause when pressure builds.
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
@@ -286,7 +286,7 @@ export const Games = () => {
                 </p>
               </div>
 
-              <div className="w-12 h-12 rounded-2xl bg-white border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-xs">
+              <div className="w-12 h-12 rounded-2xl bg-white border border-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 shadow-xs">
                 <Sparkles className="w-6 h-6" />
               </div>
             </motion.div>
@@ -300,10 +300,10 @@ export const Games = () => {
                 className="p-4 sm:p-5 rounded-3xl bg-white border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
               >
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700">
                     A self-reflection insight
                   </span>
-                  <h4 className="text-sm font-bold text-[#172033]">
+                  <h4 className="text-sm font-bold text-[#111827]">
                     {recommendations[0].title}
                   </h4>
                   <p className="text-xs text-slate-500 font-normal max-w-xl">
@@ -312,7 +312,7 @@ export const Games = () => {
                 </div>
 
                 <Link to={recommendations[0].actionRoute} className="shrink-0 w-full sm:w-auto">
-                  <Button size="sm" className="w-full sm:w-auto font-bold text-xs shadow-xs">
+                  <Button variant="primary" size="sm" className="w-full sm:w-auto font-bold text-xs shadow-xs">
                     <span>{recommendations[0].actionLabel}</span>
                     <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                   </Button>
@@ -342,7 +342,7 @@ export const Games = () => {
                       <Card
                         hoverable
                         onClick={() => handleSelectGame(game.type)}
-                        className="p-6 h-full flex flex-col justify-between border-slate-200/90 hover:border-indigo-300 transition-all rounded-3xl shadow-xs cursor-pointer group"
+                        className="p-6 h-full flex flex-col justify-between border-slate-200/90 hover:border-emerald-300 transition-all rounded-3xl shadow-xs cursor-pointer group"
                       >
                         <div>
                           <div className="flex items-center justify-between mb-4">
@@ -356,7 +356,7 @@ export const Games = () => {
                             </Badge>
                           </div>
 
-                          <h4 className="text-base font-bold text-[#172033] mb-1.5 group-hover:text-indigo-600 transition-colors">
+                          <h4 className="text-base font-bold text-[#111827] mb-1.5 group-hover:text-emerald-700 transition-colors">
                             {game.title}
                           </h4>
                           <p className="text-xs text-slate-500 leading-relaxed font-normal">
@@ -371,8 +371,9 @@ export const Games = () => {
                           </div>
 
                           <Button
+                            variant="primary"
                             size="sm"
-                            className="font-bold text-xs shadow-xs px-3.5 group-hover:bg-indigo-700"
+                            className="font-bold text-xs shadow-xs px-3.5"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleSelectGame(game.type);
@@ -399,8 +400,8 @@ export const Games = () => {
               >
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                   <div className="flex items-center space-x-2">
-                    <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                    <h4 className="text-xs font-bold text-[#172033]">Your Mindful Activity</h4>
+                    <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                    <h4 className="text-xs font-bold text-[#111827]">Your Mindful Activity</h4>
                   </div>
                   <span className="text-[11px] font-semibold text-slate-400">
                     Non-diagnostic reflection
@@ -408,16 +409,16 @@ export const Games = () => {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2.5">
-                  <div className="p-3 rounded-2xl bg-indigo-50/50 border border-indigo-100 text-center">
-                    <span className="text-base font-extrabold text-indigo-700 block">{summary.totalSessions}</span>
+                  <div className="p-3 rounded-2xl bg-emerald-50/50 border border-emerald-100 text-center">
+                    <span className="text-base font-extrabold text-emerald-800 block">{summary.totalSessions}</span>
                     <span className="text-[10px] font-semibold text-slate-500">Completed Resets</span>
                   </div>
                   <div className="p-3 rounded-2xl bg-teal-50/50 border border-teal-100 text-center">
                     <span className="text-base font-extrabold text-teal-700 block">{summary.totalMinutes}m</span>
                     <span className="text-[10px] font-semibold text-slate-500">Mindful Minutes</span>
                   </div>
-                  <div className="p-3 rounded-2xl bg-violet-50/50 border border-violet-100 text-center">
-                    <span className="text-base font-extrabold text-violet-700 block">{summary.weeklyResetCount}</span>
+                  <div className="p-3 rounded-2xl bg-slate-100 border border-slate-200 text-center">
+                    <span className="text-base font-extrabold text-[#111827] block">{summary.weeklyResetCount}</span>
                     <span className="text-[10px] font-semibold text-slate-500">This Week</span>
                   </div>
                 </div>
@@ -435,7 +436,7 @@ export const Games = () => {
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                   <div className="flex items-center space-x-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <h4 className="text-xs font-bold text-[#172033]">Self-Reflection Patterns</h4>
+                    <h4 className="text-xs font-bold text-[#111827]">Self-Reflection Patterns</h4>
                   </div>
                   <span className="text-[11px] font-semibold text-slate-400">
                     Observed coping choices
@@ -449,7 +450,7 @@ export const Games = () => {
                       className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/70 space-y-1 text-left"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-[#172033]">{p.title}</span>
+                        <span className="text-xs font-bold text-[#111827]">{p.title}</span>
                         <span className="text-[10px] font-semibold text-slate-400">
                           {p.confidenceLabel}
                         </span>
@@ -464,11 +465,11 @@ export const Games = () => {
             )}
 
             {/* Privacy & Consent Safe Notice */}
-            <div className="p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100/70 flex items-start space-x-3 text-xs text-indigo-950">
-              <Info className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-100/70 flex items-start space-x-3 text-xs text-emerald-950">
+              <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <p className="font-bold text-indigo-900">Student Privacy & Consent</p>
-                <p className="text-[11px] text-indigo-800 leading-relaxed font-normal">
+                <p className="font-bold text-emerald-900">Student Privacy & Consent</p>
+                <p className="text-[11px] text-emerald-800 leading-relaxed font-normal">
                   Your mini-game activity is stored privately as non-clinical wellness signals. YOUTH never diagnoses medical conditions or publishes rankings. You can inspect or delete any session below.
                 </p>
               </div>

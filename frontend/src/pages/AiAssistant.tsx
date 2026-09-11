@@ -128,7 +128,7 @@ export const AiAssistant = () => {
                   }`}
                 >
                   {isAi && (
-                    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 border border-indigo-100 shadow-2xs">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 border border-emerald-200 shadow-2xs">
                       <Bot className="w-4 h-4" />
                     </div>
                   )}
@@ -136,8 +136,8 @@ export const AiAssistant = () => {
                   <div
                     className={`max-w-[88%] sm:max-w-[75%] rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm leading-relaxed ${
                       isAi
-                        ? 'bg-slate-50/90 border border-slate-200/80 text-[#172033]'
-                        : 'bg-indigo-600 text-white font-normal'
+                        ? 'bg-slate-50/90 border border-slate-200/80 text-[#111827]'
+                        : 'bg-[#111827] text-white font-normal'
                     }`}
                   >
                     <p className="whitespace-pre-wrap break-words">{msg.text}</p>
@@ -170,7 +170,7 @@ export const AiAssistant = () => {
                   </div>
 
                   {!isAi && (
-                    <div className="w-8 h-8 rounded-xl bg-[#172033] text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold shadow-2xs">
+                    <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold shadow-2xs">
                       <User className="w-4 h-4" />
                     </div>
                   )}
@@ -184,13 +184,13 @@ export const AiAssistant = () => {
                 animate={{ opacity: 1 }}
                 className="flex items-start space-x-2.5 sm:space-x-3"
               >
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 border border-emerald-200">
                   <Bot className="w-4 h-4" />
                 </div>
                 <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 flex items-center space-x-2 text-xs text-slate-500">
-                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
-                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse [animation-delay:0.2s]" />
-                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse [animation-delay:0.4s]" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse [animation-delay:0.2s]" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse [animation-delay:0.4s]" />
                   <span className="text-[11px] font-medium ml-1 text-slate-600">Reflecting...</span>
                 </div>
               </motion.div>
@@ -209,7 +209,7 @@ export const AiAssistant = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleSend(prompt)}
                 disabled={isLoading}
-                className="text-[11px] font-medium bg-white text-slate-700 border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 px-3 py-1.5 rounded-full shrink-0 transition-colors cursor-pointer min-h-[32px]"
+                className="text-[11px] font-medium bg-white text-slate-700 border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40 px-3 py-1.5 rounded-full shrink-0 transition-colors cursor-pointer min-h-[32px]"
               >
                 {prompt}
               </motion.button>
@@ -225,7 +225,7 @@ export const AiAssistant = () => {
                 onKeyDown={handleKeyDown}
                 placeholder="Share what is on your mind..."
                 rows={1}
-                className="flex-1 max-h-28 min-h-[44px] bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs sm:text-sm text-[#172033] placeholder:text-slate-400 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 resize-none transition-all"
+                className="flex-1 max-h-28 min-h-[44px] bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 p-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 resize-none transition-all"
               />
               <Button
                 variant="primary"

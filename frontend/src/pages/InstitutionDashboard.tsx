@@ -80,14 +80,14 @@ export const InstitutionDashboard = () => {
           <Card className="p-6 flex items-center justify-between rounded-2xl border-slate-200/90 shadow-xs">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Enrolled Students</span>
-              <div className="text-3xl font-extrabold text-[#172033] mt-1.5 font-mono">
+              <div className="text-3xl font-extrabold text-[#111827] mt-1.5 font-mono">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats?.activeStudents ?? 0}
               </div>
               <span className="text-[11px] text-emerald-600 font-semibold mt-1 inline-block">
                 Active campus accounts
               </span>
             </div>
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center">
               <Users className="w-6 h-6" />
             </div>
           </Card>
@@ -95,14 +95,14 @@ export const InstitutionDashboard = () => {
           <Card className="p-6 flex items-center justify-between rounded-2xl border-slate-200/90 shadow-xs">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Check-in Participation</span>
-              <div className="text-3xl font-extrabold text-[#172033] mt-1.5 font-mono">
+              <div className="text-3xl font-extrabold text-[#111827] mt-1.5 font-mono">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats?.checkInParticipation ?? 0}
               </div>
-              <span className="text-[11px] text-indigo-600 font-semibold mt-1 inline-block">
+              <span className="text-[11px] text-emerald-700 font-semibold mt-1 inline-block">
                 Assessments logged
               </span>
             </div>
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center">
               <Activity className="w-6 h-6" />
             </div>
           </Card>
@@ -110,14 +110,14 @@ export const InstitutionDashboard = () => {
           <Card className="p-6 flex items-center justify-between rounded-2xl border-slate-200/90 shadow-xs">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Campus Wellbeing Index</span>
-              <div className="text-3xl font-extrabold text-[#172033] mt-1.5 font-mono">
+              <div className="text-3xl font-extrabold text-[#111827] mt-1.5 font-mono">
                 {loading ? <Skeleton className="h-8 w-16" /> : stats?.aggregatedWellbeingIndex ?? 'N/A'}
               </div>
               <span className="text-[11px] text-slate-500 font-medium mt-1 inline-block">
                 Cohort aggregate score
               </span>
             </div>
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-slate-100 text-[#111827] border border-slate-200 flex items-center justify-center">
               <TrendingUp className="w-6 h-6" />
             </div>
           </Card>

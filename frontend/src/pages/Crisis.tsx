@@ -113,11 +113,11 @@ export const Crisis = () => {
         <motion.div variants={fadeUpVariants}>
           <Card className="p-6 bg-white border-slate-200/90 rounded-2xl space-y-4 shadow-xs">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center">
                 <Wind className="w-5 h-5" />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[#172033]">5-4-3-2-1 Sensory Grounding Technique</h4>
+                <h4 className="text-sm font-bold text-[#111827]">5-4-3-2-1 Sensory Grounding Technique</h4>
                 <p className="text-xs text-slate-500 font-normal">A clinically proven exercise to reduce acute anxiety and panic symptoms.</p>
               </div>
             </div>
@@ -131,14 +131,14 @@ export const Crisis = () => {
                 { num: '1', label: 'Thing you can TASTE or affirm' },
               ].map((step, sIdx) => (
                 <div key={sIdx} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-1">
-                  <span className="text-xl font-extrabold text-indigo-600">{step.num}</span>
+                  <span className="text-xl font-extrabold text-emerald-600">{step.num}</span>
                   <p className="text-[11px] text-slate-700 font-medium leading-tight">{step.label}</p>
                 </div>
               ))}
             </div>
 
             <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <Link to="/solutions" className="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+              <Link to="/solutions" className="text-xs font-bold text-emerald-700 hover:text-emerald-900 transition-colors">
                 Explore Interactive Breathing & Grounding Timers →
               </Link>
               <Link to="/counselors" className="w-full sm:w-auto">

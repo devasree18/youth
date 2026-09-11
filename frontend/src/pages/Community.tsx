@@ -96,7 +96,7 @@ export const Community = () => {
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-semibold text-[#172033] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 cursor-pointer"
+              className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-semibold text-[#111827] focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 cursor-pointer"
             >
               {CATEGORIES.filter((c) => c !== 'All').map((c) => (
                 <option key={c} value={c}>
@@ -111,7 +111,7 @@ export const Community = () => {
             onChange={(e) => setNewPost(e.target.value)}
             placeholder="Share a thoughtful reflection, study routine, or message of encouragement..."
             rows={3}
-            className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 focus:bg-white text-xs sm:text-sm text-[#172033] placeholder:text-slate-400 resize-none transition-all outline-none"
+            className="w-full p-3.5 rounded-xl bg-slate-50 border border-slate-200 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 focus:bg-white text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 resize-none transition-all outline-none"
           />
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 border-t border-slate-100">
@@ -143,7 +143,7 @@ export const Community = () => {
               onClick={() => setSelectedFilter(cat)}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold shrink-0 transition-all cursor-pointer active:scale-[0.98] ${
                 selectedFilter === cat
-                  ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                  ? 'bg-[#111827] text-white font-bold shadow-xs'
                   : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
               }`}
             >
@@ -184,11 +184,11 @@ export const Community = () => {
                   <Card className="p-5 sm:p-6 space-y-3 rounded-2xl border-slate-200/90 shadow-xs hover:border-slate-300">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-indigo-50 text-indigo-700 rounded-xl flex items-center justify-center font-bold text-xs border border-indigo-100">
+                        <div className="w-8 h-8 bg-emerald-50 text-emerald-800 rounded-xl flex items-center justify-center font-bold text-xs border border-emerald-200">
                           {post.pseudonym.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-[#172033] block leading-tight">
+                          <span className="text-xs font-bold text-[#111827] block leading-tight">
                             {post.pseudonym}
                           </span>
                           <span className="text-[10px] text-slate-400">
@@ -211,7 +211,7 @@ export const Community = () => {
                       </div>
                     </div>
 
-                    <p className="text-xs sm:text-sm text-[#172033] leading-relaxed whitespace-pre-wrap font-normal">
+                    <p className="text-xs sm:text-sm text-[#111827] leading-relaxed whitespace-pre-wrap font-normal">
                       {post.content}
                     </p>
 

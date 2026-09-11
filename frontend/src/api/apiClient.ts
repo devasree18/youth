@@ -22,6 +22,7 @@ class ApiClient {
       import.meta.env.VITE_API_BASE_URL ||
       import.meta.env.VITE_API_URL ||
       '/api/v1';
+
     // Normalize path to ensure versioning
     if (rawUrl.endsWith('/api')) return `${rawUrl}/v1`;
     return rawUrl;
@@ -31,11 +32,41 @@ class ApiClient {
     const token = localStorage.getItem('token');
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
     };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
     return headers;
+  }
+
+  private sanitizeErrorMessage(status: number, rawMsg?: string): string {
+    if (status === 401) {
+      return 'Your session has expired. Please sign in again.';
+    }
+    if (status === 403) {
+      return 'You do not have permission to access this resource.';
+    }
+    if (status === 404) {
+      return 'We could not find the requested page or data.';
+    }
+    if (status >= 500) {
+      return 'Our servers encountered a temporary issue. Please try again in a moment.';
+    }
+
+    if (!rawMsg) return 'Unable to complete request. Please try again.';
+
+    // Strip raw technical stack traces or database keywords if present
+    if (
+      rawMsg.toLowerCase().includes('mongo') ||
+      rawMsg.toLowerCase().includes('e11000') ||
+      rawMsg.toLowerCase().includes('syntaxerror') ||
+      rawMsg.toLowerCase().includes('casterror')
+    ) {
+      return 'A data validation error occurred. Please verify your inputs.';
+    }
+
+    return rawMsg;
   }
 
   public async request<T = any>(
@@ -45,8 +76,13 @@ class ApiClient {
     const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const url = `${this.baseUrl}${path}`;
 
+    // Request Timeout Controller (15 seconds)
+    const timeoutController = new AbortController();
+    const timeoutId = setTimeout(() => timeoutController.abort(), 15000);
+
     const config: RequestInit = {
       ...options,
+      signal: options.signal || timeoutController.signal,
       headers: {
         ...this.defaultHeaders,
         ...((options.headers as Record<string, string>) || {}),
@@ -56,20 +92,34 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      const data = await response.json();
+      clearTimeout(timeoutId);
+
+      let data: any = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = { success: response.ok, message: response.statusText };
+      }
 
       if (!response.ok || data.success === false) {
-        const errorMsg =
-          data.error?.message || data.message || `HTTP ${response.status} Request Failed`;
-        throw new Error(errorMsg);
+        const rawMsg = data.error?.message || data.message;
+        const cleanMsg = this.sanitizeErrorMessage(response.status, rawMsg);
+        throw new Error(cleanMsg);
       }
 
       return data as ApiResponse<T>;
     } catch (error: any) {
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        console.error(`Network Error [${options.method || 'GET'} ${url}]:`, error);
-        throw new Error('No internet connection. Please check your network and try again.');
+      clearTimeout(timeoutId);
+
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out. Please check your mobile connection and try again.');
       }
+
+      if (error instanceof TypeError && (error.message.includes('fetch') || error.message.includes('network'))) {
+        console.error(`Network Error [${options.method || 'GET'} ${url}]:`, error);
+        throw new Error('No internet connection. Please check your connection and try again.');
+      }
+
       console.error(`API Client Error [${options.method || 'GET'} ${url}]:`, error);
       throw error;
     }
@@ -83,7 +133,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined
+      body: body ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -91,7 +141,7 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PUT',
-      body: body ? JSON.stringify(body) : undefined
+      body: body ? JSON.stringify(body) : undefined,
     });
   }
 
@@ -103,9 +153,10 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: 'PATCH',
-      body: body ? JSON.stringify(body) : undefined
+      body: body ? JSON.stringify(body) : undefined,
     });
   }
 }
 
 export const apiClient = new ApiClient();
+

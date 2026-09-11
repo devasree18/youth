@@ -269,7 +269,8 @@ export const CalmGardenGame: React.FC<ActiveGameProps> = ({
       <div
         ref={containerRef}
         onPointerMove={handleContainerPointerMove}
-        className="relative w-full h-[480px] sm:h-[540px] bg-gradient-to-b from-sky-100 via-teal-50/40 to-emerald-100/60 overflow-hidden select-none p-4 sm:p-6 flex flex-col justify-between"
+        className="relative w-full min-h-[480px] sm:h-[540px] bg-gradient-to-b from-sky-100 via-teal-50/40 to-emerald-100/60 overflow-hidden select-none p-3 sm:p-6 flex flex-col justify-between"
+        style={{ touchAction: 'manipulation' }}
       >
         {/* Soft Sunbeams & Ambient Glow */}
         <div className="absolute top-0 right-10 w-72 h-72 bg-amber-200/20 rounded-full blur-3xl pointer-events-none" />
@@ -277,21 +278,21 @@ export const CalmGardenGame: React.FC<ActiveGameProps> = ({
 
         {/* Top Floating Tools Bar */}
         <div className="relative z-10 flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-1.5 sm:gap-2 bg-white/90 backdrop-blur-md p-1.5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div className="flex items-center gap-1 sm:gap-2 bg-white/95 backdrop-blur-md p-1 sm:p-1.5 rounded-2xl border border-slate-200/80 shadow-xs flex-wrap">
             <button
               type="button"
               onClick={() => {
                 setActiveTool('seed');
                 setToastMessage('Plant mode active: tap any empty plot.');
               }}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all min-h-[40px] cursor-pointer ${
                 activeTool === 'seed'
-                  ? 'bg-emerald-600 text-white shadow-sm'
+                  ? 'bg-emerald-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <Sprout className="w-4 h-4" />
-              <span>1. Plant Seed</span>
+              <Sprout className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+              <span>Plant</span>
             </button>
 
             <button
@@ -300,14 +301,14 @@ export const CalmGardenGame: React.FC<ActiveGameProps> = ({
                 setActiveTool('water');
                 setToastMessage('Water mode active: tap or drag droplet over plots.');
               }}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all min-h-[40px] cursor-pointer ${
                 activeTool === 'water'
-                  ? 'bg-sky-600 text-white shadow-sm'
+                  ? 'bg-sky-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <Droplet className="w-4 h-4" />
-              <span>2. Water Droplet</span>
+              <Droplet className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+              <span>Water</span>
             </button>
 
             <button
@@ -316,14 +317,14 @@ export const CalmGardenGame: React.FC<ActiveGameProps> = ({
                 setActiveTool('tidy');
                 setToastMessage('Tidy mode active: tap fallen leaves to brush them away.');
               }}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all min-h-[40px] cursor-pointer ${
                 activeTool === 'tidy'
-                  ? 'bg-amber-600 text-white shadow-sm'
+                  ? 'bg-amber-600 text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >
-              <Leaf className="w-4 h-4" />
-              <span>3. Tidy Leaves</span>
+              <Leaf className="w-3.5 sm:w-4 h-3.5 sm:h-4 shrink-0" />
+              <span>Tidy</span>
             </button>
           </div>
 
@@ -332,24 +333,24 @@ export const CalmGardenGame: React.FC<ActiveGameProps> = ({
             type="button"
             size="sm"
             onClick={handleFinishGarden}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow-sm flex items-center gap-1.5"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2 rounded-xl shadow-xs flex items-center gap-1.5 min-h-[40px]"
           >
             <CheckCircle2 className="w-4 h-4" />
-            Complete Sanctuary
+            <span>Finish</span>
           </Button>
         </div>
 
         {/* Gentle Toast Guidance */}
         {toastMessage && (
           <div className="relative z-10 text-center my-1">
-            <span className="inline-block bg-white/80 backdrop-blur-sm text-slate-700 text-xs px-3.5 py-1.5 rounded-full border border-slate-200/60 font-medium shadow-2xs">
+            <span className="inline-block bg-white/90 backdrop-blur-sm text-slate-700 text-[11px] sm:text-xs px-3 py-1 rounded-full border border-slate-200/60 font-medium shadow-2xs">
               {toastMessage}
             </span>
           </div>
         )}
 
         {/* 5 Plant Plots Garden Bed */}
-        <div className="relative z-10 grid grid-cols-5 gap-2 sm:gap-4 max-w-2xl mx-auto w-full mb-4">
+        <div className="relative z-10 grid grid-cols-5 gap-1 sm:gap-4 max-w-2xl mx-auto w-full mb-3">
           {plots.map((plot) => (
             <div
               key={plot.id}

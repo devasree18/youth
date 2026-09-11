@@ -104,14 +104,14 @@ export const Footer = () => {
       </div>
 
       {/* Bottom row */}
-      <div className="border-t border-slate-100 bg-[#F8FAFC]">
+      <div className="border-t border-slate-100 bg-[#F8FAFC] pb-[max(1rem,env(safe-area-inset-bottom,0px))]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-medium">
           <p>© YOUTH {currentYear} | Built for everyday wellbeing</p>
           <div className="flex items-center space-x-4">
-            <Link to="/crisis" className="text-rose-700 font-bold hover:underline">
+            <Link to="/crisis" className="text-rose-700 font-bold hover:underline min-h-[36px] flex items-center">
               Urgent Help
             </Link>
-            <Link to="/login" className="hover:text-indigo-600 transition-colors">
+            <Link to="/login" className="hover:text-indigo-600 transition-colors min-h-[36px] flex items-center">
               Sign In
             </Link>
           </div>

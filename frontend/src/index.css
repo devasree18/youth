@@ -30,19 +30,40 @@
     --sab: env(safe-area-inset-bottom, 0px);
     --sal: env(safe-area-inset-left, 0px);
   }
+
   * {
     border-color: #e2e8f0;
+    -webkit-tap-highlight-color: transparent;
   }
+
+  html {
+    overflow-x: hidden;
+    touch-action: manipulation;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     background-color: #f8fafc;
     color: #172033;
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    padding-top: var(--sat);
-    padding-bottom: var(--sab);
-    padding-left: var(--sal);
-    padding-right: var(--sar);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Universal text wrapping rules to prevent mobile clipping */
+  h1, h2, h3, h4, h5, h6, p, span, a, label {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Form touch targets minimum size standard */
+  button, input, select, textarea, a {
+    touch-action: manipulation;
   }
 }
 
@@ -59,12 +80,24 @@
   .saas-input {
     @apply w-full bg-white text-sm text-[#172033] placeholder:text-slate-400 border border-slate-200 rounded-xl px-3.5 py-2.5 min-h-[44px] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed;
   }
+
+  .mobile-touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  .safe-top-padding {
+    padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+  }
+
+  .safe-bottom-padding {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Custom minimal scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useMobileApp } from '../mobile/MobileAppProvider';
 import {
   Home,
   Sparkles,
@@ -41,6 +42,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   actions,
 }) => {
   const { user, logout } = useAuth();
+  const { registerBackHandler } = useMobileApp();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -53,7 +55,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const notifRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdowns on outside click
+  // Close overlays on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
@@ -67,7 +69,7 @@ export const AppShell: React.FC<AppShellProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close drawers/modals on ESC key
+  // Close overlays on ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -81,6 +83,35 @@ export const AppShell: React.FC<AppShellProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Android hardware back-button handler registrations (priority order)
+  useEffect(() => {
+    if (settingsModalOpen) {
+      return registerBackHandler('settingsModal', () => {
+        setSettingsModalOpen(false);
+        return true;
+      }, 40);
+    }
+  }, [settingsModalOpen, registerBackHandler]);
+
+  useEffect(() => {
+    if (mobileDrawerOpen) {
+      return registerBackHandler('mobileDrawer', () => {
+        setMobileDrawerOpen(false);
+        return true;
+      }, 30);
+    }
+  }, [mobileDrawerOpen, registerBackHandler]);
+
+  useEffect(() => {
+    if (notificationsOpen || profileDropdownOpen) {
+      return registerBackHandler('popovers', () => {
+        setNotificationsOpen(false);
+        setProfileDropdownOpen(false);
+        return true;
+      }, 20);
+    }
+  }, [notificationsOpen, profileDropdownOpen, registerBackHandler]);
+
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -91,7 +122,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const isCounselor = userRole === 'counselor';
   const isInstitution = userRole === 'institution' || userRole === 'staff';
 
-  // Section 2: Student Primary Essential Sidebar Links
+  // Section 2: Student Primary Essential Navigation Items
   const studentNavItems = [
     { label: 'Home', path: '/dashboard', icon: Home },
     { label: 'Check-in', path: '/assessment', icon: Sparkles },
@@ -104,7 +135,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   // Section 3: Counselor Navigation
   const counselorNavItems = [
     { label: 'Overview', path: '/dashboard', icon: Home },
-    { label: 'Appointments', path: '/counselors#appointments', icon: Calendar },
+    { label: 'Appointments', path: '/counselors', icon: Calendar },
     { label: 'Directory', path: '/counselors', icon: UserCheck },
     { label: 'Resources', path: '/resources', icon: BookOpen },
   ];
@@ -114,7 +145,7 @@ export const AppShell: React.FC<AppShellProps> = ({
     { label: 'Dashboard', path: '/institution', icon: Building2 },
     { label: 'Counselors', path: '/counselors', icon: UserCheck },
     { label: 'Resources', path: '/resources', icon: BookOpen },
-    { label: 'Reports & Audit', path: '/institution#audit', icon: Lock },
+    { label: 'Reports & Audit', path: '/institution', icon: Lock },
   ];
 
   // Section 3: Platform Admin Navigation
@@ -123,7 +154,6 @@ export const AppShell: React.FC<AppShellProps> = ({
     { label: 'Institutions', path: '/institution', icon: Building2 },
     { label: 'Counselors', path: '/counselors', icon: UserCheck },
     { label: 'Resources', path: '/resources', icon: BookOpen },
-    { label: 'Audit Logs', path: '/institution#audit', icon: Lock },
   ];
 
   const currentNavItems = isStudent
@@ -138,9 +168,10 @@ export const AppShell: React.FC<AppShellProps> = ({
   const studentSecondaryLinks = [
     { label: 'Wellbeing Insights', path: '/wellbeing-insights', icon: Sparkles },
     { label: 'Reset Games', path: '/games', icon: Gamepad2 },
-    { label: 'Assessments History', path: '/assessment', icon: Sparkles },
+    { label: 'Assessments', path: '/assessment', icon: Sparkles },
     { label: 'Counselor Appointments', path: '/counselors', icon: UserCheck },
     { label: 'Peer Community', path: '/community', icon: Users },
+    { label: 'Resource Library', path: '/resources', icon: BookOpen },
     { label: 'Privacy & Safety Protocol', path: '/crisis', icon: ShieldCheck },
   ];
 
@@ -148,7 +179,7 @@ export const AppShell: React.FC<AppShellProps> = ({
   const userFirstName = user?.name ? user.name.split(' ')[0] : 'Student';
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#172033] flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#172033] flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-900 w-full overflow-x-hidden">
       <div className="flex-1 flex w-full max-w-[1440px] mx-auto min-h-screen">
         {/* =========================================================================
             1. AUTHENTICATED DESKTOP SIDEBAR (Slim, Minimal, Collapsible)
@@ -209,7 +240,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             })}
           </nav>
 
-          {/* Desktop Sidebar Bottom: Profile, Settings, Logout (Section 2) */}
+          {/* Desktop Sidebar Bottom: Profile, Settings, Logout */}
           <div className="p-3 border-t border-slate-100 bg-white space-y-1">
             <button
               onClick={() => setSettingsModalOpen(true)}
@@ -254,22 +285,22 @@ export const AppShell: React.FC<AppShellProps> = ({
             2. MAIN CONTENT AREA & AUTHENTICATED HEADER
             ========================================================================= */}
         <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-          {/* Top Header (Slim, Spacious, Role-aware) */}
-          <header className="h-16 px-4 sm:px-8 border-b border-slate-200/80 bg-white/95 backdrop-blur-md flex items-center justify-between sticky top-0 z-30 shrink-0">
-            <div className="flex items-center space-x-3">
+          {/* Top Header (Safe Area Aware on Android) */}
+          <header className="pt-[env(safe-area-inset-top,0px)] px-4 sm:px-8 border-b border-slate-200/80 bg-white/95 backdrop-blur-md flex items-center justify-between sticky top-0 z-30 shrink-0 min-h-[4rem]">
+            <div className="flex items-center space-x-3 py-2">
               <button
                 onClick={() => setMobileDrawerOpen(true)}
-                className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors focus:outline-hidden"
+                className="md:hidden p-2 -ml-1 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors focus:outline-hidden min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
                 aria-label="Open navigation drawer"
               >
                 <Menu className="w-5 h-5" />
               </button>
-              <div>
-                <h1 className="text-sm sm:text-base font-bold text-[#172033] tracking-tight leading-tight">
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-base font-bold text-[#172033] tracking-tight leading-tight truncate">
                   {title}
                 </h1>
                 {subtitle && (
-                  <p className="text-xs text-slate-500 hidden sm:block leading-none mt-0.5">
+                  <p className="text-xs text-slate-500 hidden sm:block leading-none mt-0.5 truncate">
                     {subtitle}
                   </p>
                 )}
@@ -277,14 +308,14 @@ export const AppShell: React.FC<AppShellProps> = ({
             </div>
 
             {/* Header Right Actions */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="flex items-center space-x-1 sm:space-x-3">
               {/* Quiet Urgent Help Link */}
               <Link
                 to="/crisis"
-                className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 px-3 py-1.5 rounded-xl hover:bg-rose-50/70 transition-colors"
+                className="inline-flex items-center space-x-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 px-2.5 py-1.5 rounded-xl hover:bg-rose-50/70 transition-colors min-h-[40px]"
                 title="Urgent Help & Hotlines"
               >
-                <PhoneCall className="w-3.5 h-3.5 text-slate-400 hover:text-rose-500" />
+                <PhoneCall className="w-4 h-4 text-slate-400 hover:text-rose-500 shrink-0" />
                 <span className="hidden xs:inline">Urgent Help</span>
               </Link>
 
@@ -295,7 +326,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     setNotificationsOpen(!notificationsOpen);
                     setProfileDropdownOpen(false);
                   }}
-                  className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors relative cursor-pointer"
+                  className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors relative cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center"
                   title="Notifications"
                   aria-label="View notifications"
                   aria-expanded={notificationsOpen}
@@ -304,7 +335,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 </button>
 
                 {notificationsOpen && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-slate-200/90 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                     <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
                       <h4 className="text-xs font-bold text-[#172033]">Notifications</h4>
                       <button
@@ -320,7 +351,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                         <div>
                           <p className="text-xs font-bold text-[#172033]">Daily check-in ready</p>
                           <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
-                            Take a 60-second moment to record how you are feeling today.
+                            Take a moment to record your emotional balance today.
                           </p>
                           <Link
                             to="/assessment"
@@ -343,7 +374,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     setProfileDropdownOpen(!profileDropdownOpen);
                     setNotificationsOpen(false);
                   }}
-                  className="flex items-center space-x-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="flex items-center space-x-2 p-1 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer min-h-[44px] min-w-[44px] justify-center"
                   aria-label="Open profile menu"
                   aria-expanded={profileDropdownOpen}
                 >
@@ -374,8 +405,8 @@ export const AppShell: React.FC<AppShellProps> = ({
                               onClick={() => setProfileDropdownOpen(false)}
                               className="flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors"
                             >
-                              <sub.icon className="w-3.5 h-3.5 text-slate-400" />
-                              <span>{sub.label}</span>
+                              <sub.icon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="truncate">{sub.label}</span>
                             </Link>
                           ))}
                         </>
@@ -388,7 +419,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                         }}
                         className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors text-left cursor-pointer"
                       >
-                        <Settings className="w-3.5 h-3.5 text-slate-400" />
+                        <Settings className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>Settings & Privacy</span>
                       </button>
                     </div>
@@ -401,7 +432,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                         }}
                         className="w-full flex items-center space-x-2.5 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer"
                       >
-                        <LogOut className="w-3.5 h-3.5" />
+                        <LogOut className="w-3.5 h-3.5 shrink-0" />
                         <span>Sign out</span>
                       </button>
                     </div>
@@ -413,74 +444,74 @@ export const AppShell: React.FC<AppShellProps> = ({
             </div>
           </header>
 
-          {/* Main Content Viewport */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto pb-24 md:pb-10">
+          {/* Main Content Viewport: Protected against bottom nav overflow */}
+          <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-10 min-w-0">
             {children}
           </main>
         </div>
       </div>
 
       {/* =========================================================================
-          3. STUDENT MOBILE BOTTOM NAVIGATION (Section 5: 5 Items, 44px min touch target)
+          3. STUDENT MOBILE BOTTOM NAVIGATION (5 Primary Tabs, min 44px touch targets)
           ========================================================================= */}
       {isStudent && (
         <nav
-          className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-md border-t border-slate-200/90 flex items-center justify-around px-1 z-40"
+          className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/90 flex items-center justify-around px-1 z-40 pb-[env(safe-area-inset-bottom,0px)] h-[calc(3.75rem+env(safe-area-inset-bottom,0px))]"
           aria-label="Mobile bottom navigation"
         >
           <Link
             to="/dashboard"
-            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
+            className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
               location.pathname === '/dashboard' ? 'text-indigo-600 font-bold' : 'text-slate-500'
             }`}
           >
-            <Home className="w-5 h-5 mb-0.5" />
-            <span>Home</span>
+            <Home className="w-5 h-5 mb-0.5 shrink-0" />
+            <span className="truncate">Home</span>
           </Link>
 
           <Link
             to="/assessment"
-            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
+            className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
               location.pathname === '/assessment' ? 'text-indigo-600 font-bold' : 'text-slate-500'
             }`}
           >
-            <Sparkles className="w-5 h-5 mb-0.5" />
-            <span>Check-in</span>
+            <Sparkles className="w-5 h-5 mb-0.5 shrink-0" />
+            <span className="truncate">Check-in</span>
           </Link>
 
           <Link
             to="/solutions"
-            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
+            className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
               location.pathname === '/solutions' ? 'text-indigo-600 font-bold' : 'text-slate-500'
             }`}
           >
-            <BookMarked className="w-5 h-5 mb-0.5" />
-            <span>Journal</span>
+            <BookMarked className="w-5 h-5 mb-0.5 shrink-0" />
+            <span className="truncate">Journal</span>
           </Link>
 
           <Link
             to="/ai-assistant"
-            className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
-              location.pathname === '/ai-assistant' ? 'text-indigo-600 font-bold' : 'text-slate-500'
+            className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold transition-colors ${
+              location.pathname === '/ai-assistant' || location.pathname === '/ai' ? 'text-indigo-600 font-bold' : 'text-slate-500'
             }`}
           >
-            <MessageSquare className="w-5 h-5 mb-0.5" />
-            <span>Support</span>
+            <MessageSquare className="w-5 h-5 mb-0.5 shrink-0" />
+            <span className="truncate">Support</span>
           </Link>
 
           <button
             onClick={() => setMobileDrawerOpen(true)}
-            className="flex flex-col items-center justify-center min-w-[56px] min-h-[44px] py-1 text-[10px] font-semibold text-slate-500 hover:text-indigo-600 cursor-pointer"
+            className="flex flex-col items-center justify-center flex-1 h-full min-h-[44px] py-1 text-[10px] font-semibold text-slate-500 hover:text-indigo-600 cursor-pointer"
             aria-label="Profile and secondary pages"
           >
-            <User className="w-5 h-5 mb-0.5" />
-            <span>Profile</span>
+            <User className="w-5 h-5 mb-0.5 shrink-0" />
+            <span className="truncate">Profile</span>
           </button>
         </nav>
       )}
 
       {/* =========================================================================
-          4. RESPONSIVE MOBILE / PROFILE DRAWER
+          4. RESPONSIVE MOBILE / PROFILE DRAWER (Slide-over with full secondary links)
           ========================================================================= */}
       {mobileDrawerOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex justify-end">
@@ -490,7 +521,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             aria-hidden="true"
           />
           <div
-            className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col z-10 p-5 transition-transform duration-200 ease-out"
+            className="relative w-full max-w-xs bg-white h-full shadow-2xl flex flex-col z-10 p-5 pt-[calc(1.25rem+env(safe-area-inset-top,0px))] pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))] transition-transform duration-200 ease-out"
             role="dialog"
             aria-modal="true"
             aria-label="User navigation drawer"
@@ -508,7 +539,7 @@ export const AppShell: React.FC<AppShellProps> = ({
               </div>
               <button
                 onClick={() => setMobileDrawerOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 min-h-[40px] min-w-[40px] flex items-center justify-center"
                 aria-label="Close drawer"
               >
                 <X className="w-5 h-5" />
@@ -528,7 +559,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                     key={item.label}
                     to={item.path}
                     onClick={() => setMobileDrawerOpen(false)}
-                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold ${
+                    className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold min-h-[44px] ${
                       isActive ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-slate-700 hover:bg-slate-50'
                     }`}
                   >
@@ -542,14 +573,14 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <>
                   <div className="pt-3 mt-3 border-t border-slate-100">
                     <span className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                      More Services
+                      Secondary Services
                     </span>
                     {studentSecondaryLinks.map((sub) => (
                       <Link
                         key={sub.label}
                         to={sub.path}
                         onClick={() => setMobileDrawerOpen(false)}
-                        className="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                        className="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50 min-h-[40px]"
                       >
                         <sub.icon className="w-4 h-4 text-slate-400" />
                         <span>{sub.label}</span>
@@ -563,7 +594,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <Link
                   to="/crisis"
                   onClick={() => setMobileDrawerOpen(false)}
-                  className="flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-700 hover:bg-rose-50"
+                  className="flex items-center space-x-2.5 px-3 py-2.5 rounded-xl text-xs font-bold text-rose-700 hover:bg-rose-50 min-h-[44px]"
                 >
                   <PhoneCall className="w-4 h-4 text-rose-600" />
                   <span>24/7 Urgent Help</span>
@@ -607,7 +638,7 @@ export const AppShell: React.FC<AppShellProps> = ({
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs transition-opacity duration-200"
             onClick={() => setSettingsModalOpen(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-200/90 max-w-md w-full p-6 z-10 animate-in fade-in zoom-in-95 duration-150 space-y-5">
+          <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-200/90 max-w-md w-full p-5 sm:p-6 z-10 animate-in fade-in zoom-in-95 duration-150 space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100 flex items-center justify-center font-bold text-xs">
@@ -620,7 +651,7 @@ export const AppShell: React.FC<AppShellProps> = ({
               </div>
               <button
                 onClick={() => setSettingsModalOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 min-h-[40px] min-w-[40px] flex items-center justify-center"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -646,7 +677,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <Link
                   to="/assessment"
                   onClick={() => setSettingsModalOpen(false)}
-                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors flex items-center justify-between"
+                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors flex items-center justify-between min-h-[44px]"
                 >
                   <span>Assessments</span>
                   <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
@@ -654,7 +685,7 @@ export const AppShell: React.FC<AppShellProps> = ({
                 <Link
                   to="/counselors"
                   onClick={() => setSettingsModalOpen(false)}
-                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors flex items-center justify-between"
+                  className="p-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-colors flex items-center justify-between min-h-[44px]"
                 >
                   <span>Appointments</span>
                   <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
@@ -669,13 +700,13 @@ export const AppShell: React.FC<AppShellProps> = ({
                   setSettingsModalOpen(false);
                   handleLogout();
                 }}
-                className="text-xs font-bold text-rose-600 hover:underline cursor-pointer"
+                className="text-xs font-bold text-rose-600 hover:underline cursor-pointer min-h-[44px] flex items-center"
               >
                 Sign out of account
               </button>
               <button
                 onClick={() => setSettingsModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition-colors cursor-pointer min-h-[44px]"
               >
                 Done
               </button>
@@ -688,5 +719,6 @@ export const AppShell: React.FC<AppShellProps> = ({
 };
 
 export default AppShell;
+
 
 

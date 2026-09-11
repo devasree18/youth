@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useMobileApp } from '../mobile/MobileAppProvider';
 import {
   LogOut,
   Menu,
@@ -15,9 +16,20 @@ import { Button } from '../ui/button';
 
 export const Navbar = () => {
   const { user, logout } = useAuth();
+  const { registerBackHandler } = useMobileApp();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Android hardware back button handler for navbar drawer
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      return registerBackHandler('navbarMenu', () => {
+        setMobileMenuOpen(false);
+        return true;
+      }, 30);
+    }
+  }, [mobileMenuOpen, registerBackHandler]);
 
   // Close mobile menu on ESC key press
   useEffect(() => {

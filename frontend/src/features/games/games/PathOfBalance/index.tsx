@@ -218,7 +218,7 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [screenState, movePlayer]);
 
-  // Click-to-move / Tap-to-move
+  // Click-to-move / Tap-to-move / Touch drag
   const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (screenState !== 'playing' || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -227,6 +227,19 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
 
     const dx = (clickX - playerPos.x) * 0.35;
     const dy = (clickY - playerPos.y) * 0.35;
+    movePlayer(dx, dy);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (screenState !== 'playing' || !containerRef.current) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const touchX = ((touch.clientX - rect.left) / rect.width) * 100;
+    const touchY = ((touch.clientY - rect.top) / rect.height) * 100;
+
+    const dx = (touchX - playerPos.x) * 0.25;
+    const dy = (touchY - playerPos.y) * 0.25;
     movePlayer(dx, dy);
   };
 
@@ -323,7 +336,9 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
       <div
         ref={containerRef}
         onClick={handleMapClick}
-        className="relative w-full h-[460px] sm:h-[540px] bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 overflow-hidden cursor-pointer select-none p-4"
+        onTouchMove={handleTouchMove}
+        className="relative w-full h-[460px] sm:h-[540px] bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 overflow-hidden cursor-pointer select-none p-4 touch-none"
+        style={{ touchAction: 'none' }}
       >
         {/* Winding Scenic Path SVG Background */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40">
@@ -423,8 +438,8 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
         )}
 
         {/* On-screen Directional Touch Controls */}
-        <div className="absolute bottom-4 left-4 z-30 bg-white/80 backdrop-blur-md p-2 rounded-2xl border border-slate-200 shadow-md">
-          <div className="grid grid-cols-3 gap-1 w-28 h-28">
+        <div className="absolute bottom-3 left-3 z-30 bg-white/90 backdrop-blur-md p-1.5 sm:p-2 rounded-2xl border border-slate-200/90 shadow-md">
+          <div className="grid grid-cols-3 gap-1 w-32 h-32 sm:w-36 sm:h-36">
             <div />
             <button
               type="button"
@@ -432,7 +447,7 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
                 e.stopPropagation();
                 movePlayer(0, -6);
               }}
-              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center p-1"
+              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer touch-manipulation"
               title="Move Up"
             >
               <ArrowUp className="w-5 h-5" />
@@ -445,7 +460,7 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
                 e.stopPropagation();
                 movePlayer(-6, 0);
               }}
-              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center p-1"
+              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer touch-manipulation"
               title="Move Left"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -461,7 +476,7 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
                 e.stopPropagation();
                 movePlayer(6, 0);
               }}
-              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center p-1"
+              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer touch-manipulation"
               title="Move Right"
             >
               <ArrowRight className="w-5 h-5" />
@@ -474,7 +489,7 @@ export const PathOfBalanceGame: React.FC<ActiveGameProps> = ({
                 e.stopPropagation();
                 movePlayer(0, 6);
               }}
-              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center p-1"
+              className="bg-indigo-50 active:bg-indigo-200 text-indigo-700 rounded-xl flex items-center justify-center min-h-[40px] min-w-[40px] cursor-pointer touch-manipulation"
               title="Move Down"
             >
               <ArrowDown className="w-5 h-5" />

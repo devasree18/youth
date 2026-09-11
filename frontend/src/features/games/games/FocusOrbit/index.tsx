@@ -304,15 +304,16 @@ export const FocusOrbitGame: React.FC<ActiveGameProps> = ({
       <div
         ref={containerRef}
         onClick={handleBackgroundTap}
-        className="relative w-full h-[460px] sm:h-[540px] bg-slate-900 overflow-hidden cursor-crosshair select-none flex items-center justify-center"
+        className="relative w-full h-[440px] sm:h-[540px] bg-slate-900 overflow-hidden select-none flex items-center justify-center touch-none"
+        style={{ touchAction: 'none' }}
       >
         {/* Ambient Subtle Background Pattern */}
-        <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
+        <div className="absolute inset-0 bg-[radial-gradient(#334155_1px,transparent_1px)] [background-size:24px_24px] opacity-25 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-950/20 to-slate-950/80 pointer-events-none" />
 
         {/* Central Calm Guide Ring */}
-        <div className="absolute w-72 h-72 rounded-full border border-indigo-500/10 pointer-events-none" />
-        <div className="absolute w-96 h-96 rounded-full border border-teal-500/10 pointer-events-none" />
+        <div className="absolute w-60 sm:w-72 h-60 sm:h-72 rounded-full border border-indigo-500/10 pointer-events-none" />
+        <div className="absolute w-80 sm:w-96 h-80 sm:h-96 rounded-full border border-teal-500/10 pointer-events-none" />
 
         {/* Tap Ripple Particle Effects */}
         {tapRipples.map((ripple) => (
@@ -341,7 +342,7 @@ export const FocusOrbitGame: React.FC<ActiveGameProps> = ({
               }}
               onClick={handleOrbTap}
               onTouchStart={handleOrbTap}
-              className="absolute -ml-8 -mt-8 w-16 h-16 sm:w-20 sm:h-20 cursor-pointer flex items-center justify-center group focus:outline-none"
+              className="absolute -ml-9 -mt-9 w-20 h-20 sm:w-22 sm:h-22 cursor-pointer flex items-center justify-center group focus:outline-none touch-manipulation min-w-[56px] min-h-[56px]"
             >
               {/* Soft Pulsing Ambient Halo */}
               <motion.div
@@ -368,8 +369,8 @@ export const FocusOrbitGame: React.FC<ActiveGameProps> = ({
         </AnimatePresence>
 
         {/* Subtle Bottom Instruction */}
-        <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none">
-          <p className="text-xs text-slate-400/80 font-medium">
+        <div className="absolute bottom-4 left-0 right-0 text-center pointer-events-none px-4">
+          <p className="text-xs text-slate-400/90 font-medium">
             Tap the glowing orb softly as it appears
           </p>
         </div>

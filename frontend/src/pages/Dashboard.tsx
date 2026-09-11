@@ -121,23 +121,23 @@ export const Dashboard = () => {
 
         {/* ==================== 2. PRIMARY ACTION: MOOD CHECK-IN ==================== */}
         <motion.div variants={fadeUpVariants} className="space-y-3">
-          <div className="grid grid-cols-5 gap-2 sm:gap-3">
+          <div className="grid grid-cols-5 gap-1.5 sm:gap-3">
             {MOODS.map((mood) => {
               const isSelected = selectedMood === mood.value;
               return (
                 <button
                   key={mood.value}
                   onClick={() => handleMoodSelect(mood.value)}
-                  className={`flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl border transition-all duration-150 cursor-pointer text-center active:scale-[0.98] ${
+                  className={`flex flex-col items-center justify-center p-2 sm:p-4 rounded-2xl border transition-all duration-150 cursor-pointer text-center active:scale-[0.98] min-h-[64px] sm:min-h-[76px] ${
                     isSelected
                       ? 'bg-indigo-50/90 border-indigo-500 text-indigo-900 shadow-xs ring-2 ring-indigo-500/20'
                       : `bg-white border-slate-200/80 text-slate-700 ${mood.color}`
                   }`}
                 >
-                  <span className="text-2xl sm:text-3xl mb-1.5 transform transition-transform group-hover:scale-110">
+                  <span className="text-xl sm:text-3xl mb-1 transform transition-transform group-hover:scale-110">
                     {mood.emoji}
                   </span>
-                  <span className="text-xs font-semibold">{mood.label}</span>
+                  <span className="text-[10px] sm:text-xs font-semibold leading-tight">{mood.label}</span>
                 </button>
               );
             })}

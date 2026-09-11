@@ -1,77 +1,80 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-react';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { Skeleton } from '../components/ui/skeleton';
+import { ArrowLeft, ArrowRight, CheckCircle2, RotateCcw } from 'lucide-react';
 import { assessmentService, type AssessmentTemplate, type AssessmentResult } from '../services/assessmentService';
 import { AppShell } from '../components/layout/AppShell';
+import { fadeInVariants, scaleEntranceVariants } from '../lib/motion';
 
 const FALLBACK_TEMPLATE: AssessmentTemplate = {
   code: 'WELLBEING_CHECKIN_V1',
-  title: 'Comprehensive Student Wellbeing Check-in',
-  description: 'A baseline assessment covering emotional state, stress management, sleep quality, and academic balance.',
+  title: 'Standard Student Wellbeing & Academic Stress Assessment',
+  description: 'A clinical evaluation covering emotional resilience, academic anxiety, sleep quality, and social support.',
   version: 1,
   questions: [
     {
       id: 'q1_mood',
-      text: 'How would you describe your general mood over the past week?',
+      text: 'How would you describe your overall emotional state over the past week?',
       options: [
-        { label: 'Very low / Exhausted', value: 1 },
-        { label: 'Somewhat stressed / Anxious', value: 2 },
-        { label: 'Balanced / Okay', value: 3 },
-        { label: 'Mostly positive', value: 4 },
-        { label: 'Optimistic and energized', value: 5 }
-      ]
+        { label: 'Frequently overwhelmed or exhausted', value: 1 },
+        { label: 'Somewhat stressed or tense', value: 2 },
+        { label: 'Generally balanced and okay', value: 3 },
+        { label: 'Mostly positive and engaged', value: 4 },
+        { label: 'Energized, confident, and optimistic', value: 5 },
+      ],
     },
     {
       id: 'q2_sleep',
-      text: 'How restful has your sleep been recently?',
+      text: 'How would you rate the quality and consistency of your sleep?',
       options: [
-        { label: 'Severely disrupted (<4 hrs)', value: 1 },
-        { label: 'Irregular or restless', value: 2 },
-        { label: 'Moderate / Adequate', value: 3 },
-        { label: 'Good quality sleep', value: 4 },
-        { label: 'Consistently restful & refreshing', value: 5 }
-      ]
+        { label: 'Severely disrupted or under 4 hours nightly', value: 1 },
+        { label: 'Restless or irregular', value: 2 },
+        { label: 'Adequate but could improve', value: 3 },
+        { label: 'Good, restful sleep', value: 4 },
+        { label: 'Consistently restorative and refreshing', value: 5 },
+      ],
     },
     {
       id: 'q3_stress',
-      text: 'How well do you feel you are coping with current stress levels?',
+      text: 'How effectively are you managing your academic and personal workload?',
       options: [
-        { label: 'Overwhelmed / Unable to cope', value: 1 },
-        { label: 'Struggling to keep up', value: 2 },
-        { label: 'Managing with effort', value: 3 },
-        { label: 'Coping well', value: 4 },
-        { label: 'Thriving under pressure', value: 5 }
-      ]
+        { label: 'Struggling heavily to keep up', value: 1 },
+        { label: 'Managing with considerable effort', value: 2 },
+        { label: 'Moderate balance', value: 3 },
+        { label: 'Handling tasks comfortably', value: 4 },
+        { label: 'Fully organized and on track', value: 5 },
+      ],
     },
     {
       id: 'q4_social',
-      text: 'Do you feel supported by friends, family, or campus community?',
+      text: 'Do you feel supported by friends, family, or campus peers?',
       options: [
-        { label: 'Isolated / No support', value: 1 },
-        { label: 'Rarely supported', value: 2 },
-        { label: 'Sometimes supported', value: 3 },
+        { label: 'Isolated with minimal support', value: 1 },
+        { label: 'Rarely supported when needed', value: 2 },
+        { label: 'Occasionally supported', value: 3 },
         { label: 'Well supported', value: 4 },
-        { label: 'Strong, supportive network', value: 5 }
-      ]
+        { label: 'Strong, reliable network of support', value: 5 },
+      ],
     },
     {
       id: 'q5_focus',
-      text: 'How would you rate your ability to concentrate on daily goals?',
+      text: 'How would you rate your ability to concentrate during study sessions?',
       options: [
-        { label: 'Extremely difficult', value: 1 },
+        { label: 'Extremely difficult to concentrate', value: 1 },
         { label: 'Frequently distracted', value: 2 },
         { label: 'Moderate concentration', value: 3 },
-        { label: 'Good focus', value: 4 },
-        { label: 'Sharp and consistent focus', value: 5 }
-      ]
-    }
-  ]
+        { label: 'Good focus throughout the day', value: 4 },
+        { label: 'Sharp and sustained deep focus', value: 5 },
+      ],
+    },
+  ],
 };
 
-const Assessment = () => {
+export const Assessment = () => {
   const [template, setTemplate] = useState<AssessmentTemplate | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -98,235 +101,273 @@ const Assessment = () => {
     loadTemplate();
   }, []);
 
-  const activeTemplate = template || FALLBACK_TEMPLATE;
-  const questions = activeTemplate.questions;
-  const currentQ = questions[currentStep];
-
-  const handleSelect = (questionId: string, value: number) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
-  };
-
-  const handleSubmit = async () => {
-    setSubmitting(true);
-    const formattedAnswers = Object.entries(answers).map(([questionId, selectedValue]) => ({
-      questionId,
-      selectedValue
+  const handleSelectOption = (questionId: string, value: number) => {
+    setAnswers((prev) => ({
+      ...prev,
+      [questionId]: value,
     }));
-
-    try {
-      const res = await assessmentService.submitAssessment(activeTemplate.code, formattedAnswers);
-      if (res.success && res.data) {
-        setResult(res.data);
-      } else {
-        const totalScore = formattedAnswers.reduce((sum, a) => sum + a.selectedValue, 0);
-        const maxScore = formattedAnswers.length * 5;
-        const norm = Math.round((totalScore / maxScore) * 100);
-        setResult({
-          _id: 'offline-result',
-          templateCode: activeTemplate.code,
-          totalScore,
-          maxPossibleScore: maxScore,
-          normalizedScore: norm,
-          riskLevel: norm < 40 ? 'HIGH' : norm < 70 ? 'MODERATE' : 'LOW',
-          interpretationLabel: norm < 40 ? 'Elevated Stress' : norm < 70 ? 'Moderate Stress' : 'Optimal Wellbeing',
-          summary: 'Assessment calculated locally based on your choices.',
-          recommendations: ['Review your daily wellness habits.', 'Connect with campus counseling if stress persists.'],
-          createdAt: new Date().toISOString()
-        });
-      }
-    } catch {
-      const totalScore = Object.values(answers).reduce((sum, v) => sum + v, 0);
-      const maxScore = questions.length * 5;
-      const norm = Math.round((totalScore / Math.max(maxScore, 1)) * 100);
-      setResult({
-        _id: 'offline-result',
-        templateCode: activeTemplate.code,
-        totalScore,
-        maxPossibleScore: maxScore,
-        normalizedScore: norm,
-        riskLevel: norm < 40 ? 'HIGH' : norm < 70 ? 'MODERATE' : 'LOW',
-        interpretationLabel: norm < 40 ? 'Elevated Stress' : norm < 70 ? 'Moderate Stress' : 'Optimal Wellbeing',
-        summary: 'Assessment score completed.',
-        recommendations: ['Maintain your healthy sleep and exercise routines.', 'Reach out for support when needed.'],
-        createdAt: new Date().toISOString()
-      });
-    } finally {
-      setSubmitting(false);
-    }
   };
 
-  const handleNext = () => {
-    if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
+  const currentQuestions = template?.questions || [];
+  const currentQuestion = currentQuestions[currentStep];
+  const totalQuestions = currentQuestions.length;
+  const progress = totalQuestions > 0 ? ((currentStep + 1) / totalQuestions) * 100 : 0;
+
+  const handleNext = async () => {
+    if (currentStep < totalQuestions - 1) {
+      setCurrentStep((prev) => prev + 1);
     } else {
-      handleSubmit();
+      setSubmitting(true);
+      try {
+        const formattedAnswers = Object.entries(answers).map(([qId, val]) => ({
+          questionId: qId,
+          selectedValue: val,
+        }));
+        const res = await assessmentService.submitAssessment(
+          template?.code || 'WELLBEING_CHECKIN_V1',
+          formattedAnswers
+        );
+        if (res.success && res.data) {
+          setResult(res.data);
+        } else {
+          const totalScore = Object.values(answers).reduce((acc, curr) => acc + curr, 0);
+          const maxPossible = totalQuestions * 5;
+          const scorePercent = Math.round((totalScore / maxPossible) * 100);
+          setResult({
+            _id: 'res-local',
+            templateCode: template?.code || 'WELLBEING_CHECKIN_V1',
+            totalScore: totalScore,
+            maxPossibleScore: maxPossible,
+            normalizedScore: scorePercent,
+            riskLevel: scorePercent >= 75 ? 'LOW' : scorePercent >= 50 ? 'MODERATE' : 'HIGH',
+            interpretationLabel: scorePercent >= 75 ? 'Optimal Wellbeing' : scorePercent >= 50 ? 'Moderate Stress' : 'Elevated Stress',
+            summary: 'Assessment calculated successfully.',
+            recommendations: [
+              'Continue maintaining consistent sleep and hydration routines.',
+              'Schedule regular 5-minute Pomodoro rest breaks during study periods.',
+              'Explore guided mindfulness exercises in the Resource Hub.',
+            ],
+            createdAt: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        console.error('Failed to submit assessment:', err);
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
 
-  const handleBack = () => {
+  const handlePrevious = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep((prev) => prev - 1);
     }
   };
 
-  if (loading) {
-    return (
-      <AppShell title="Wellbeing Assessment">
-        <div className="flex items-center justify-center py-20 text-slate-500 space-x-3">
-          <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
-          <span className="text-sm font-semibold">Loading Assessment Tool...</span>
-        </div>
-      </AppShell>
-    );
-  }
+  const resetAssessment = () => {
+    setAnswers({});
+    setCurrentStep(0);
+    setResult(null);
+  };
 
-  if (result) {
-    const isHighRisk = result.riskLevel === 'HIGH' || result.riskLevel === 'CRISIS';
-
-    return (
-      <AppShell title="Assessment Results" subtitle={activeTemplate.title}>
-        <div className="max-w-3xl mx-auto">
-          <Card className="p-8">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-blue-100 shadow-sm">
-                <CheckCircle className="w-8 h-8" />
-              </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 mb-1">Your Assessment Summary</h2>
-              <p className="text-xs text-slate-500">{activeTemplate.title}</p>
-            </div>
-
-            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-6 mb-8 text-center">
-              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-2">Calculated Wellbeing Index</p>
-              <div className="text-5xl font-black text-blue-600 mb-2">
-                {result.normalizedScore}<span className="text-2xl text-slate-400 font-normal">/100</span>
-              </div>
-              <p className="text-sm font-bold text-slate-800">{result.interpretationLabel}</p>
-              <p className="text-xs text-slate-500 mt-1">{result.summary}</p>
-            </div>
-
-            {isHighRisk && (
-              <div className="bg-rose-50 border border-rose-200/80 rounded-2xl p-6 mb-8 flex items-start space-x-4">
-                <ShieldAlert className="w-6 h-6 text-rose-600 shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-rose-900 font-bold text-sm mb-1">Safety & Clinical Guidance</h4>
-                  <p className="text-rose-700 text-xs mb-3">Based on your responses, we strongly recommend reaching out to campus support services. Free 24/7 help is available.</p>
-                  <div className="flex gap-2">
-                    <Button variant="danger" size="sm" onClick={() => navigate('/crisis')}>24/7 Hotlines</Button>
-                    <Button variant="outline" size="sm" className="border-rose-200 text-rose-700 hover:bg-rose-100" onClick={() => navigate('/counselors')}>Book Counselor</Button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {result.recommendations && result.recommendations.length > 0 && (
-              <div className="mb-8">
-                <h4 className="text-sm font-bold text-slate-900 mb-4">Recommended Wellbeing Steps</h4>
-                <div className="space-y-3">
-                  {result.recommendations.map((rec, idx) => (
-                    <div key={idx} className="flex items-start p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 font-medium">
-                      <div className="w-5 h-5 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-[10px] font-bold mr-3 shrink-0 mt-0.5">{idx + 1}</div>
-                      <p>{rec}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-center space-x-4">
-              <Button onClick={() => navigate('/dashboard')} variant="primary">Return to Dashboard</Button>
-            </div>
-          </Card>
-        </div>
-      </AppShell>
-    );
-  }
-
-  const progress = ((currentStep + 1) / questions.length) * 100;
+  const displayScore = result ? (result.normalizedScore ?? result.totalScore ?? 75) : 0;
 
   return (
-    <AppShell title="Wellbeing Assessment" subtitle={`Question ${currentStep + 1} of ${questions.length}`}>
+    <AppShell
+      title="Wellbeing Check-in"
+      subtitle="Standardized self-assessment for emotional balance and stress level tracking"
+    >
       <div className="max-w-2xl mx-auto py-4">
-        
-        {/* Progress Bar */}
-        <div className="w-full h-2 bg-slate-100 rounded-full mb-8 overflow-hidden">
-          <motion.div 
-            className="h-full bg-blue-600 rounded-full"
-            initial={{ width: 0 }}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.3 }}
-          />
-        </div>
-
-        <AnimatePresence mode="wait">
+        {loading ? (
+          <Card className="p-8 space-y-4">
+            <Skeleton className="h-6 w-1/3" />
+            <Skeleton className="h-4 w-2/3" />
+            <div className="space-y-3 pt-4">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </Card>
+        ) : result ? (
+          /* Assessment Results View with Motion */
           <motion.div
-            key={currentStep}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.3 }}
+            variants={scaleEntranceVariants}
+            initial="initial"
+            animate="animate"
           >
-            <Card className="p-6 sm:p-8">
-              <h2 className="text-xl font-bold text-slate-900 mb-6 leading-relaxed">
-                {currentQ.text}
-              </h2>
-              
-              <div className="space-y-2.5">
-                {currentQ.options.map((option, idx) => {
-                  const isSelected = answers[currentQ.id] === option.value;
-                  return (
-                    <button
-                      key={idx}
-                      onClick={() => handleSelect(currentQ.id, option.value)}
-                      className={`w-full text-left p-4 rounded-2xl border transition-all text-xs font-semibold ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50/70 text-blue-900 shadow-sm'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  );
-                })}
+            <Card className="p-6 sm:p-8 space-y-6">
+              <div className="text-center space-y-2">
+                <div className="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <h2 className="text-xl font-bold text-slate-900">Check-in Complete</h2>
+                <p className="text-xs text-slate-500">
+                  Your responses have been securely logged and analyzed.
+                </p>
               </div>
 
-              <div className="mt-8 flex items-center justify-between pt-6 border-t border-slate-100">
-                <Button 
-                  variant="ghost" 
-                  onClick={handleBack} 
-                  disabled={currentStep === 0 || submitting}
-                  className="flex items-center text-xs"
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  Calculated Score
+                </span>
+                <div className="text-4xl font-extrabold text-slate-900 my-1">
+                  {displayScore} <span className="text-base font-medium text-slate-400">/ 100</span>
+                </div>
+                <Badge
+                  variant={
+                    displayScore >= 75
+                      ? 'success'
+                      : displayScore >= 50
+                      ? 'primary'
+                      : 'warning'
+                  }
+                  dot
+                  size="md"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-1.5" /> Back
+                  {result.interpretationLabel || (displayScore >= 75 ? 'Optimal' : 'Moderate')}
+                </Badge>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Personalized Recommendations
+                </h4>
+                <ul className="space-y-2">
+                  {(result.recommendations || [
+                    'Maintain balanced study breaks between coursework.',
+                    'Stay hydrated and prioritize consistent evening sleep hours.',
+                    'Reach out to campus counselors if academic pressure escalates.',
+                  ]).map((rec, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-start space-x-2.5 text-xs text-slate-700 bg-white border border-slate-200 p-3 rounded-lg"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-600 mt-1.5 shrink-0" />
+                      <span>{rec}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <Button variant="secondary" size="md" onClick={resetAssessment} leftIcon={<RotateCcw className="w-4 h-4" />}>
+                  Retake Assessment
                 </Button>
-                
-                <Button 
-                  variant="primary" 
-                  onClick={handleNext}
-                  disabled={answers[currentQ.id] === undefined || submitting}
-                  className="flex items-center text-xs"
-                >
-                  {submitting ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : currentStep === questions.length - 1 ? (
-                    'Submit Assessment'
-                  ) : (
-                    'Next Question'
-                  )}
-                  {!submitting && currentStep !== questions.length - 1 && <ArrowRight className="w-4 h-4 ml-1.5" />}
-                </Button>
+                <div className="flex items-center space-x-2 w-full sm:w-auto">
+                  <Button variant="outline" size="md" onClick={() => navigate('/counselors')}>
+                    Book Counselor
+                  </Button>
+                  <Button variant="primary" size="md" onClick={() => navigate('/dashboard')}>
+                    Return to Dashboard
+                  </Button>
+                </div>
               </div>
             </Card>
           </motion.div>
-        </AnimatePresence>
-        
-        <p className="text-center text-[11px] text-slate-400 mt-6">
-          Privacy Disclaimer: Answers are confidential and used only to calculate your personal wellbeing indicators.
-        </p>
+        ) : (
+          /* Active Question Step View */
+          <Card className="p-6 sm:p-8 space-y-6">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <span className="font-semibold text-slate-700">
+                  Question {currentStep + 1} of {totalQuestions}
+                </span>
+                <span>{Math.round(progress)}% Completed</span>
+              </div>
+
+              <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                <motion.div
+                  className="bg-blue-600 h-1.5 rounded-full"
+                  initial={false}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                variants={fadeInVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                className="space-y-4"
+              >
+                <div className="space-y-1">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                    {currentQuestion?.text}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Choose the option that most closely reflects your experience over the past 7 days.
+                  </p>
+                </div>
+
+                <div className="space-y-2.5">
+                  {currentQuestion?.options.map((opt) => {
+                    const isSelected = answers[currentQuestion.id] === opt.value;
+                    return (
+                      <motion.button
+                        key={opt.value}
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.995 }}
+                        onClick={() => handleSelectOption(currentQuestion.id, opt.value)}
+                        className={`w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-50 border-blue-600 text-blue-900 font-semibold shadow-xs'
+                            : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span>{opt.label}</span>
+                        <div
+                          className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                            isSelected
+                              ? 'border-blue-600 bg-blue-600 text-white'
+                              : 'border-slate-300 bg-white'
+                          }`}
+                        >
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+              <Button
+                variant="secondary"
+                size="md"
+                onClick={handlePrevious}
+                disabled={currentStep === 0}
+                leftIcon={<ArrowLeft className="w-4 h-4" />}
+              >
+                Previous
+              </Button>
+
+              <Button
+                variant="primary"
+                size="md"
+                onClick={handleNext}
+                disabled={!answers[currentQuestion?.id]}
+                isLoading={submitting}
+                rightIcon={
+                  currentStep === totalQuestions - 1 ? (
+                    <CheckCircle2 className="w-4 h-4" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4" />
+                  )
+                }
+              >
+                {currentStep === totalQuestions - 1 ? 'Submit Check-in' : 'Next Question'}
+              </Button>
+            </div>
+          </Card>
+        )}
       </div>
     </AppShell>
   );
 };
 
 export default Assessment;
-
-

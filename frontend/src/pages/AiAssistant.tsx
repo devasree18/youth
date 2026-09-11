@@ -1,16 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Send, Bot, User, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Send, Bot, User, ShieldAlert } from 'lucide-react';
 import { aiService, type ChatMessage as ServiceChatMessage } from '../services/aiService';
 import { AppShell } from '../components/layout/AppShell';
+import { fadeUpVariants } from '../lib/motion';
 
 const SUGGESTED_PROMPTS = [
-  "I'm feeling stressed about college exams.",
-  "I'm having trouble sleeping at night.",
-  "How can I manage daily anxiety?",
-  "I need study techniques to prevent burnout."
+  'I am feeling overwhelmed with impending exams.',
+  'Can you suggest techniques to improve sleep quality?',
+  'How do I handle academic burnout and stay motivated?',
+  'Give me a 3-minute calming breathing exercise.',
 ];
 
 interface ChatMessage {
@@ -19,12 +20,12 @@ interface ChatMessage {
   isCrisis?: boolean;
 }
 
-const AiAssistant = () => {
+export const AiAssistant = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { 
-      role: 'ai', 
-      text: "Hi there. I'm your YOUTH AI Wellness Companion. I'm here to listen, support, and help you discover stress management techniques. How are you feeling today?" 
-    }
+    {
+      role: 'ai',
+      text: 'Hello. I am your confidential AI Wellness Companion. I am here to help you reflect on stress, practice calming techniques, or discuss academic wellness. What is on your mind today?',
+    },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +35,7 @@ const AiAssistant = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   useEffect(() => {
     const fetchHistory = async () => {
@@ -44,7 +45,7 @@ const AiAssistant = () => {
           const formatted = res.data.map((m: ServiceChatMessage) => ({
             role: (m.role === 'assistant' || m.role === 'ai' ? 'ai' : 'user') as 'ai' | 'user',
             text: m.content,
-            isCrisis: m.isCrisisIntercepted
+            isCrisis: m.isCrisisIntercepted,
           }));
           setMessages(formatted);
         }
@@ -56,133 +57,190 @@ const AiAssistant = () => {
   }, []);
 
   const handleSend = async (text: string = input) => {
-    if (!text.trim()) return;
-    
+    if (!text.trim() || isLoading) return;
+
     const userText = text.trim();
-    setMessages(prev => [...prev, { role: 'user', text: userText }]);
+    setMessages((prev) => [...prev, { role: 'user', text: userText }]);
     setInput('');
     setIsLoading(true);
 
     try {
       const res = await aiService.sendMessage(userText);
       if (res.success && res.data) {
-        setMessages(prev => [
-          ...prev, 
-          { 
-            role: 'ai', 
-            text: res.data!.reply, 
-            isCrisis: res.data!.isCrisisIntercepted 
-          }
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'ai',
+            text: res.data!.reply,
+            isCrisis: res.data!.isCrisisIntercepted,
+          },
         ]);
       } else {
-        setMessages(prev => [
-          ...prev, 
-          { 
-            role: 'ai', 
-            text: "I'm available to help support your wellbeing goals. How else can I assist you?" 
-          }
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'ai',
+            text: 'I am here to support your wellbeing goals. How else can I assist you?',
+          },
         ]);
       }
     } catch {
-      setMessages(prev => [
-        ...prev, 
-        { 
-          role: 'ai', 
-          text: "I am having trouble connecting right now. If you are experiencing a crisis, please reach out to our Tele-MANAS hotline at 14416." 
-        }
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'ai',
+          text: 'I am currently unable to reach the knowledge network. If you are experiencing urgent distress, please dial Tele-MANAS at 14416 or KIRAN at 1800-599-0019 immediately.',
+          isCrisis: true,
+        },
       ]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
-    <AppShell title="Safe AI Companion" subtitle="Confidential 24/7 wellness dialogue & coping strategies">
-      <div className="max-w-4xl mx-auto h-[calc(85vh-120px)] flex flex-col">
-        <Card className="flex-1 flex flex-col overflow-hidden bg-white shadow-sm border-slate-200/80 rounded-3xl">
-          
-          {/* Safety Notice Banner */}
-          <div className="bg-amber-50/80 border-b border-amber-200/70 p-3.5 px-6 flex items-center space-x-2 text-amber-900 text-xs">
-            <Sparkles className="w-4 h-4 text-amber-700 shrink-0" />
-            <p className="leading-snug">
-              <strong>Private & Confidential:</strong> YOUTH AI Assistant provides supportive guidance & techniques. It is not emergency medical care. If you need urgent distress support, use the <strong>24/7 Crisis</strong> button.
-            </p>
+    <AppShell
+      title="AI Wellness Companion"
+      subtitle="Confidential conversational guidance with automated crisis detection"
+    >
+      <div className="max-w-4xl mx-auto flex flex-col h-[calc(100vh-12rem)] min-h-[500px]">
+        {/* Chat message history container */}
+        <Card className="flex-1 flex flex-col overflow-hidden p-0 bg-white shadow-xs">
+          {/* Messages list */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+            {messages.map((msg, idx) => {
+              const isAi = msg.role === 'ai';
+              return (
+                <motion.div
+                  key={idx}
+                  variants={fadeUpVariants}
+                  initial="initial"
+                  animate="animate"
+                  className={`flex items-start space-x-3 ${
+                    isAi ? 'justify-start' : 'justify-end'
+                  }`}
+                >
+                  {isAi && (
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 border border-blue-100">
+                      <Bot className="w-4 h-4" />
+                    </div>
+                  )}
+
+                  <div
+                    className={`max-w-[85%] sm:max-w-[75%] rounded-xl p-4 text-xs sm:text-sm leading-relaxed ${
+                      isAi
+                        ? 'bg-slate-50 border border-slate-200 text-slate-800'
+                        : 'bg-blue-600 text-white'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
+
+                    {msg.isCrisis && (
+                      <div className="mt-3 pt-3 border-t border-rose-200 bg-rose-50 -mx-4 -mb-4 p-3 rounded-b-xl text-xs text-rose-900 flex flex-col gap-1.5">
+                        <div className="flex items-center space-x-1.5 font-bold text-rose-700">
+                          <ShieldAlert className="w-3.5 h-3.5" />
+                          <span>Emergency Helpline Interception</span>
+                        </div>
+                        <p className="text-[11px] text-rose-800">
+                          Our safety filters detected elevated distress. Please reach out to licensed counselors immediately:
+                        </p>
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <a
+                            href="tel:14416"
+                            className="bg-white border border-rose-300 text-rose-700 px-2.5 py-1 rounded font-semibold text-xs hover:bg-rose-100 transition-colors"
+                          >
+                            Tele-MANAS (14416)
+                          </a>
+                          <a
+                            href="tel:18005990019"
+                            className="bg-white border border-rose-300 text-rose-700 px-2.5 py-1 rounded font-semibold text-xs hover:bg-rose-100 transition-colors"
+                          >
+                            KIRAN (1800-599-0019)
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {!isAi && (
+                    <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                      <User className="w-4 h-4" />
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
+
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-start space-x-3"
+              >
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
+                  <Bot className="w-4 h-4" />
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center space-x-2 text-xs text-slate-500">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-bounce [animation-delay:0.4s]" />
+                  <span className="text-[11px] ml-1">Reflecting...</span>
+                </div>
+              </motion.div>
+            )}
           </div>
 
-          {/* Messages Scroll Area */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-6 space-y-5">
-            <AnimatePresence>
-              {messages.map((m, i) => (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  key={i} 
-                  className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div className={`flex max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
-                      m.role === 'user' ? 'bg-blue-600 text-white ml-3 shadow-sm' : 'bg-slate-900 text-white mr-3 shadow-sm'
-                    }`}>
-                      {m.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-                    </div>
-                    <div className={`p-4 rounded-2xl text-xs sm:text-sm ${
-                      m.role === 'user' 
-                        ? 'bg-blue-600 text-white rounded-tr-none shadow-sm font-medium' 
-                        : m.isCrisis
-                        ? 'bg-rose-50 text-rose-900 border border-rose-200 rounded-tl-none font-semibold'
-                        : 'bg-slate-100/80 text-slate-800 rounded-tl-none border border-slate-200/60'
-                    }`}>
-                      <p className="whitespace-pre-wrap leading-relaxed">{m.text}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-              
-              {isLoading && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                  <div className="flex items-center bg-slate-100 rounded-2xl rounded-tl-none p-4 space-x-2 border border-slate-200/60">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* Quick Starter Prompts */}
+          <div className="px-4 py-2 border-t border-slate-100 bg-slate-50/50 flex items-center space-x-2 overflow-x-auto">
+            <span className="text-[11px] font-semibold text-slate-400 shrink-0 uppercase tracking-wide">
+              Suggested:
+            </span>
+            {SUGGESTED_PROMPTS.map((prompt, i) => (
+              <motion.button
+                key={i}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSend(prompt)}
+                disabled={isLoading}
+                className="text-[11px] font-medium bg-white text-slate-700 border border-slate-200 hover:border-slate-300 hover:bg-slate-100 px-2.5 py-1 rounded-md shrink-0 transition-colors cursor-pointer"
+              >
+                {prompt}
+              </motion.button>
+            ))}
           </div>
 
-          {/* Suggested Prompts & Input Controls */}
-          <div className="p-4 bg-white border-t border-slate-100 space-y-3">
-            <div className="flex flex-wrap gap-2">
-              {SUGGESTED_PROMPTS.map(prompt => (
-                <button 
-                  key={prompt}
-                  onClick={() => handleSend(prompt)}
-                  className="text-xs bg-slate-50 border border-slate-200 text-slate-600 px-3 py-1.5 rounded-xl hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 transition-colors font-semibold"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
-            
-            <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex space-x-2">
-              <input
-                type="text"
+          {/* Input Box Footer */}
+          <div className="p-3 sm:p-4 border-t border-slate-200 bg-white">
+            <div className="flex items-end space-x-2">
+              <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition-all placeholder:text-slate-400"
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message here... (Shift + Enter for new line)"
+                rows={1}
+                className="flex-1 max-h-32 min-h-[42px] bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 p-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-600 focus:border-blue-600 resize-none transition-colors"
               />
-              <Button 
-                type="submit" 
-                variant="primary" 
-                disabled={isLoading || !input.trim()} 
-                className="rounded-2xl px-5 flex items-center justify-center shrink-0"
+              <Button
+                variant="primary"
+                size="md"
+                onClick={() => handleSend()}
+                disabled={!input.trim() || isLoading}
+                className="h-[42px] px-3.5 shrink-0"
               >
                 <Send className="w-4 h-4" />
               </Button>
-            </form>
+            </div>
+            <p className="text-[10px] text-slate-400 text-center mt-2">
+              Conversations are confidential. AI responses are supportive but do not constitute formal psychiatric treatment.
+            </p>
           </div>
-
         </Card>
       </div>
     </AppShell>
@@ -190,4 +248,3 @@ const AiAssistant = () => {
 };
 
 export default AiAssistant;
-

@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Users, Activity, ShieldCheck, UserPlus, TrendingUp } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, Activity, UserPlus, TrendingUp } from 'lucide-react';
 import { institutionService, type InstitutionStats } from '../services/institutionService';
 import { AppShell } from '../components/layout/AppShell';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Alert } from '../components/ui/alert';
+import { Skeleton } from '../components/ui/skeleton';
+import { staggerContainerVariants, fadeUpVariants } from '../lib/motion';
 
-const InstitutionDashboard = () => {
+export const InstitutionDashboard = () => {
   const [stats, setStats] = useState<InstitutionStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [inviteName, setInviteName] = useState('');
@@ -50,109 +57,143 @@ const InstitutionDashboard = () => {
   };
 
   return (
-    <AppShell title="Institution Portal" subtitle="B2B Campus Wellbeing Analytics & Privacy-Safe Management">
-      <div className="space-y-6">
-
+    <AppShell
+      title="Campus Administration Portal"
+      subtitle="Aggregated student wellbeing metrics, participation trends, and member management"
+    >
+      <motion.div
+        variants={staggerContainerVariants}
+        initial="hidden"
+        animate="visible"
+        className="space-y-6"
+      >
         {stats?.privacyNotice && (
-          <div className="p-4 bg-amber-50 border border-amber-200/80 text-amber-900 rounded-2xl text-xs font-bold flex items-center space-x-2">
-            <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0" />
-            <span>{stats.privacyNotice}</span>
-          </div>
+          <motion.div variants={fadeUpVariants}>
+            <Alert variant="warning" title="Privacy Protection Threshold Active">
+              {stats.privacyNotice}
+            </Alert>
+          </motion.div>
         )}
 
         {/* Analytics Widgets Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 flex items-center justify-between">
+        <motion.div variants={fadeUpVariants} className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <Card className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Enrolled Members</span>
-              <div className="text-3xl font-black text-slate-900 mt-1">{loading ? '...' : stats?.activeStudents ?? 0}</div>
-              <span className="text-[11px] text-emerald-600 font-bold mt-1 inline-block">Active Campus Accounts</span>
+              <span className="text-xs font-semibold text-slate-500">Enrolled Students</span>
+              <div className="text-2xl font-bold text-slate-900 mt-1">
+                {loading ? <Skeleton className="h-8 w-16" /> : stats?.activeStudents ?? 0}
+              </div>
+              <span className="text-[11px] text-emerald-600 font-medium mt-1 inline-block">
+                Active campus accounts
+              </span>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
-              <Users className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <Users className="w-5 h-5" />
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 flex items-center justify-between">
+          <Card className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Assessment Responses</span>
-              <div className="text-3xl font-black text-slate-900 mt-1">{loading ? '...' : stats?.checkInParticipation ?? 0}</div>
-              <span className="text-[11px] text-blue-600 font-bold mt-1 inline-block">Completed Check-ins</span>
+              <span className="text-xs font-semibold text-slate-500">Check-in Participation</span>
+              <div className="text-2xl font-bold text-slate-900 mt-1">
+                {loading ? <Skeleton className="h-8 w-16" /> : stats?.checkInParticipation ?? 0}
+              </div>
+              <span className="text-[11px] text-blue-600 font-medium mt-1 inline-block">
+                Assessments logged
+              </span>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
-              <Activity className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <Activity className="w-5 h-5" />
             </div>
-          </div>
+          </Card>
 
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 flex items-center justify-between">
+          <Card className="p-5 flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Campus Wellbeing Index</span>
-              <div className="text-3xl font-black text-slate-900 mt-1">{loading ? '...' : (stats?.aggregatedWellbeingIndex ?? 'N/A')}</div>
-              <span className="text-[11px] text-slate-500 font-bold mt-1 inline-block">Privacy Aggregated Score</span>
+              <span className="text-xs font-semibold text-slate-500">Campus Wellbeing Index</span>
+              <div className="text-2xl font-bold text-slate-900 mt-1">
+                {loading ? <Skeleton className="h-8 w-16" /> : stats?.aggregatedWellbeingIndex ?? 'N/A'}
+              </div>
+              <span className="text-[11px] text-slate-500 font-medium mt-1 inline-block">
+                Cohort aggregate score
+              </span>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-              <TrendingUp className="w-6 h-6" />
+            <div className="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+              <TrendingUp className="w-5 h-5" />
             </div>
-          </div>
+          </Card>
+        </motion.div>
 
-        </div>
-
-        {/* Member Invitation Form */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
-          <div className="flex items-center space-x-2 mb-1">
-            <UserPlus className="w-5 h-5 text-blue-600" />
-            <h3 className="text-base font-extrabold text-slate-900">Invite Campus Members</h3>
-          </div>
-          <p className="text-xs text-slate-500 mb-5 font-semibold">Send onboarding invitations to new students, faculty, or campus counselor staff.</p>
-
-          {inviteStatus && (
-            <div className={`mb-4 p-3.5 rounded-2xl text-xs font-bold ${
-              inviteStatus.startsWith('Invitation failed') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-            }`}>
-              {inviteStatus}
+        {/* Member Invitation Card */}
+        <motion.div variants={fadeUpVariants}>
+          <Card className="p-6 space-y-4">
+            <div>
+              <div className="flex items-center space-x-2">
+                <UserPlus className="w-4 h-4 text-blue-600" />
+                <h3 className="text-sm font-bold text-slate-900">Invite Campus Members</h3>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Send an onboarding invite to students, campus counselors, or institutional staff.
+              </p>
             </div>
-          )}
 
-          <form onSubmit={handleInvite} className="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <input
-              type="text"
-              value={inviteName}
-              onChange={(e) => setInviteName(e.target.value)}
-              placeholder="Full Name"
-              className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-900 outline-none focus:border-blue-500 focus:bg-white transition-all"
-              required
-            />
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              placeholder="Email (@university.edu)"
-              className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-900 outline-none focus:border-blue-500 focus:bg-white transition-all"
-              required
-            />
-            <select
-              value={inviteRole}
-              onChange={(e) => setInviteRole(e.target.value)}
-              className="p-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs outline-none font-bold text-slate-700"
-            >
-              <option value="STUDENT">Student</option>
-              <option value="INSTITUTION_STAFF">Campus Counselor / Staff</option>
-            </select>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-blue-600 text-white rounded-2xl text-xs font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-md shadow-blue-500/20 active:scale-[0.98]"
-            >
-              {isSubmitting ? 'Sending...' : 'Send Invite'}
-            </button>
-          </form>
-        </div>
+            {inviteStatus && (
+              <Alert
+                variant={inviteStatus.startsWith('Invitation failed') ? 'error' : 'success'}
+              >
+                {inviteStatus}
+              </Alert>
+            )}
 
-      </div>
+            <form onSubmit={handleInvite} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
+              <Input
+                label="Full Name"
+                type="text"
+                placeholder="e.g. Maya Patel"
+                value={inviteName}
+                onChange={(e) => setInviteName(e.target.value)}
+                required
+              />
+
+              <Input
+                label="Campus Email"
+                type="email"
+                placeholder="user@campus.edu"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                required
+              />
+
+              <div className="space-y-1.5 text-left">
+                <label className="block text-xs font-semibold text-slate-700 tracking-tight">
+                  Role
+                </label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value)}
+                  className="w-full bg-white text-sm text-slate-900 border border-slate-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"
+                >
+                  <option value="STUDENT">Student</option>
+                  <option value="INSTITUTION_STAFF">Counselor / Staff</option>
+                </select>
+              </div>
+
+              <div>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="md"
+                  className="w-full"
+                  isLoading={isSubmitting}
+                >
+                  Send Invite
+                </Button>
+              </div>
+            </form>
+          </Card>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 };
 
 export default InstitutionDashboard;
-

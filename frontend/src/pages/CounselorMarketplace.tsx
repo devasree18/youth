@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Star, Calendar, CheckCircle2, Video } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Star, Calendar, Video, Clock } from 'lucide-react';
 import { counselorService, type Counselor, type AvailabilitySlot } from '../services/counselorService';
 import { appointmentService } from '../services/appointmentService';
 import { AppShell } from '../components/layout/AppShell';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { Alert } from '../components/ui/alert';
+import { Modal } from '../components/ui/dialog';
+import { Skeleton } from '../components/ui/skeleton';
+import { fadeUpVariants, staggerContainerVariants } from '../lib/motion';
 
-const CounselorMarketplace = () => {
+export const CounselorMarketplace = () => {
   const [counselors, setCounselors] = useState<Counselor[]>([]);
   const [selectedCounselor, setSelectedCounselor] = useState<Counselor | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<AvailabilitySlot | null>(null);
@@ -45,8 +53,9 @@ const CounselorMarketplace = () => {
         'online'
       );
       if (res.success) {
-        setBookingStatus('Appointment successfully booked! Confirmation details sent to your account.');
+        setBookingStatus('Appointment booked successfully! Details sent to your account.');
         setSelectedSlot(null);
+        setSelectedCounselor(null);
       } else {
         setBookingStatus(`Booking failed: ${res.error?.message || 'Slot unavailable'}`);
       }
@@ -57,121 +66,170 @@ const CounselorMarketplace = () => {
     }
   };
 
-  const getDayName = (dayNum: number) => ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayNum] || 'Day';
+  const getDayName = (dayNum: number) =>
+    ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayNum] || 'Day';
 
   return (
-    <AppShell title="Campus Counselors" subtitle="Connect with licensed mental health specialists for private 1-on-1 consultations">
+    <AppShell
+      title="Counselor Directory"
+      subtitle="Connect with licensed mental health specialists for private 1-on-1 consultations"
+    >
       <div className="space-y-6">
-
         {bookingStatus && (
-          <div className={`p-4 rounded-2xl text-xs font-bold flex items-center space-x-2 ${
-            bookingStatus.startsWith('Booking failed') ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-          }`}>
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-            <span>{bookingStatus}</span>
-          </div>
+          <Alert
+            variant={bookingStatus.startsWith('Booking failed') ? 'error' : 'success'}
+            title={bookingStatus.startsWith('Booking failed') ? 'Booking Error' : 'Success'}
+          >
+            {bookingStatus}
+          </Alert>
         )}
 
         {/* Directory Grid */}
         {loading ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-200/80 text-slate-500 font-semibold text-xs">Loading verified specialists...</div>
-        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {counselors.map((c) => (
-              <div key={c._id} className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between hover:shadow-md transition-all">
-                <div>
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="font-black text-slate-900 text-base">{c.name}</h3>
-                      <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-0.5 rounded-full inline-block mt-1">{c.specialization}</span>
-                    </div>
-
-                    <div className="flex items-center text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-100">
-                      <Star className="w-3.5 h-3.5 fill-amber-400 mr-1 text-amber-400" />
-                      {c.rating} ({c.reviewsCount})
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-slate-600 leading-relaxed mb-4">{c.description}</p>
-
-                  <div className="space-y-1 text-xs text-slate-500 mb-6 bg-slate-50 p-3 rounded-2xl border border-slate-100">
-                    <div>🎓 <strong>Qualifications:</strong> {c.qualifications?.join(', ')}</div>
-                    <div>🗣️ <strong>Languages:</strong> {c.languages?.join(', ')}</div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                  <div className="text-xs">
-                    <span className="text-slate-400 font-semibold">Consultation: </span>
-                    <span className="font-bold text-slate-900">{c.price === 0 ? 'Free / Campus Sponsored' : `₹${c.price}`}</span>
-                  </div>
-
-                  <button 
-                    onClick={() => { setSelectedCounselor(c); setSelectedSlot(null); }}
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-500/20 active:scale-[0.98]"
-                  >
-                    <Calendar className="w-3.5 h-3.5 mr-1.5" />
-                    Book Slot
-                  </button>
-                </div>
-              </div>
+            {[1, 2, 3, 4].map((i) => (
+              <Card key={i} className="p-6 space-y-4">
+                <Skeleton className="h-5 w-1/3" />
+                <Skeleton className="h-4 w-1/2" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-8 w-1/4" />
+              </Card>
             ))}
           </div>
+        ) : (
+          <motion.div
+            variants={staggerContainerVariants}
+            initial="initial"
+            animate="animate"
+            className="grid grid-cols-1 md:grid-cols-2 gap-5"
+          >
+            {counselors.map((c) => (
+              <motion.div key={c._id} variants={fadeUpVariants}>
+                <Card className="p-6 flex flex-col justify-between space-y-5 h-full">
+                  <div>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900">{c.name}</h3>
+                        <div className="mt-1">
+                          <Badge variant="primary" size="sm">{c.specialization}</Badge>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded-md border border-amber-200">
+                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400 mr-1" />
+                        <span>{c.rating} ({c.reviewsCount})</span>
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-600 leading-relaxed mt-3">{c.description}</p>
+
+                    <div className="mt-4 p-3 rounded-lg bg-slate-50 border border-slate-100 text-xs text-slate-600 space-y-1">
+                      <div className="flex items-center space-x-1.5">
+                        <strong className="text-slate-700">Qualifications:</strong>
+                        <span>{c.qualifications?.join(', ')}</span>
+                      </div>
+                      <div className="flex items-center space-x-1.5">
+                        <strong className="text-slate-700">Languages:</strong>
+                        <span>{c.languages?.join(', ')}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div className="text-xs">
+                      <span className="text-slate-400 font-medium">Session Fee: </span>
+                      <span className="font-bold text-slate-900">
+                        {c.price === 0 ? 'Campus Sponsored (Free)' : `₹${c.price}`}
+                      </span>
+                    </div>
+
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedCounselor(c);
+                        setSelectedSlot(null);
+                      }}
+                      leftIcon={<Calendar className="w-3.5 h-3.5" />}
+                    >
+                      Select Slot
+                    </Button>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
         )}
 
-        {/* Modal / Booking Drawer */}
-        {selectedCounselor && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95">
-              <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-                <div>
-                  <h3 className="font-extrabold text-slate-900 text-base">Book Session with {selectedCounselor.name}</h3>
-                  <p className="text-xs text-slate-500">{selectedCounselor.specialization}</p>
-                </div>
-                <button onClick={() => setSelectedCounselor(null)} className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1">✕</button>
-              </div>
-
-              <div>
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Available Slot Schedule</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  {selectedCounselor.availabilitySlots?.map((slot, idx) => (
-                    <button
+        {/* Booking Modal */}
+        <Modal
+          isOpen={!!selectedCounselor}
+          onClose={() => setSelectedCounselor(null)}
+          title={`Schedule Consultation: ${selectedCounselor?.name}`}
+          description={selectedCounselor?.specialization}
+          maxWidth="md"
+          footer={
+            <>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setSelectedCounselor(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                disabled={!selectedSlot}
+                isLoading={isBooking}
+                onClick={handleBookSlot}
+              >
+                Confirm Appointment
+              </Button>
+            </>
+          }
+        >
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-xs font-semibold text-slate-700 mb-2">Available Consultation Slots</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {selectedCounselor?.availabilitySlots?.map((slot, idx) => {
+                  const isSelected = selectedSlot === slot;
+                  return (
+                    <motion.button
                       key={idx}
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                       onClick={() => setSelectedSlot(slot)}
-                      className={`p-3 rounded-2xl text-left border transition-all text-xs ${
-                        selectedSlot === slot 
-                          ? 'border-blue-600 bg-blue-50 font-bold text-blue-900 ring-2 ring-blue-500/20 shadow-sm' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                      className={`p-3 rounded-lg text-left border text-xs transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-blue-50 border-blue-600 text-blue-900 font-semibold'
+                          : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      <div className="font-bold text-slate-900">{getDayName(slot.dayOfWeek)}</div>
+                      <div className="font-semibold text-slate-900">{getDayName(slot.dayOfWeek)}</div>
                       <div className="text-[11px] text-slate-500 flex items-center mt-1">
-                        <Video className="w-3 h-3 mr-1 text-blue-600" />
-                        {slot.startTime} - {slot.endTime}
+                        <Clock className="w-3 h-3 mr-1 text-slate-400" />
+                        {slot.startTime} – {slot.endTime}
                       </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100 flex justify-end space-x-2">
-                <button onClick={() => setSelectedCounselor(null)} className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancel</button>
-                <button 
-                  disabled={!selectedSlot || isBooking}
-                  onClick={handleBookSlot}
-                  className="px-5 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 disabled:opacity-50 transition-all shadow-md shadow-blue-500/20 active:scale-[0.98]"
-                >
-                  {isBooking ? 'Confirming...' : 'Confirm Appointment'}
-                </button>
+                    </motion.button>
+                  );
+                })}
               </div>
             </div>
-          </div>
-        )}
 
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-500 space-y-1">
+              <div className="flex items-center space-x-1">
+                <Video className="w-3.5 h-3.5 text-blue-600" />
+                <span className="font-medium text-slate-700">Private End-to-End Encrypted Telehealth</span>
+              </div>
+              <p>Appointments are conducted securely. A meeting link will be sent prior to the session.</p>
+            </div>
+          </div>
+        </Modal>
       </div>
     </AppShell>
   );
 };
 
 export default CounselorMarketplace;
-

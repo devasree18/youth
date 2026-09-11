@@ -27,6 +27,17 @@ logs
 npm-debug.log*
 yarn-debug.log*
 
+# Android & Keystores
+android/app/*.jks
+android/app/*.keystore
+*.keystore
+*.jks
+android/.gradle/
+android/build/
+android/app/build/
+android/captures/
+.gradle/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

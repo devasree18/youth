@@ -14,6 +14,7 @@ import Games from './pages/Games';
 import WellbeingInsights from './pages/WellbeingInsights';
 import Login from './pages/Login';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { MobileAppProvider } from './components/mobile/MobileAppProvider';
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
@@ -25,22 +26,24 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/wellbeing-insights" element={<ProtectedRoute><WellbeingInsights /></ProtectedRoute>} />
-          <Route path="/assessment" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
-          <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
-          <Route path="/resources" element={<ProtectedRoute><ResourceHub /></ProtectedRoute>} />
-          <Route path="/ai-assistant" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
-          <Route path="/ai" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
-          <Route path="/crisis" element={<ProtectedRoute><Crisis /></ProtectedRoute>} />
-          <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-          <Route path="/solutions" element={<ProtectedRoute><SolutionHub /></ProtectedRoute>} />
-          <Route path="/counselors" element={<ProtectedRoute><CounselorMarketplace /></ProtectedRoute>} />
-          <Route path="/institution" element={<ProtectedRoute><InstitutionDashboard /></ProtectedRoute>} />
-        </Routes>
+        <MobileAppProvider>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/wellbeing-insights" element={<ProtectedRoute><WellbeingInsights /></ProtectedRoute>} />
+            <Route path="/assessment" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
+            <Route path="/games" element={<ProtectedRoute><Games /></ProtectedRoute>} />
+            <Route path="/resources" element={<ProtectedRoute><ResourceHub /></ProtectedRoute>} />
+            <Route path="/ai-assistant" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
+            <Route path="/ai" element={<ProtectedRoute><AiAssistant /></ProtectedRoute>} />
+            <Route path="/crisis" element={<ProtectedRoute><Crisis /></ProtectedRoute>} />
+            <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/solutions" element={<ProtectedRoute><SolutionHub /></ProtectedRoute>} />
+            <Route path="/counselors" element={<ProtectedRoute><CounselorMarketplace /></ProtectedRoute>} />
+            <Route path="/institution" element={<ProtectedRoute><InstitutionDashboard /></ProtectedRoute>} />
+          </Routes>
+        </MobileAppProvider>
       </BrowserRouter>
     </AuthProvider>
   );

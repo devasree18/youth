@@ -18,7 +18,10 @@ export interface ApiResponse<T = any> {
 
 class ApiClient {
   private get baseUrl(): string {
-    const rawUrl = import.meta.env.VITE_API_URL || '/api/v1';
+    const rawUrl =
+      import.meta.env.VITE_API_BASE_URL ||
+      import.meta.env.VITE_API_URL ||
+      '/api/v1';
     // Normalize path to ensure versioning
     if (rawUrl.endsWith('/api')) return `${rawUrl}/v1`;
     return rawUrl;
@@ -27,7 +30,7 @@ class ApiClient {
   private get defaultHeaders(): Record<string, string> {
     const token = localStorage.getItem('token');
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     };
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
@@ -46,9 +49,9 @@ class ApiClient {
       ...options,
       headers: {
         ...this.defaultHeaders,
-        ...(options.headers as Record<string, string> || {})
+        ...((options.headers as Record<string, string>) || {}),
       },
-      credentials: 'include'
+      credentials: 'include',
     };
 
     try {
@@ -56,12 +59,17 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok || data.success === false) {
-        const errorMsg = data.error?.message || data.message || `HTTP ${response.status} Request Failed`;
+        const errorMsg =
+          data.error?.message || data.message || `HTTP ${response.status} Request Failed`;
         throw new Error(errorMsg);
       }
 
       return data as ApiResponse<T>;
     } catch (error: any) {
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        console.error(`Network Error [${options.method || 'GET'} ${url}]:`, error);
+        throw new Error('No internet connection. Please check your network and try again.');
+      }
       console.error(`API Client Error [${options.method || 'GET'} ${url}]:`, error);
       throw error;
     }

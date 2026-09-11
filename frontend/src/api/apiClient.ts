@@ -36,7 +36,7 @@ export class ApiError extends Error {
 }
 
 // Fallback production deployment backend URL for native APK builds
-const DEFAULT_PRODUCTION_API_URL = 'https://youth-wellbeing.vercel.app/api/v1';
+const DEFAULT_PRODUCTION_API_URL = 'https://youth-sigma.vercel.app/api/v1';
 
 class ApiClient {
   public get baseUrl(): string {

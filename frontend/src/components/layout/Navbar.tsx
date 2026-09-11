@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
-  ShieldAlert,
   LogOut,
   Menu,
   X,
@@ -11,8 +10,7 @@ import {
   MessageSquare,
   Activity,
   Users,
-  Building2,
-  HeartHandshake,
+  PhoneCall,
 } from 'lucide-react';
 import { Button } from '../ui/button';
 
@@ -29,38 +27,31 @@ export const Navbar = () => {
 
   const navLinks = user
     ? [
-        { label: 'Dashboard', path: '/dashboard', icon: Activity },
+        { label: 'Home', path: '/dashboard', icon: Activity },
         { label: 'Check-in', path: '/assessment', icon: Sparkles },
-        { label: 'AI Companion', path: '/ai-assistant', icon: MessageSquare },
+        { label: 'AI Support', path: '/ai-assistant', icon: MessageSquare },
         { label: 'Resources', path: '/resources', icon: BookOpen },
-        { label: 'Counselors', path: '/counselors', icon: HeartHandshake },
         { label: 'Community', path: '/community', icon: Users },
-        { label: 'Institution', path: '/institution', icon: Building2 },
       ]
     : [
-        { label: 'Platform', path: '#features', icon: Sparkles },
+        { label: 'Features', path: '#features', icon: Sparkles },
         { label: 'Resources', path: '/resources', icon: BookOpen },
-        { label: 'Counselors', path: '/counselors', icon: HeartHandshake },
         { label: 'Community', path: '/community', icon: Users },
-        { label: 'For Institutions', path: '/institution', icon: Building2 },
       ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-xs border-b border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-xs border-b border-slate-100">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to={user ? '/dashboard' : '/'} className="flex items-center space-x-2.5">
           <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-base shadow-xs">
             Y
           </div>
-          <div className="flex items-baseline space-x-1.5">
-            <span className="text-base font-bold tracking-tight text-slate-900">YOUTH</span>
-            <span className="text-[11px] font-medium text-slate-500">Enterprise</span>
-          </div>
+          <span className="text-base font-bold tracking-tight text-slate-900">YOUTH</span>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center space-x-1">
+        <nav className="hidden md:flex items-center space-x-1">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             const Icon = link.icon;
@@ -68,7 +59,7 @@ export const Navbar = () => {
               <a
                 key={link.label}
                 href={link.path}
-                className="px-3 py-1.5 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"
               >
                 {link.label}
               </a>
@@ -76,9 +67,9 @@ export const Navbar = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center space-x-1.5 transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-colors ${
                   isActive
-                    ? 'bg-slate-100 text-blue-600 font-semibold'
+                    ? 'bg-blue-50 text-blue-700 font-semibold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
@@ -90,41 +81,36 @@ export const Navbar = () => {
         </nav>
 
         {/* Action Controls & User Status */}
-        <div className="hidden sm:flex items-center space-x-2.5">
-          {/* Crisis 24/7 Pill */}
+        <div className="hidden sm:flex items-center space-x-3">
+          {/* Quiet Urgent Help */}
           <Link
             to="/crisis"
-            className="inline-flex items-center space-x-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100/80 border border-rose-200 px-2.5 py-1.5 rounded-md transition-colors"
+            className="inline-flex items-center space-x-1.5 text-xs font-medium text-slate-600 hover:text-rose-600 px-2.5 py-1.5 rounded-lg hover:bg-rose-50/50 transition-colors"
           >
-            <ShieldAlert className="w-3.5 h-3.5 text-rose-600" />
-            <span>24/7 Crisis Helpline</span>
+            <PhoneCall className="w-3.5 h-3.5 text-slate-400 hover:text-rose-500" />
+            <span>Urgent Help</span>
           </Link>
 
           {user ? (
             <div className="flex items-center space-x-2 pl-2 border-l border-slate-200">
               <Link
                 to="/dashboard"
-                className="flex items-center space-x-2 px-2.5 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+                className="flex items-center space-x-2 px-2.5 py-1 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                <div className="w-6 h-6 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-semibold">
+                <div className="w-6 h-6 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs font-semibold">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
-                <div className="text-left">
-                  <span className="text-xs font-semibold text-slate-800 block max-w-[100px] truncate leading-tight">
-                    {user.name || 'User'}
-                  </span>
-                  <span className="text-[10px] text-slate-500 uppercase leading-none">
-                    {user.role || 'Member'}
-                  </span>
-                </div>
+                <span className="text-xs font-medium text-slate-800 truncate max-w-[100px]">
+                  {user.name?.split(' ')[0] || 'User'}
+                </span>
               </Link>
 
               <button
                 onClick={handleLogout}
-                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
                 title="Log Out"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3.5 h-3.5" />
               </button>
             </div>
           ) : (
@@ -144,13 +130,13 @@ export const Navbar = () => {
         </div>
 
         {/* Mobile Hamburger Toggle */}
-        <div className="flex lg:hidden items-center space-x-2">
+        <div className="flex md:hidden items-center space-x-2">
           <Link
             to="/crisis"
-            className="p-1.5 text-rose-600 bg-rose-50 rounded-lg border border-rose-200"
-            title="Crisis Support"
+            className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg"
+            title="Urgent Help"
           >
-            <ShieldAlert className="w-4 h-4" />
+            <PhoneCall className="w-4 h-4" />
           </Link>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -163,7 +149,7 @@ export const Navbar = () => {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2 animate-in fade-in">
+        <div className="md:hidden border-t border-slate-100 bg-white px-4 py-3 space-y-2 animate-in fade-in">
           <div className="space-y-0.5">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -197,7 +183,7 @@ export const Navbar = () => {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-xs font-medium text-rose-600 bg-rose-50 hover:bg-rose-100"
+                className="w-full flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Log Out</span>
@@ -226,3 +212,5 @@ export const Navbar = () => {
     </header>
   );
 };
+
+export default Navbar;

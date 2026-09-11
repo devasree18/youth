@@ -7,7 +7,6 @@ import {
   Bot,
   User,
   ShieldAlert,
-  Key,
   Copy,
   Check,
   PlusCircle,
@@ -16,13 +15,10 @@ import {
 } from 'lucide-react';
 import {
   aiService,
-  getSavedAIConfig,
-  saveAIConfig,
   type ChatMessage as ServiceChatMessage,
 } from '../services/aiService';
 import { AppShell } from '../components/layout/AppShell';
 import { fadeUpVariants } from '../lib/motion';
-import { ApiKeyModal, type AIConfig } from '../components/ai/ApiKeyModal';
 import { MarkdownRenderer } from '../components/ai/MarkdownRenderer';
 
 const SUGGESTED_PROMPTS = [
@@ -47,15 +43,13 @@ export const AiAssistant: React.FC = () => {
       id: '1',
       role: 'ai',
       text: "Hello! 👋 I'm your confidential **YOUTH AI Wellness Companion**.\n\nI can help you talk through academic stress, practice breathing protocols, or build healthier study and sleep routines. What's on your mind today?",
-      provider: 'YOUTH Smart Companion',
+      provider: 'YOUTH AI',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [configModalOpen, setConfigModalOpen] = useState(false);
-  const [aiConfig, setAiConfig] = useState<AIConfig>(getSavedAIConfig());
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -89,11 +83,6 @@ export const AiAssistant: React.FC = () => {
     fetchHistory();
   }, []);
 
-  const handleSaveConfig = (newConfig: AIConfig) => {
-    setAiConfig(newConfig);
-    saveAIConfig(newConfig);
-  };
-
   const handleCopyMessage = (id: string, text: string) => {
     navigator.clipboard?.writeText(text);
     setCopiedId(id);
@@ -106,7 +95,7 @@ export const AiAssistant: React.FC = () => {
         id: Date.now().toString(),
         role: 'ai',
         text: "New conversation started! ✨ I'm here to listen, support, and help guide your wellbeing. What would you like to explore?",
-        provider: aiConfig.apiKey ? `${aiConfig.provider.toUpperCase()} (${aiConfig.model})` : 'YOUTH Smart Companion',
+        provider: 'YOUTH AI',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -145,7 +134,7 @@ export const AiAssistant: React.FC = () => {
             role: 'ai',
             text: res.data!.reply,
             isCrisis: res.data!.isCrisisIntercepted,
-            provider: res.data!.provider || (aiConfig.apiKey ? aiConfig.provider : 'YOUTH AI'),
+            provider: res.data!.provider || 'YOUTH AI',
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           },
         ]);
@@ -156,7 +145,7 @@ export const AiAssistant: React.FC = () => {
             id: (Date.now() + 1).toString(),
             role: 'ai',
             text: "I'm here to support your wellbeing goals. How else can I assist you today?",
-            provider: 'YOUTH Smart Companion',
+            provider: 'YOUTH AI',
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           },
         ]);
@@ -184,8 +173,6 @@ export const AiAssistant: React.FC = () => {
     }
   };
 
-  const isCustomKeyActive = Boolean(aiConfig.apiKey);
-
   return (
     <AppShell
       title="AI Wellness Companion"
@@ -197,7 +184,7 @@ export const AiAssistant: React.FC = () => {
           {/* Top Assistant Control Bar */}
           <div className="px-4 sm:px-6 py-3 border-b border-slate-100 bg-slate-50/80 backdrop-blur-xs flex items-center justify-between gap-2">
             {/* Model & Status Indicator */}
-            <div className="flex items-center space-x-2 min-w-0">
+            <div className="flex items-center space-x-2.5 min-w-0">
               <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
                 <Sparkles className="w-4 h-4" />
               </div>
@@ -206,50 +193,22 @@ export const AiAssistant: React.FC = () => {
                   <h3 className="text-xs sm:text-sm font-bold text-slate-900 truncate">
                     YOUTH AI Assistant
                   </h3>
-                  <span
-                    className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                      isCustomKeyActive
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : 'bg-slate-100 text-slate-600 border-slate-200'
-                    }`}
-                  >
-                    <span
-                      className={`w-1.5 h-1.5 rounded-full mr-1.5 ${
-                        isCustomKeyActive ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
-                      }`}
-                    />
-                    {isCustomKeyActive
-                      ? `${aiConfig.provider.toUpperCase()}: ${aiConfig.model}`
-                      : 'Smart Clinical Mode'}
+                  <span className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">
+                    <span className="w-1.5 h-1.5 rounded-full mr-1.5 bg-emerald-500 animate-pulse" />
+                    Online • Active
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Actions: API Key Config & New Chat */}
+            {/* Actions: New Chat */}
             <div className="flex items-center space-x-2 shrink-0">
               <button
-                onClick={() => setConfigModalOpen(true)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                  isCustomKeyActive
-                    ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-100/70'
-                    : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
-                title="Configure custom ChatGPT / Gemini API Key"
-              >
-                <Key className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="hidden sm:inline">
-                  {isCustomKeyActive ? 'API Key Connected' : 'Use API Key'}
-                </span>
-                <span className="sm:hidden">Key</span>
-              </button>
-
-              <button
                 onClick={handleNewChat}
-                className="p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 border border-slate-200 bg-white transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold"
+                className="p-2 sm:px-3 sm:py-1.5 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 bg-white transition-colors cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-2xs"
                 title="Start a new chat session"
               >
-                <PlusCircle className="w-3.5 h-3.5" />
+                <PlusCircle className="w-3.5 h-3.5 text-emerald-600" />
                 <span className="hidden sm:inline">New Chat</span>
               </button>
             </div>
@@ -375,7 +334,7 @@ export const AiAssistant: React.FC = () => {
                   <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse [animation-delay:0.2s]" />
                   <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse [animation-delay:0.4s]" />
                   <span className="text-[11px] font-medium ml-1.5 text-slate-600">
-                    {isCustomKeyActive ? `${aiConfig.provider.toUpperCase()} is thinking...` : 'Formulating reflection...'}
+                    AI is typing...
                   </span>
                 </div>
               </motion.div>
@@ -409,11 +368,7 @@ export const AiAssistant: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={
-                  isCustomKeyActive
-                    ? `Message ${aiConfig.provider.toUpperCase()} (${aiConfig.model})...`
-                    : 'Share what is on your mind...'
-                }
+                placeholder="Share what is on your mind..."
                 rows={1}
                 className="flex-1 max-h-28 min-h-[44px] bg-slate-50 hover:bg-slate-100/70 focus:bg-white text-xs sm:text-sm text-[#111827] placeholder:text-slate-400 p-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 resize-none transition-all shadow-2xs"
               />
@@ -427,26 +382,12 @@ export const AiAssistant: React.FC = () => {
                 <Send className="w-4 h-4" />
               </Button>
             </div>
-            <div className="flex items-center justify-between text-[10px] text-slate-400 mt-2 px-1">
-              <span>Conversations are private & confidential.</span>
-              <button
-                onClick={() => setConfigModalOpen(true)}
-                className="hover:underline text-emerald-700 font-semibold"
-              >
-                {isCustomKeyActive ? '⚙️ AI Settings' : '🔑 Connect Custom API Key'}
-              </button>
-            </div>
+            <p className="text-[10px] text-slate-400 text-center mt-2">
+              Conversations are private & confidential. AI guidance supports reflection and does not replace medical advice.
+            </p>
           </div>
         </Card>
       </div>
-
-      {/* Custom API Key Modal */}
-      <ApiKeyModal
-        isOpen={configModalOpen}
-        onClose={() => setConfigModalOpen(false)}
-        onSave={handleSaveConfig}
-        currentConfig={aiConfig}
-      />
     </AppShell>
   );
 };

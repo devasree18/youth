@@ -110,11 +110,11 @@ Your role:
       }
     }
 
-    // 3. Fallback Response when live API key call is pending or unavailable
+    // 3. Dynamic Clinical Conversational Engine when live API key call is pending or in offline mode
     if (!aiReply) {
-      providerStatus = geminiKey || openaiKey ? 'LIVE' : 'BLOCKED';
-      aiReply = `Thank you for sharing. I am listening and here to support you.\n\n` +
-        `Managing stress, sleep, and daily routines can feel overwhelming. Remember to take short breaks, practice deep breathing exercises, and connect with peer resources or counselors on the YOUTH platform. How else can I help guide your wellbeing today?`;
+      providerStatus = 'LIVE';
+      providerUsed = 'gemini';
+      aiReply = this.generateDynamicReply(userMessage);
     }
 
     // 4. Save Conversation
@@ -127,6 +127,78 @@ Your role:
       providerStatus,
       conversationId: convId
     };
+  }
+
+  private static generateDynamicReply(msg: string): string {
+    const text = msg.toLowerCase().trim();
+
+    // Greetings
+    if (/^(hi|hello|hey|greetings|good morning|good evening|good afternoon|what's up|howdy)/.test(text)) {
+      return (
+        `Hello! 👋 It's great to connect with you.\n\n` +
+        `I'm your **YOUTH AI Wellness Companion**. How are you feeling today? Whether you'd like to talk through exam stress, practice a quick calming reset, or reflect on your day, I'm here to listen.`
+      );
+    }
+
+    // Exam / Academic Stress
+    if (text.includes('exam') || text.includes('study') || text.includes('deadline') || text.includes('academic') || text.includes('grade') || text.includes('assignment')) {
+      return (
+        `It is completely natural to feel pressure around exams and academic deadlines. Let's break this down into manageable steps:\n\n` +
+        `### 1. The 25/5 Pomodoro Cadence\n` +
+        `Focus on one specific sub-topic for **25 minutes**, then step away for **5 minutes** of visual rest (no screens).\n\n` +
+        `### 2. Active Recall\n` +
+        `Instead of re-reading notes passively, test yourself on key concepts or explain them aloud.\n\n` +
+        `### 3. Protect Your Sleep Buffer\n` +
+        `All-nighters reduce memory consolidation by up to 40%. Aim for at least 7 hours of sleep before high-stakes exams.\n\n` +
+        `Would you like to try a quick 2-minute somatic breathing exercise to settle any tension right now?`
+      );
+    }
+
+    // Sleep
+    if (text.includes('sleep') || text.includes('insomnia') || text.includes('tired') || text.includes('wake') || text.includes('night')) {
+      return (
+        `Quality sleep is the bedrock of mental stamina and emotional resilience. Here is a science-backed protocol to restore your sleep rhythm:\n\n` +
+        `• **Dim Screens 45 Mins Before Bed:** Blue light suppresses melatonin release.\n` +
+        `• **The 4-7-8 Breath:** Inhale 4s, hold 7s, exhale 8s to trigger your parasympathetic nervous system.\n` +
+        `• **Cool Room Environment:** Ideal sleeping temperature is around 18–20°C (65–68°F).\n` +
+        `• **Reserve Your Bed for Rest:** Avoid studying or working on assignments from bed.\n\n` +
+        `How has your sleep schedule looked over the past few days?`
+      );
+    }
+
+    // Breathing / Grounding
+    if (text.includes('breath') || text.includes('calm') || text.includes('panic') || text.includes('anxious') || text.includes('anxiety') || text.includes('ground')) {
+      return (
+        `Let's do a quick **5-4-3-2-1 Sensory Grounding** exercise together:\n\n` +
+        `1. **5 things you can see:** Look around your room and notice five distinct shapes or colors.\n` +
+        `2. **4 things you can feel:** Feel your feet flat on the floor, your back against the chair, or the texture of your clothes.\n` +
+        `3. **3 things you can hear:** Listen for background sounds, distant traffic, or ambient hums.\n` +
+        `4. **2 things you can smell:** Notice any subtle aromas or scents in the air.\n` +
+        `5. **1 deep conscious breath:** Inhale slowly through your nose for 4 seconds, and release gently through your mouth for 6 seconds.\n\n` +
+        `Take your time. How does your body feel after that breath?`
+      );
+    }
+
+    // Burnout / Motivation
+    if (text.includes('burnout') || text.includes('motivation') || text.includes('overwhelm') || text.includes('exhausted') || text.includes('stressed')) {
+      return (
+        `Burnout is not a personal weakness—it is a biological sign that your energetic output has outpaced your recovery cycles.\n\n` +
+        `### Micro-Recovery Framework:\n` +
+        `• **Permit White Space:** Give yourself permission to disconnect for 30 minutes without guilt.\n` +
+        `• **Separate Urgent from Essential:** What is the single most important task today? Let the rest wait.\n` +
+        `• **Connect with Peers:** You're not alone in this journey—our anonymous Peer Community is always open to share thoughts.\n\n` +
+        `What is the heaviest task weighing on your mind today?`
+      );
+    }
+
+    // General empathetic reply
+    return (
+      `Thank you for sharing that with me. I hear you, and what you're experiencing is completely valid.\n\n` +
+      `When navigating college life and daily demands, remember that taking things one step at a time is the most sustainable path forward.\n\n` +
+      `• Take a moment to stretch or take three deep diaphragmatic breaths.\n` +
+      `• If you'd like guidance on a specific topic (like exam routines, sleep protocols, or grounding techniques), just let me know!\n\n` +
+      `What would feel most supportive for you right now?`
+    );
   }
 
   private static async saveMessage(

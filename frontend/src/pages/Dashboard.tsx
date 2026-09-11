@@ -398,99 +398,148 @@ export const Dashboard = () => {
           </div>
 
           {/* ==================== RIGHT COLUMN (4 COLS) ==================== */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* A. WEEKLY STREAK & RESILIENCE GAUGE */}
+          <div className="lg:col-span-4 space-y-5">
+            {/* A. SLEEK RESILIENCE PULSE & STREAK WIDGET */}
             <motion.div variants={fadeUpVariants}>
-              <Card className="p-5 rounded-3xl border-slate-200/90 bg-white shadow-xs space-y-4">
+              <Card className="p-5 sm:p-5.5 rounded-3xl border-slate-200/90 bg-white shadow-xs space-y-4 hover:border-emerald-200 transition-all">
+                {/* Header */}
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
-                      <Flame className="w-4 h-4 fill-amber-500" />
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-9 h-9 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200/80 flex items-center justify-center shadow-2xs">
+                      <Flame className="w-4.5 h-4.5 fill-amber-500" />
                     </div>
                     <div>
-                      <h3 className="text-xs font-bold text-slate-900">Weekly Consistency</h3>
-                      <p className="text-[10px] text-slate-400">Daily wellbeing logs</p>
+                      <h3 className="text-xs font-bold text-slate-900 leading-tight">Wellbeing Pulse</h3>
+                      <p className="text-[10px] text-slate-400">Consistency & Resilience</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                  <span className="inline-flex items-center text-[11px] font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200 shadow-2xs">
                     5 Day Streak 🔥
                   </span>
                 </div>
 
-                {/* 7-Day Dots Tracker */}
-                <div className="grid grid-cols-7 gap-1.5 pt-1 text-center">
-                  {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, idx) => {
-                    const isDone = idx <= 4;
-                    const isToday = idx === 4;
-                    return (
-                      <div key={idx} className="flex flex-col items-center gap-1">
-                        <span className="text-[10px] font-semibold text-slate-400">{day}</span>
-                        <div
-                          className={`w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold transition-all ${
-                            isDone
-                              ? 'bg-emerald-600 text-white shadow-2xs'
-                              : 'bg-slate-100 text-slate-400 border border-slate-200'
-                          } ${isToday ? 'ring-2 ring-emerald-500/40' : ''}`}
-                        >
-                          {isDone ? '✓' : ''}
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* Resilience Score Gauge / Progress */}
+                <div className="p-3 rounded-2xl bg-slate-50/80 border border-slate-200/70 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-500 font-medium flex items-center gap-1.5">
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
+                      Resilience Score
+                    </span>
+                    <span className="font-bold text-emerald-700">
+                      {summary?.wellbeingScore || 84}/100 • {summary?.scoreLabel || 'Optimal'}
+                    </span>
+                  </div>
+                  {/* Visual Progress Bar */}
+                  <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${summary?.wellbeingScore || 84}%` }}
+                      transition={{ duration: 0.8, ease: 'easeOut' }}
+                      className="h-full bg-gradient-to-r from-teal-500 to-emerald-600 rounded-full"
+                    />
+                  </div>
                 </div>
 
-                {/* Resilience Score Index */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    <span className="text-xs font-semibold text-slate-700">Resilience Index</span>
+                {/* 7-Day Activity Matrix */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 font-semibold px-0.5">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
                   </div>
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                    {summary?.wellbeingScore ? `${summary.wellbeingScore} / 100` : '84 / 100'} • {summary?.scoreLabel || 'Optimal'}
-                  </span>
+                  <div className="grid grid-cols-7 gap-1.5 text-center">
+                    {[
+                      { day: 'M', checked: true },
+                      { day: 'T', checked: true },
+                      { day: 'W', checked: true },
+                      { day: 'T', checked: true },
+                      { day: 'F', checked: true, isToday: true },
+                      { day: 'S', checked: false },
+                      { day: 'S', checked: false },
+                    ].map((item, idx) => (
+                      <div
+                        key={idx}
+                        className={`h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-all ${
+                          item.checked
+                            ? 'bg-emerald-600 text-white shadow-2xs'
+                            : 'bg-slate-100 text-slate-400 border border-slate-200/60'
+                        } ${item.isToday ? 'ring-2 ring-emerald-500/30' : ''}`}
+                        title={item.checked ? 'Check-in completed' : 'Upcoming day'}
+                      >
+                        {item.checked ? <CheckCircle2 className="w-3.5 h-3.5 text-white" /> : '•'}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Link to Full Insights */}
+                <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400">Tracked via WHO-5 Protocol</span>
+                  <Link
+                    to="/wellbeing-insights"
+                    className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 transition-colors flex items-center gap-1"
+                  >
+                    <span>Full Trends</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
                 </div>
               </Card>
             </motion.div>
 
-            {/* B. DAILY CLINICAL MICRO-MINDSET TIP */}
+            {/* B. DAILY CLINICAL MICRO-MINDSET CARD */}
             <motion.div variants={fadeUpVariants}>
-              <Card className="p-5 rounded-3xl border-slate-200/90 bg-gradient-to-br from-slate-50 via-teal-50/20 to-white shadow-xs space-y-3">
+              <Card className="p-5 rounded-3xl border-slate-200/90 bg-gradient-to-br from-emerald-50/40 via-teal-50/20 to-white shadow-xs space-y-3 relative overflow-hidden">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                  <span className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider flex items-center gap-1.5">
                     <Compass className="w-3.5 h-3.5 text-emerald-600" />
-                    Today's Clinical Insight
+                    Clinical Mindset Anchor
                   </span>
                   <button
                     onClick={handleNextTip}
-                    className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors cursor-pointer"
-                    title="Next tip"
+                    className="p-1.5 rounded-lg text-emerald-700 hover:text-emerald-900 hover:bg-emerald-100/60 transition-colors cursor-pointer"
+                    title="Read another insight"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <p className="text-xs text-slate-700 leading-relaxed font-normal italic">
+
+                <p className="text-xs text-slate-700 leading-relaxed font-normal italic pl-1 border-l-2 border-emerald-400">
                   "{CLINICAL_TIPS[tipIndex]}"
                 </p>
+
                 <div className="pt-2 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-100">
                   <span>YOUTH Psychology Protocol</span>
-                  <span className="text-emerald-700 font-semibold cursor-pointer" onClick={handleNextTip}>
-                    Tap for next tip →
-                  </span>
+                  <button
+                    onClick={handleNextTip}
+                    className="text-emerald-700 font-bold hover:underline cursor-pointer"
+                  >
+                    Next insight →
+                  </button>
                 </div>
               </Card>
             </motion.div>
 
-            {/* C. 24/7 SUPPORT & HOTLINE CARD */}
+            {/* C. DIRECT SUPPORT & CRISIS ACCESS */}
             <motion.div variants={fadeUpVariants}>
               <Card className="p-5 rounded-3xl border-slate-200/90 bg-white shadow-xs space-y-3.5">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Immediate Human Support
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                    Immediate Support
+                  </h3>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                    24/7 Active
+                  </span>
+                </div>
 
                 <div className="space-y-2.5">
+                  {/* Tele-MANAS Call */}
                   <a
                     href="tel:14416"
-                    className="p-3 rounded-2xl bg-rose-50/80 border border-rose-200/80 flex items-center justify-between group hover:bg-rose-100/70 transition-colors"
+                    className="p-3 rounded-2xl bg-rose-50/80 border border-rose-200 flex items-center justify-between group hover:bg-rose-100/80 transition-all shadow-2xs"
                   >
                     <div className="flex items-center space-x-2.5">
                       <div className="w-8 h-8 rounded-xl bg-white text-rose-700 border border-rose-200 flex items-center justify-center shadow-2xs">
@@ -498,15 +547,18 @@ export const Dashboard = () => {
                       </div>
                       <div>
                         <h4 className="text-xs font-bold text-rose-950">Tele-MANAS (14416)</h4>
-                        <p className="text-[10px] text-rose-800">Govt 24/7 Free Hotline</p>
+                        <p className="text-[10px] text-rose-800">Toll-free Govt mental health line</p>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-rose-700 group-hover:underline">Call</span>
+                    <span className="text-xs font-bold text-rose-700 bg-white px-2.5 py-1 rounded-xl border border-rose-200 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                      Call
+                    </span>
                   </a>
 
+                  {/* Counselor Directory */}
                   <Link
                     to="/counselors"
-                    className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between group hover:bg-emerald-50/50 hover:border-emerald-200 transition-colors"
+                    className="p-3 rounded-2xl bg-slate-50 border border-slate-200/90 flex items-center justify-between group hover:bg-emerald-50/50 hover:border-emerald-200 transition-all"
                   >
                     <div className="flex items-center space-x-2.5">
                       <div className="w-8 h-8 rounded-xl bg-white text-emerald-700 border border-slate-200 flex items-center justify-center shadow-2xs">
@@ -516,10 +568,10 @@ export const Dashboard = () => {
                         <h4 className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
                           Campus Counselors
                         </h4>
-                        <p className="text-[10px] text-slate-500">Book confidential 1-on-1</p>
+                        <p className="text-[10px] text-slate-500">Book 1-on-1 confidential session</p>
                       </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" />
                   </Link>
                 </div>
               </Card>

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useRef, useCallback } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
 import { Network } from '@capacitor/network';
 import { StatusBar, Style } from '@capacitor/status-bar';
@@ -30,7 +31,11 @@ export const MobileAppProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isOffline, setIsOffline] = useState<boolean>(false);
   const backHandlersRef = useRef<BackButtonHandler[]>([]);
   const location = useLocation();
-  const navigate = useNavigate();
+  const locationRef = useRef(location);
+
+  useEffect(() => {
+    locationRef.current = location;
+  }, [location]);
 
   const registerBackHandler = useCallback(
     (id: string, handler: () => boolean, priority = 10) => {
@@ -48,47 +53,65 @@ export const MobileAppProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const recheckNetwork = useCallback(async () => {
     try {
-      const status = await Network.getStatus();
-      setIsOffline(!status.connected);
+      if (Capacitor.isPluginAvailable('Network')) {
+        const status = await Network.getStatus();
+        setIsOffline(!status.connected);
+      } else {
+        setIsOffline(!navigator.onLine);
+      }
     } catch {
       setIsOffline(!navigator.onLine);
     }
   }, []);
 
+  // 1. Native Status Bar & Splash Screen setup
   useEffect(() => {
-    // 1. Configure Status Bar & hide Splash Screen on native device
-    const initNativeFeatures = async () => {
-      try {
-        await StatusBar.setStyle({ style: Style.Dark });
-        await StatusBar.setBackgroundColor({ color: '#4F46E5' });
-      } catch {
-        // Ignored on web
+    if (Capacitor.isNativePlatform()) {
+      if (Capacitor.isPluginAvailable('StatusBar')) {
+        StatusBar.setStyle({ style: Style.Dark }).catch(() => {});
+        StatusBar.setBackgroundColor({ color: '#4F46E5' }).catch(() => {});
       }
-
-      try {
-        await SplashScreen.hide();
-      } catch {
-        // Ignored on web
+      if (Capacitor.isPluginAvailable('SplashScreen')) {
+        SplashScreen.hide().catch(() => {});
       }
-    };
+    }
+  }, []);
 
-    initNativeFeatures();
+  // 2. Network monitoring: Only set offline if Network.getStatus().connected === false
+  useEffect(() => {
+    let isMounted = true;
+    let networkHandle: { remove: () => void } | null = null;
 
-    // 2. Network status monitoring
-    let networkListener: any = null;
-    const checkNetwork = async () => {
-      try {
-        const status = await Network.getStatus();
-        setIsOffline(!status.connected);
+    const initNetwork = async () => {
+      if (Capacitor.isPluginAvailable('Network')) {
+        try {
+          const status = await Network.getStatus();
+          if (isMounted) {
+            setIsOffline(status ? !status.connected : false);
+          }
 
-        networkListener = await Network.addListener('networkStatusChange', (s) => {
-          setIsOffline(!s.connected);
-        });
-      } catch {
-        // Fallback to web online/offline events
-        setIsOffline(!navigator.onLine);
-        const handleOnline = () => setIsOffline(false);
-        const handleOffline = () => setIsOffline(true);
+          const handle = await Network.addListener('networkStatusChange', (s) => {
+            if (isMounted) {
+              setIsOffline(s ? !s.connected : false);
+            }
+          });
+
+          if (isMounted) {
+            networkHandle = handle;
+          } else {
+            handle?.remove?.();
+          }
+        } catch (e) {
+          console.warn('Network plugin monitoring unavailable:', e);
+          if (isMounted) {
+            setIsOffline(!navigator.onLine);
+          }
+        }
+      } else {
+        // Fallback for web browser
+        if (isMounted) setIsOffline(!navigator.onLine);
+        const handleOnline = () => isMounted && setIsOffline(false);
+        const handleOffline = () => isMounted && setIsOffline(true);
         window.addEventListener('online', handleOnline);
         window.addEventListener('offline', handleOffline);
 
@@ -99,55 +122,72 @@ export const MobileAppProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
     };
 
-    checkNetwork();
+    let webCleanup: (() => void) | undefined;
+    initNetwork().then((cleanup) => {
+      if (typeof cleanup === 'function') {
+        webCleanup = cleanup;
+      }
+    });
 
     return () => {
-      if (networkListener && typeof networkListener.remove === 'function') {
-        networkListener.remove();
+      isMounted = false;
+      if (networkHandle && typeof networkHandle.remove === 'function') {
+        networkHandle.remove();
+      }
+      if (typeof webCleanup === 'function') {
+        webCleanup();
       }
     };
   }, []);
 
-  // 3. Android Hardware Back Button navigation handling with overlay stack
+  // 3. Android Hardware Back Button: single persistent listener with overlay handling
   useEffect(() => {
-    let backListener: any = null;
+    let isMounted = true;
+    let backHandle: { remove: () => void } | null = null;
 
-    const setupBackButton = async () => {
-      try {
-        backListener = await CapApp.addListener('backButton', ({ canGoBack }) => {
-          // 3a. Check if any modal/drawer overlay handler consumes the back event
-          if (backHandlersRef.current.length > 0) {
-            for (const item of backHandlersRef.current) {
+    if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('App')) {
+      CapApp.addListener('backButton', ({ canGoBack }) => {
+        // 3a. Check if any active overlay / modal consumes the event
+        if (backHandlersRef.current.length > 0) {
+          for (const item of backHandlersRef.current) {
+            try {
               const consumed = item.handler();
-              if (consumed) {
-                return;
-              }
+              if (consumed) return;
+            } catch (err) {
+              console.warn('Back handler error:', err);
             }
           }
+        }
 
-          // 3b. If no overlay open, check root path or navigate history
-          const pathname = location.pathname;
-          const rootPaths = ['/dashboard', '/login', '/'];
+        // 3b. Root paths minimize app, sub-pages go back
+        const currentPath = locationRef.current.pathname;
+        const rootPaths = ['/dashboard', '/login', '/'];
 
-          if (rootPaths.includes(pathname) || !canGoBack) {
-            CapApp.minimizeApp();
+        if (rootPaths.includes(currentPath) || !canGoBack) {
+          CapApp.minimizeApp().catch(() => {});
+        } else {
+          window.history.back();
+        }
+      })
+        .then((handle) => {
+          if (isMounted) {
+            backHandle = handle;
           } else {
-            navigate(-1);
+            handle?.remove?.();
           }
+        })
+        .catch((err) => {
+          console.warn('App backButton listener setup error:', err);
         });
-      } catch {
-        // Ignored on web
-      }
-    };
-
-    setupBackButton();
+    }
 
     return () => {
-      if (backListener && typeof backListener.remove === 'function') {
-        backListener.remove();
+      isMounted = false;
+      if (backHandle && typeof backHandle.remove === 'function') {
+        backHandle.remove();
       }
     };
-  }, [location.pathname, navigate]);
+  }, []);
 
   return (
     <MobileAppContext.Provider value={{ isOffline, registerBackHandler, recheckNetwork }}>

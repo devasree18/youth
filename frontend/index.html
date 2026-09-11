@@ -7,6 +7,22 @@
     <meta name="theme-color" content="#4F46E5" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <script>
+      // Safe fallback initialization for native Capacitor bridge to prevent triggerEvent startup race conditions
+      if (typeof window !== 'undefined') {
+        window.Capacitor = window.Capacitor || {};
+        if (typeof window.Capacitor.triggerEvent !== 'function') {
+          window.Capacitor.triggerEvent = function (eventName, target, eventData) {
+            try {
+              if (window.Capacitor.Plugins && window.Capacitor.Plugins[target]) {
+                return true;
+              }
+            } catch (e) {}
+            return true;
+          };
+        }
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -14,8 +30,6 @@
   </head>
   <body class="bg-[#F8FAFC] text-[#172033] antialiased font-sans">
     <div id="root"></div>
-    
     <script type="module" src="/src/main.tsx"></script>
-
   </body>
 </html>

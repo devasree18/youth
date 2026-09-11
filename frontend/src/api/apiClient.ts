@@ -173,8 +173,12 @@ class ApiClient {
       }
 
       if (error instanceof TypeError && (error.message.includes('fetch') || error.message.includes('network') || error.message.includes('Failed to fetch'))) {
-        console.error(`Network Error [${options.method || 'GET'} ${url}]:`, error);
-        throw new ApiError('No internet connection. Please check your network and try again.', 0, 'NETWORK_ERROR', null, true);
+        console.error(`Network/CORS Error [${options.method || 'GET'} ${url}]:`, error);
+        const isActuallyOffline = typeof navigator !== 'undefined' && navigator.onLine === false;
+        if (isActuallyOffline) {
+          throw new ApiError('No internet connection. Please check your network and try again.', 0, 'OFFLINE', null, true);
+        }
+        throw new ApiError('Unable to connect to server. Please try again in a moment.', 0, 'CONNECTION_ERROR', null, false);
       }
 
       console.error(`API Client Error [${options.method || 'GET'} ${url}]:`, error);

@@ -241,43 +241,47 @@ export const AppShell: React.FC<AppShellProps> = ({
           </nav>
 
           {/* Desktop Sidebar Bottom: Profile, Settings, Logout */}
-          <div className="p-3 border-t border-slate-100 bg-white space-y-1">
-            <button
-              onClick={() => setSettingsModalOpen(true)}
-              className={`w-full flex items-center space-x-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#111827] hover:bg-slate-50 transition-colors cursor-pointer ${
-                sidebarCollapsed ? 'justify-center' : ''
-              }`}
-              title="Profile & Settings"
-            >
-              <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center justify-center text-xs font-bold shrink-0">
-                {userInitial}
-              </div>
+          <div className="p-3 border-t border-slate-100 bg-white space-y-2">
+            <div className="p-2 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <button
+                onClick={() => setSettingsModalOpen(true)}
+                className={`w-full flex items-center space-x-2.5 text-xs font-semibold text-slate-600 hover:text-[#111827] transition-colors cursor-pointer ${
+                  sidebarCollapsed ? 'justify-center' : ''
+                }`}
+                title="Profile & Settings"
+              >
+                <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-2xs">
+                  {userInitial}
+                </div>
+                {!sidebarCollapsed && (
+                  <div className="text-left leading-tight truncate flex-1">
+                    <p className="text-xs font-bold text-[#111827] truncate">{userFirstName}</p>
+                    <span className="inline-block text-[9px] font-bold text-emerald-700 bg-emerald-100/70 px-1.5 py-0.2 rounded uppercase">
+                      {userRole}
+                    </span>
+                  </div>
+                )}
+              </button>
+
               {!sidebarCollapsed && (
-                <div className="text-left leading-tight truncate flex-1">
-                  <p className="text-xs font-bold text-[#111827] truncate">{userFirstName}</p>
-                  <p className="text-[10px] text-slate-400 capitalize truncate">{userRole}</p>
+                <div className="flex items-center justify-between pt-2 mt-2 border-t border-slate-200/60 text-[11px]">
+                  <button
+                    onClick={() => setSettingsModalOpen(true)}
+                    className="inline-flex items-center space-x-1 font-medium text-slate-500 hover:text-emerald-700 transition-colors cursor-pointer"
+                  >
+                    <Settings className="w-3.5 h-3.5" />
+                    <span>Settings</span>
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center space-x-1 font-medium text-slate-400 hover:text-rose-600 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Logout</span>
+                  </button>
                 </div>
               )}
-            </button>
-
-            {!sidebarCollapsed && (
-              <div className="flex items-center justify-between px-2 pt-1">
-                <button
-                  onClick={() => setSettingsModalOpen(true)}
-                  className="inline-flex items-center space-x-1.5 text-[11px] font-medium text-slate-500 hover:text-emerald-600 py-1 transition-colors cursor-pointer"
-                >
-                  <Settings className="w-3.5 h-3.5" />
-                  <span>Settings</span>
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="inline-flex items-center space-x-1 text-[11px] font-medium text-slate-400 hover:text-rose-600 py-1 transition-colors cursor-pointer"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
+            </div>
           </div>
         </aside>
 
@@ -445,7 +449,7 @@ export const AppShell: React.FC<AppShellProps> = ({
           </header>
 
           {/* Main Content Viewport: Protected against bottom nav overflow */}
-          <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-10 min-w-0">
+          <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-10 min-w-0">
             {children}
           </main>
         </div>
